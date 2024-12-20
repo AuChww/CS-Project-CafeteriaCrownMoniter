@@ -3,9 +3,11 @@ version: '3.8'
 services:
   web:
     build:
-      context: .  # ใช้ directory ปัจจุบันเป็น context
-      dockerfile: Dockerfile  # ใช้ Dockerfile ที่อยู่ใน /Backend
+      context: .  # Use the current directory as the build context
+      dockerfile: Dockerfile  # Dockerfile located in the root directory
+    environment:
+      - FLASK_APP=API/app.py  # Point to the Flask app
     ports:
-      - "8000:8000"
+      - "8000:8000"  # Map container port 8000 to host port 8000
     volumes:
-      - .:/app
+      - .:/app  # Mount current directory into the container for development
