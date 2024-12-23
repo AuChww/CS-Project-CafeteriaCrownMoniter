@@ -1,4 +1,4 @@
-// pages/recomment/restaurant/[id].tsx
+// pages/recommend/restaurant/[id].tsx
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 

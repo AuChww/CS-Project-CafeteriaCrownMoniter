@@ -1,4 +1,4 @@
-// pages/recomment/bar/[id].tsx
+// pages/recommend/bar/[id].tsx
 import { useRouter } from 'next/router';
 
 const BarPage = () => {
