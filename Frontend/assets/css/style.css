@@ -1,0 +1,12 @@
+.transition-opacity {
+    transition: opacity 200ms ease-in-out;
+  }
+  
+  .opacity-0 {
+    opacity: 0;
+  }
+  
+  .opacity-1 {
+    opacity: 1;
+  }
+  
