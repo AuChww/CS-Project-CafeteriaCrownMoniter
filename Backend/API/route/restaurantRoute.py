@@ -1,48 +1,85 @@
-from flask_restx import Namespace, Resource, fields
+from flask import Blueprint, jsonify, request
+from Application.Service.feature.restaurantService import get_restaurant_by_id_service,get_all_restaurants_service,get_all_reviews_by_restaurant_id_service,add_restaurant_service, update_restaurant_service, delete_restaurant_service
 
-# Create a namespace for Restaurants
-api = Namespace('restaurants', description='Restaurant-related operations')
+restaurant_bp = Blueprint('restaurants', __name__)
 
-# Define a model for the restaurant resource
-restaurant_model = api.model('Restaurant', {
-    'id': fields.Integer(description='The unique identifier of a restaurant', readonly=True),
-    'name': fields.String(required=True, description='The name of the restaurant'),
-    'cuisine': fields.String(required=True, description='The type of cuisine served'),
-})
 
-# In-memory data store (for demonstration purposes)
-restaurants = []
+@restaurant_bp.route('/api/v1/getAllRestaurants', methods=['GET'])
+def get_all_restaurants():
+    restaurants = get_all_restaurants_service()
+    restaurant_list = [
+        {
+            'restaurant_id': r.restaurant_id,
+            'bar_id': r.bar_id,
+            'restaurant_name': r.restaurant_name,
+            'restaurant_location': r.restaurant_location,
+            'restaurant_detail': r.restaurant_detail,
+            'total_rating': r.total_rating,
+            'total_reviews': r.total_reviews
+        }
+        for r in restaurants
+    ]
+    return jsonify({'restaurants': restaurant_list})
 
-@api.route('/')
-class RestaurantList(Resource):
-    @api.marshal_list_with(restaurant_model)
-    def get(self):
-        """List all restaurants"""
-        return restaurants
+@restaurant_bp.route('/api/v1/getRestaurantId/<int:restaurant_id>', methods=['GET'])
+def get_restaurant_by_id(restaurant_id):
+    restaurant = get_restaurant_by_id_service(restaurant_id)
+    if not restaurant:
+        return jsonify({'message': 'Restaurant not found'}), 404
 
-    @api.expect(restaurant_model)
-    @api.marshal_with(restaurant_model, code=201)
-    def post(self):
-        """Create a new restaurant"""
-        new_restaurant = api.payload
-        new_restaurant['id'] = len(restaurants) + 1
-        restaurants.append(new_restaurant)
-        return new_restaurant, 201
+    return jsonify({
+        'restaurant_id': restaurant.restaurant_id,
+        'bar_id': restaurant.bar_id,
+        'restaurant_name': restaurant.restaurant_name,
+        'restaurant_location': restaurant.restaurant_location,
+        'restaurant_detail': restaurant.restaurant_detail,
+        'total_rating': restaurant.total_rating,
+        'total_reviews': restaurant.total_reviews
+    })
 
-@api.route('/<int:id>')
-@api.response(404, 'Restaurant not found')
-class Restaurant(Resource):
-    @api.marshal_with(restaurant_model)
-    def get(self, id):
-        """Fetch a restaurant given its identifier"""
-        restaurant = next((r for r in restaurants if r['id'] == id), None)
-        if restaurant is None:
-            api.abort(404, "Restaurant not found")
-        return restaurant
+@restaurant_bp.route('/api/v1/getReviewByRestaurantId/<int:restaurant_id>/reviews', methods=['GET'])
+def get_all_reviews_by_restaurant_id(restaurant_id):
+    reviews = get_all_reviews_by_restaurant_id_service(restaurant_id)
+    review_list = [
+        {
+            'review_id': r.review_id,
+            'user_id': r.user_id,
+            'restaurant_id': r.restaurant_id,
+            'rating': r.rating,
+            'comment': r.comment,
+            'created_at': r.created_at
+        }
+        for r in reviews
+    ]
+    return jsonify({'reviews': review_list})
 
-    @api.response(204, 'Restaurant deleted')
-    def delete(self, id):
-        """Delete a restaurant given its identifier"""
-        global restaurants
-        restaurants = [r for r in restaurants if r['id'] != id]
-        return '', 204
+@restaurant_bp.route('/api/v1/restaurants', methods=['POST'])
+def add_restaurant():
+    data = request.json
+    bar_id = data.get('bar_id')
+    restaurant_name = data.get('restaurant_name')
+    restaurant_location = data.get('restaurant_location')
+    restaurant_detail = data.get('restaurant_detail')
+
+    if not all([bar_id, restaurant_name, restaurant_location]):
+        return jsonify({'message': 'Missing required fields'}), 400
+
+    restaurant_id = add_restaurant_service(bar_id, restaurant_name, restaurant_location, restaurant_detail)
+    return jsonify({'message': 'Restaurant added successfully', 'restaurant_id': restaurant_id}), 201
+
+@restaurant_bp.route('/api/v1/restaurants/<int:restaurant_id>', methods=['PUT'])
+def update_restaurant(restaurant_id):
+    data = request.json
+    updated = update_restaurant_service(restaurant_id, data)
+    if not updated:
+        return jsonify({'message': 'Restaurant not found'}), 404
+
+    return jsonify({'message': 'Restaurant updated successfully'})
+
+@restaurant_bp.route('/api/v1/restaurants/<int:restaurant_id>', methods=['DELETE'])
+def delete_restaurant(restaurant_id):
+    deleted = delete_restaurant_service(restaurant_id)
+    if not deleted:
+        return jsonify({'message': 'Restaurant not found'}), 404
+
+    return jsonify({'message': 'Restaurant deleted successfully'})

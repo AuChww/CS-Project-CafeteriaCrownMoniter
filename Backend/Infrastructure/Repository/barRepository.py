@@ -92,3 +92,39 @@ def get_all_reviews_by_bar_id(bar_id):
         for row in data
     ]
     return reviews
+
+def add_bar(bar_name, bar_location, bar_detail):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute(
+        'INSERT INTO BAR (bar_name, bar_location, bar_detail) VALUES (%s, %s, %s) RETURNING bar_id',
+        (bar_name, bar_location, bar_detail)
+    )
+    bar_id = cur.fetchone()[0]
+    conn.commit()
+    cur.close()
+    conn.close()
+    return bar_id
+
+def update_bar(bar_id, data):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute(
+        'UPDATE BAR SET bar_name = %s, bar_location = %s, bar_detail = %s WHERE bar_id = %s',
+        (data.get('bar_name'), data.get('bar_location'), data.get('bar_detail'), bar_id)
+    )
+    updated = cur.rowcount > 0
+    conn.commit()
+    cur.close()
+    conn.close()
+    return updated
+
+def delete_bar(bar_id):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute('DELETE FROM BAR WHERE bar_id = %s', (bar_id,))
+    deleted = cur.rowcount > 0
+    conn.commit()
+    cur.close()
+    conn.close()
+    return deleted
