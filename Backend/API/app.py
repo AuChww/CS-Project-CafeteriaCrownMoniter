@@ -1,10 +1,9 @@
 from flask import Flask
-from API.route.yoloRoute import yolo_bp
+from API.route.barRoute import bar_bp
 
 app = Flask(__name__)
 
-# Register blueprint
-app.register_blueprint(yolo_bp)
+app.register_blueprint(bar_bp)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+    app.run(port=8000, debug=True)  # Update port to match docker-compose.yml
