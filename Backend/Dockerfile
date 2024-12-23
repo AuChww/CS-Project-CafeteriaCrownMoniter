@@ -1,23 +1,32 @@
-# ใช้ Python 3.12 slim เป็น base image
+# Use a Python base image
 FROM python:3.12-slim
 
-# ติดตั้ง dependencies ที่จำเป็นสำหรับการคอมไพล์ psycopg2
+# Install system dependencies required for OpenCV and Torch
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpq-dev \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libjpeg-dev \
+    libpng-dev \
+    libtiff-dev \
+    libx11-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# ตั้งค่า working directory ใน container
+# Set the working directory in the container
 WORKDIR /app
 
-# คัดลอกไฟล์ requirements.txt ไปยัง container
-COPY requirements.txt /app/requirements.txt
+# Copy the application files to the container
+COPY . .
 
-# ติดตั้ง dependencies จาก requirements.txt
-RUN pip install --no-cache-dir -r /app/requirements.txt
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# คัดลอกโฟลเดอร์ API ไปยัง container
-COPY ./API /app/API
+# Set environment variables for Flask
+ENV FLASK_APP=API/app.py
+ENV FLASK_RUN_HOST=0.0.0.0
+ENV FLASK_RUN_PORT=8000
 
-# คำสั่งให้เริ่ม server
-CMD ["flask", "run", "--host=0.0.0.0", "--port=8000"]
+# Expose the port Flask will run on
+EXPOSE 8000
+
+# Command to run the Flask application
+CMD ["flask", "run"]
