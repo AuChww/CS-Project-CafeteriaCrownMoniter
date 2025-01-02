@@ -1,0 +1,116 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Bar API",
+      "description": "API for managing bars",
+      "version": "1.0.0"
+    },
+    "host": "localhost:8000",
+    "basePath": "/api/bars",
+    "schemes": ["http"],
+    "paths": {
+      "/": {
+        "get": {
+          "summary": "Get all bars",
+          "responses": {
+            "200": {
+              "description": "List of bars"
+            }
+          }
+        },
+        "post": {
+          "summary": "Create a new bar",
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "bar_name": {"type": "string"},
+                  "bar_location": {"type": "string"},
+                  "bar_detail": {"type": "string"}
+                }
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Bar created"
+            }
+          }
+        }
+      },
+      "/{bar_id}": {
+        "get": {
+          "summary": "Get a bar by ID",
+          "parameters": [
+            {
+              "name": "bar_id",
+              "in": "path",
+              "required": true,
+              "type": "integer"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Bar details"
+            },
+            "404": {
+              "description": "Bar not found"
+            }
+          }
+        },
+        "put": {
+          "summary": "Update a bar",
+          "parameters": [
+            {
+              "name": "bar_id",
+              "in": "path",
+              "required": true,
+              "type": "integer"
+            },
+            {
+              "in": "body",
+              "name": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "bar_name": {"type": "string"},
+                  "bar_location": {"type": "string"},
+                  "bar_detail": {"type": "string"}
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Bar updated"
+            }
+          }
+        },
+        "delete": {
+          "summary": "Delete a bar",
+          "parameters": [
+            {
+              "name": "bar_id",
+              "in": "path",
+              "required": true,
+              "type": "integer"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Bar deleted"
+            },
+            "404": {
+              "description": "Bar not found"
+            }
+          }
+        }
+      }
+    }
+  }
+  
