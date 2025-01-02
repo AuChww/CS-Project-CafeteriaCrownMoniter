@@ -26,7 +26,7 @@ while True:
     num_humans = len(humans)  # นับจำนวนมนุษย์ที่ตรวจพบ
 
     # แสดงจำนวนมนุษย์ที่ตรวจพบบนเฟรม
-    cv2.putText(frame, f'Human Count: {num_humans}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    cv2.putText(frame, f'Single: {num_humans}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
     # แสดงผลวิดีโอที่ตรวจจับแล้ว
     cv2.imshow('YOLOv5 Human Detection', frame)
