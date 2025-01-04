@@ -44,12 +44,13 @@ def get_all_restaurants_by_bar_id(bar_id):
     restaurant_list = [
         {
             'restaurant_id': r.restaurant_id,
-            'bar_id': r.bar_id,
+            'zone_id': r.zone_id,
             'restaurant_name': r.restaurant_name,
             'restaurant_location': r.restaurant_location,
             'restaurant_detail': r.restaurant_detail,
             'total_rating': r.total_rating,
-            'total_reviews': r.total_reviews
+            'total_reviews': r.total_reviews,
+            'restaurant_image': r.restaurant_image
         }
         for r in restaurants
     ]
@@ -64,8 +65,9 @@ def get_all_reviews_by_bar_id(bar_id):
             'user_id': r.user_id,
             'restaurant_id': r.restaurant_id,
             'rating': r.rating,
-            'comment': r.comment,
-            'created_at': r.created_at,
+            'comment': r.review_comment,
+            'created_time': r.created_time,
+            'update_time': r.update_time,
             'review_image': r.review_image  # เพิ่มฟิลด์ review_image
         }
         for r in reviews
@@ -89,6 +91,7 @@ def get_all_zones_by_bar_id(bar_id):
         for z in zones
     ]
     return jsonify({'zones': zone_list})
+
 
 @bar_bp.route('/api/v1/addBar', methods=['POST'])
 def add_bar():

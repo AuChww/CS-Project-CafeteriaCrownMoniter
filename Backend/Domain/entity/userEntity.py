@@ -4,5 +4,5 @@ class UserEntity:
         self.user_image = user_image
         self.username = username
         self.password = password
-        self.role = role
         self.email = email
+        self.role = role

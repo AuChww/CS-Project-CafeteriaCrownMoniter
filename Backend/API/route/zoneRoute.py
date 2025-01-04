@@ -17,16 +17,16 @@ def get_all_zones_endpoint():
     zones = get_all_zones_service()  # Use the service function here
     zone_list = [
         {
-            'zone_id': zone.zone_id,
-            'bar_id': zone.bar_id,
-            'zone_name': zone.zone_name,
-            'zone_detail': zone.zone_detail,
-            'max_people_in_zone': zone.max_people_in_zone,
-            'current_visitor_count': zone.current_visitor_count,
-            'update_date_time': zone.update_date_time,
-            'zone_time': zone.zone_time
+            'zone_id': z.zone_id,
+            'bar_id': z.bar_id,
+            'zone_name': z.zone_name,
+            'zone_detail': z.zone_detail,
+            'max_people_in_zone': z.max_people_in_zone,
+            'current_visitor_count': z.current_visitor_count,
+            'update_date_time': z.update_date_time,
+            'zone_time': z.zone_time
         }
-        for zone in zones
+        for z in zones
     ]
     return jsonify({'zones': zone_list})
 
