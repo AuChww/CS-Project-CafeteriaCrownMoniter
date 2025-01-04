@@ -17,7 +17,8 @@ def get_all_reviews():
             restaurant_id=row[2],
             rating=row[3],
             comment=row[4],
-            created_at=row[5]
+            created_at=row[5],
+            review_image=row[6]  # เพิ่มฟิลด์ review_image
         )
         for row in data
     ]
@@ -38,20 +39,44 @@ def get_review_by_id(review_id):
             restaurant_id=row[2],
             rating=row[3],
             comment=row[4],
-            created_at=row[5]
+            created_at=row[5],
+            review_image=row[6]  # เพิ่มฟิลด์ review_image
         )
     return None
 
-def add_review(user_id, restaurant_id, rating, comment):
+def add_review(user_id, restaurant_id, rating, comment, review_image=None):
     conn = db_conn()
     cur = conn.cursor()
     query = '''
-        INSERT INTO review (user_id, restaurant_id, rating, comment)
-        VALUES (%s, %s, %s, %s) RETURNING review_id
+        INSERT INTO review (user_id, restaurant_id, rating, comment, review_image)
+        VALUES (%s, %s, %s, %s, %s) RETURNING review_id
     '''
-    cur.execute(query, (user_id, restaurant_id, rating, comment))
+    cur.execute(query, (user_id, restaurant_id, rating, comment, review_image))
     review_id = cur.fetchone()[0]
     conn.commit()
     cur.close()
     conn.close()
     return review_id
+
+def update_review(review_id, user_id, restaurant_id, rating, comment, review_image=None):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute('''
+        UPDATE review SET user_id = %s, restaurant_id = %s, rating = %s, comment = %s, review_image = %s
+        WHERE review_id = %s
+    ''', (user_id, restaurant_id, rating, comment, review_image, review_id))
+    updated = cur.rowcount > 0
+    conn.commit()
+    cur.close()
+    conn.close()
+    return updated
+
+def delete_review(review_id):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute('DELETE FROM review WHERE review_id = %s', (review_id,))
+    deleted = cur.rowcount > 0
+    conn.commit()
+    cur.close()
+    conn.close()
+    return deleted

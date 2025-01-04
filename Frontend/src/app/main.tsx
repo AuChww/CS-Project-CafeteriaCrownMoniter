@@ -34,8 +34,8 @@ export default function HomePage() {
                         className="bg-white rounded-lg shadow-lg p-6 border border-gray-200 hover:bg-gray-100"
                     >
                         <h2 className="text-2xl font-semibold mb-4 text-black">{bar.bar_name}</h2>
-                        <p className="text-lg text-gray-600 mb-2">People in Bar: {bar.people_count}</p>
-                        <p className="text-sm text-gray-500">ความหนาแน่น {bar.crown}</p>
+                        <p className="text-lg text-gray-600 mb-2">People in Bar : {bar.people_count}</p>
+                        <p className="text-md text-gray-600">ความหนาแน่น {bar.crown}</p>
                     </div>
                 ))}
             </div>
