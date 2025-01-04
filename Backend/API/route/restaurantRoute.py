@@ -9,7 +9,7 @@ def get_all_restaurants():
     restaurant_list = [
         {
             'restaurant_id': r.restaurant_id,
-            'bar_id': r.bar_id,
+            'zone_id': r.zone_id,
             'restaurant_name': r.restaurant_name,
             'restaurant_location': r.restaurant_location,
             'restaurant_detail': r.restaurant_detail,
@@ -29,7 +29,7 @@ def get_restaurant_by_id(restaurant_id):
 
     return jsonify({
         'restaurant_id': restaurant.restaurant_id,
-        'bar_id': restaurant.bar_id,
+        'zone_id': restaurant.zone_id,
         'restaurant_name': restaurant.restaurant_name,
         'restaurant_location': restaurant.restaurant_location,
         'restaurant_detail': restaurant.restaurant_detail,
@@ -47,8 +47,10 @@ def get_all_reviews_by_restaurant_id(restaurant_id):
             'user_id': r.user_id,
             'restaurant_id': r.restaurant_id,
             'rating': r.rating,
-            'comment': r.comment,
-            'created_at': r.created_at
+            'review_comment': r.review_comment,
+            'created_time': r.created_time,
+            'update_time': r.update_time,
+            'review_image': r.review_image 
         }
         for r in reviews
     ]
