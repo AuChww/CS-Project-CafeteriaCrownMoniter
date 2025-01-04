@@ -17,8 +17,8 @@ def get_all_users():
             user_image=row[1],
             username=row[2],
             password=row[3],
-            email=row[4],
-            role=row[5]
+            role=row[4],
+            email=row[5],
         )
         for row in rows
     ]
@@ -38,8 +38,8 @@ def get_user_by_id(user_id):
             user_image=row[1],
             username=row[2],
             password=row[3],
-            email=row[4],
-            role=row[5]
+            role=row[4],
+            email=row[5],
         )
     return None
 
