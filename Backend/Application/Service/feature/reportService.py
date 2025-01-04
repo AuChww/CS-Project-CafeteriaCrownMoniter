@@ -1,22 +1,22 @@
-from Infrastructure.Repository.visitorHistoryRepository import (
-    get_all_visitor_histories,
-    get_visitor_history_by_id,
-    add_visitor_history,
-    update_visitor_history,
-    delete_visitor_history
+from Infrastructure.Repository.reportRepository import (
+    get_all_report,
+    get_report_by_id,
+    add_report,
+    update_report,
+    delete_report
 )
 
-def get_all_visitor_histories_service():
-    return get_all_visitor_histories()
+def get_all_report_service():
+    return get_all_report()
 
-def get_visitor_history_by_id_service(visitor_history_id):
-    return get_visitor_history_by_id(visitor_history_id)
+def get_report_by_id_service(report_id):
+    return get_report_by_id(report_id)
 
-def add_visitor_history_service(date_time, zone_id, visitor_count):
-    return add_visitor_history(date_time, zone_id, visitor_count)
+def add_report_service(user_id, zone_id, report_status, report_type, report_message, report_image):
+    return add_report(user_id, zone_id, report_status, report_type, report_message, report_image)
 
-def update_visitor_history_service(visitor_history_id, data):
-    return update_visitor_history(visitor_history_id, data)
+def update_report_service(report_id, data):
+    return update_report(report_id, data)
 
-def delete_visitor_history_service(visitor_history_id):
-    return delete_visitor_history(visitor_history_id)
+def delete_report_service(report_id):
+    return delete_report(report_id)
