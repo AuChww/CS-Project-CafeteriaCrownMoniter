@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from Application.Service.feature.barService import get_all_bars_service, get_bar_by_id_service, get_all_restaurants_by_bar_id_service, get_all_reviews_by_bar_id_service, add_bar_service, update_bar_service, delete_bar_service
+from Application.Service.feature.barService import get_all_bars_service, get_bar_by_id_service, get_all_restaurants_by_bar_id_service, get_all_reviews_by_bar_id_service, get_all_zones_by_bar_id_service, add_bar_service, update_bar_service, delete_bar_service
 
 bar_bp = Blueprint('bars', __name__)
 
@@ -12,6 +12,7 @@ def get_all_bars():
             'bar_name': bar.bar_name,
             'bar_location': bar.bar_location,
             'bar_detail': bar.bar_detail,
+            'max_people_in_bar': bar.max_people_in_bar,
             'total_rating': bar.total_rating,
             'total_reviews': bar.total_reviews,
             'bar_image': bar.bar_image  # เพิ่ม bar_image ในการตอบกลับ
@@ -31,6 +32,7 @@ def get_bar_by_id(bar_id):
         'bar_name': bar.bar_name,
         'bar_location': bar.bar_location,
         'bar_detail': bar.bar_detail,
+        'max_people_in_bar': bar.max_people_in_bar,
         'total_rating': bar.total_rating,
         'total_reviews': bar.total_reviews,
         'bar_image': bar.bar_image  # เพิ่ม bar_image ในการตอบกลับ
@@ -53,7 +55,7 @@ def get_all_restaurants_by_bar_id(bar_id):
     ]
     return jsonify({'restaurants': restaurant_list})
 
-@bar_bp.route('/api/v1/getReviewByBarId/<int:bar_id>', methods=['GET'])
+@bar_bp.route('/api/v1/getAllReviewByBarId/<int:bar_id>', methods=['GET'])
 def get_all_reviews_by_bar_id(bar_id):
     reviews = get_all_reviews_by_bar_id_service(bar_id)
     review_list = [
@@ -63,11 +65,30 @@ def get_all_reviews_by_bar_id(bar_id):
             'restaurant_id': r.restaurant_id,
             'rating': r.rating,
             'comment': r.comment,
-            'created_at': r.created_at
+            'created_at': r.created_at,
+            'review_image': r.review_image  # เพิ่มฟิลด์ review_image
         }
         for r in reviews
     ]
     return jsonify({'reviews': review_list})
+
+@bar_bp.route('/api/v1/getAllZonesByBarId/<int:bar_id>', methods=['GET'])
+def get_all_zones_by_bar_id(bar_id):
+    zones = get_all_zones_by_bar_id_service(bar_id)
+    zone_list = [
+        {
+            'zone_id': z.zone_id,
+            'bar_id': z.bar_id,
+            'zone_name': z.zone_name,
+            'zone_detail': z.zone_detail,
+            'max_people_in_zone': z.max_people_in_zone,
+            'current_visitor_count': z.current_visitor_count,
+            'update_date_time': z.update_date_time,
+            'zone_time': z.zone_time
+        }
+        for z in zones
+    ]
+    return jsonify({'zones': zone_list})
 
 @bar_bp.route('/api/v1/addBar', methods=['POST'])
 def add_bar():
