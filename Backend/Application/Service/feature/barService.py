@@ -12,8 +12,8 @@ def get_all_restaurants_by_bar_id_service(bar_id):
 def get_all_reviews_by_bar_id_service(bar_id):
     return get_all_reviews_by_bar_id(bar_id)
 
-def add_bar_service(bar_name, bar_location, bar_detail):
-    return add_bar(bar_name, bar_location, bar_detail)
+def add_bar_service(bar_name, bar_location, bar_detail, bar_image):
+    return add_bar(bar_name, bar_location, bar_detail, bar_image)
 
 def update_bar_service(bar_id, data):
     return update_bar(bar_id, data)

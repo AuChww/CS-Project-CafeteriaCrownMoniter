@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from Application.Service.feature.barService import get_all_bars_service,get_bar_by_id_service,get_all_restaurants_by_bar_id_service,get_all_reviews_by_bar_id_service,add_bar_service, update_bar_service, delete_bar_service
+from Application.Service.feature.barService import get_all_bars_service, get_bar_by_id_service, get_all_restaurants_by_bar_id_service, get_all_reviews_by_bar_id_service, add_bar_service, update_bar_service, delete_bar_service
 
 bar_bp = Blueprint('bars', __name__)
 
@@ -14,6 +14,7 @@ def get_all_bars():
             'bar_detail': bar.bar_detail,
             'total_rating': bar.total_rating,
             'total_reviews': bar.total_reviews,
+            'bar_image': bar.bar_image  # เพิ่ม bar_image ในการตอบกลับ
         }
         for bar in bars
     ]
@@ -31,7 +32,8 @@ def get_bar_by_id(bar_id):
         'bar_location': bar.bar_location,
         'bar_detail': bar.bar_detail,
         'total_rating': bar.total_rating,
-        'total_reviews': bar.total_reviews
+        'total_reviews': bar.total_reviews,
+        'bar_image': bar.bar_image  # เพิ่ม bar_image ในการตอบกลับ
     })
 
 @bar_bp.route('/api/v1/getRestaurantByBarId/<int:bar_id>', methods=['GET'])
@@ -73,17 +75,18 @@ def add_bar():
     bar_name = data.get('bar_name')
     bar_location = data.get('bar_location')
     bar_detail = data.get('bar_detail')
+    bar_image = data.get('bar_image')  # รับ bar_image จาก request
 
     if not all([bar_name, bar_location]):
         return jsonify({'message': 'Missing required fields'}), 400
 
-    bar_id = add_bar_service(bar_name, bar_location, bar_detail)
+    bar_id = add_bar_service(bar_name, bar_location, bar_detail, bar_image)  # ส่ง bar_image ไปยัง service
     return jsonify({'message': 'Bar added successfully', 'bar_id': bar_id}), 201
 
 @bar_bp.route('/api/v1/updateBar/<int:bar_id>', methods=['PUT'])
 def update_bar(bar_id):
     data = request.json
-    updated = update_bar_service(bar_id, data)
+    updated = update_bar_service(bar_id, data)  # ส่งข้อมูลทั้งหมดยัง service
     if not updated:
         return jsonify({'message': 'Bar not found'}), 404
 
