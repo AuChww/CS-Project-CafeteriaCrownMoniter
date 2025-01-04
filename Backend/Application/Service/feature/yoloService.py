@@ -1,6 +1,6 @@
 import cv2
 from ultralytics import YOLO
-from Domain.entity.yoloEntity import Zone
+from Backend.Domain.entity.reportEntity import Zone
 
 class YoloService:
     def __init__(self):
