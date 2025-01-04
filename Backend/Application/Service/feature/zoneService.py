@@ -1,0 +1,34 @@
+from Infrastructure.Repository.zoneRepository import (
+    get_all_zones,
+    get_zone_by_id,
+    get_visitor_history_by_zone_id,
+    get_restaurant_by_zone_id,
+    get_all_report_by_zone_id,
+    add_zone,
+    update_zone,
+    delete_zone
+)
+
+def get_all_zones_service():
+    return get_all_zones()
+
+def get_zone_by_id_service(zone_id):
+    return get_zone_by_id(zone_id)
+
+def get_visitor_history_by_zone_id_service(zone_id):
+    return get_visitor_history_by_zone_id(zone_id)
+
+def get_restaurant_by_zone_id_service(zone_id):
+    return get_restaurant_by_zone_id(zone_id)
+
+def get_all_report_by_zone_id_service(zone_id):
+    return get_all_report_by_zone_id(zone_id)
+
+def add_zone_service(bar_id, zone_name, zone_detail=None, max_people_in_zone=0, current_visitor_count=0, zone_time=None):
+    return add_zone(bar_id, zone_name, zone_detail, max_people_in_zone, current_visitor_count, zone_time)
+
+def update_zone_service(zone_id, data):
+    return update_zone(zone_id, data)
+
+def delete_zone_service(zone_id):
+    return delete_zone(zone_id)

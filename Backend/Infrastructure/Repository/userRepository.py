@@ -1,6 +1,7 @@
 from Infrastructure.db_connection import db_conn
 from Domain.entity.userEntity import UserEntity
 from Domain.entity.reviewEntity import ReviewEntity
+from Domain.entity.reportEntity import ReportEntity
 
 def get_all_users():
     conn = db_conn()
@@ -41,6 +42,29 @@ def get_user_by_id(user_id):
             role=row[5]
         )
     return None
+
+def get_all_reports_by_user_id(user_id):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM report WHERE user_id = %s', (user_id,))
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    reports = [
+        ReportEntity(
+            report_id=row[0],
+            user_id=row[1],
+            zone_id=row[2],
+            report_status=row[3],
+            report_type=row[4],
+            report_message=row[5],
+            created_time=row[6],
+            report_image=row[7]  # เพิ่มฟิลด์ report_image
+        )
+        for row in rows
+    ]
+    return reports
 
 def get_reviews_by_user_id(user_id):
     conn = db_conn()
