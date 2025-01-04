@@ -18,7 +18,8 @@ def get_all_restaurants():
             restaurant_location=row[3],
             restaurant_detail=row[4],
             total_rating=row[5],
-            total_reviews=row[6]
+            total_reviews=row[6],
+            restaurant_image=row[7]  # เพิ่มฟิลด์ restaurant_image
         )
         for row in data
     ]
@@ -40,7 +41,8 @@ def get_restaurant_by_id(restaurant_id):
             restaurant_location=row[3],
             restaurant_detail=row[4],
             total_rating=row[5],
-            total_reviews=row[6]
+            total_reviews=row[6],
+            restaurant_image=row[7]  # เพิ่มฟิลด์ restaurant_image
         )
     return None
 
@@ -72,12 +74,12 @@ def get_all_reviews_by_restaurant_id(restaurant_id):
     ]
     return reviews
 
-def add_restaurant(bar_id, restaurant_name, restaurant_location, restaurant_detail):
+def add_restaurant(bar_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image):
     conn = db_conn()
     cur = conn.cursor()
     cur.execute(
-        'INSERT INTO RESTAURANT (bar_id, restaurant_name, restaurant_location, restaurant_detail) VALUES (%s, %s, %s, %s) RETURNING restaurant_id',
-        (bar_id, restaurant_name, restaurant_location, restaurant_detail)
+        'INSERT INTO RESTAURANT (bar_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image) VALUES (%s, %s, %s, %s, %s) RETURNING restaurant_id',
+        (bar_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image)
     )
     restaurant_id = cur.fetchone()[0]
     conn.commit()
@@ -88,10 +90,21 @@ def add_restaurant(bar_id, restaurant_name, restaurant_location, restaurant_deta
 def update_restaurant(restaurant_id, data):
     conn = db_conn()
     cur = conn.cursor()
-    cur.execute(
-        'UPDATE RESTAURANT SET restaurant_name = %s, restaurant_location = %s, restaurant_detail = %s WHERE restaurant_id = %s',
-        (data.get('restaurant_name'), data.get('restaurant_location'), data.get('restaurant_detail'), restaurant_id)
-    )
+    
+    # ตรวจสอบว่า restaurant_image มีอยู่ใน data หรือไม่
+    restaurant_image = data.get('restaurant_image', None)
+
+    if restaurant_image:
+        cur.execute(
+            'UPDATE RESTAURANT SET restaurant_name = %s, restaurant_location = %s, restaurant_detail = %s, restaurant_image = %s WHERE restaurant_id = %s',
+            (data.get('restaurant_name'), data.get('restaurant_location'), data.get('restaurant_detail'), restaurant_image, restaurant_id)
+        )
+    else:
+        cur.execute(
+            'UPDATE RESTAURANT SET restaurant_name = %s, restaurant_location = %s, restaurant_detail = %s WHERE restaurant_id = %s',
+            (data.get('restaurant_name'), data.get('restaurant_location'), data.get('restaurant_detail'), restaurant_id)
+        )
+    
     updated = cur.rowcount > 0
     conn.commit()
     cur.close()

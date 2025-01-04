@@ -8,14 +8,14 @@ const Navbar = () => {
     return (
         <nav className="absolute w-full top-0 sticky bg-gradient-to-r
             from-[#AEF359]
-            via-emerald-400
+            via-emerald-300
             to-[#03A96B]
             background-animate text-white p-3 z-50">
             <div className="container mx-auto flex justify-between">
                 {/* Logo or title */}
                 <div className="text-2xl font-bold">
                     <Link href="/">
-                        <div className="text-[#03A96B]">KU CROWN</div>
+                        <div className="text-[#03A96B]">KU CROWD</div>
                     </Link>
                 </div>
 

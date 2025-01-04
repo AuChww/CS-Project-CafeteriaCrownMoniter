@@ -1,4 +1,5 @@
 import React from "react";
+import BarCard from "@/components/ฺBarCard";
 
 interface Bar {
   bar_id: number;
@@ -20,24 +21,16 @@ const TopBar: React.FC<TopBarProps> = ({ bars }) => {
       <h1 className="text-3xl font-bold mb-4">Top Bars</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {bars.map((bar) => (
-          <div
+          <BarCard
             key={bar.bar_id}
-            className="bg-white rounded-lg shadow-lg p-4 border border-gray-200"
-          >
-            <h2 className="text-2xl font-semibold mb-2">{bar.bar_name}</h2>
-            {bar.bar_image && (
-              <img
-                src={bar.bar_image}
-                alt={bar.bar_name}
-                className="w-full h-48 object-cover rounded-md mb-4"
-              />
-            )}
-            <p className="text-sm text-gray-600 mb-2">Location: {bar.bar_location}</p>
-            <p className="text-sm text-gray-600 mb-2">Details: {bar.bar_detail}</p>
-            <p className="text-sm text-gray-600">
-              Rating: {bar.total_rating} ({bar.total_reviews} reviews)
-            </p>
-          </div>
+            bar_id={bar.bar_id}
+            bar_name={bar.bar_name}
+            bar_location={bar.bar_location}
+            bar_detail={bar.bar_detail}
+            total_rating={bar.total_rating}
+            total_reviews={bar.total_reviews}
+            bar_image={bar.bar_image}
+          />
         ))}
       </div>
     </div>
