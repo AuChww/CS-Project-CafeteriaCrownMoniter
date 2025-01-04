@@ -4,12 +4,15 @@ from API.route.barRoute import bar_bp
 from API.route.restaurantRoute import restaurant_bp
 from API.route.reviewRoute import review_bp
 from API.route.userRoute import user_bp
+from API.route.reportRoute import report_bp
+
 
 app = Flask(__name__)
 app.register_blueprint(bar_bp)
 app.register_blueprint(restaurant_bp)
 app.register_blueprint(review_bp)
 app.register_blueprint(user_bp)
+app.register_blueprint(report_bp)
 
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
