@@ -19,7 +19,8 @@ def get_all_bars():
             bar_location=row[2],
             bar_detail=row[3],
             total_rating=row[4],
-            total_reviews=row[5]
+            total_reviews=row[5],
+            bar_image=row[6]  # รับข้อมูล bar_image จากฐานข้อมูล
         )
         for row in data
     ]
@@ -40,7 +41,8 @@ def get_bar_by_id(bar_id):
             bar_location=row[2],
             bar_detail=row[3],
             total_rating=row[4],
-            total_reviews=row[5]
+            total_reviews=row[5],
+            bar_image=row[6]  # รับข้อมูล bar_image จากฐานข้อมูล
         )
     return None
 
@@ -93,12 +95,12 @@ def get_all_reviews_by_bar_id(bar_id):
     ]
     return reviews
 
-def add_bar(bar_name, bar_location, bar_detail):
+def add_bar(bar_name, bar_location, bar_detail, bar_image=None):
     conn = db_conn()
     cur = conn.cursor()
     cur.execute(
-        'INSERT INTO BAR (bar_name, bar_location, bar_detail) VALUES (%s, %s, %s) RETURNING bar_id',
-        (bar_name, bar_location, bar_detail)
+        'INSERT INTO BAR (bar_name, bar_location, bar_detail, bar_image) VALUES (%s, %s, %s, %s) RETURNING bar_id',
+        (bar_name, bar_location, bar_detail, bar_image)
     )
     bar_id = cur.fetchone()[0]
     conn.commit()
@@ -110,8 +112,8 @@ def update_bar(bar_id, data):
     conn = db_conn()
     cur = conn.cursor()
     cur.execute(
-        'UPDATE BAR SET bar_name = %s, bar_location = %s, bar_detail = %s WHERE bar_id = %s',
-        (data.get('bar_name'), data.get('bar_location'), data.get('bar_detail'), bar_id)
+        'UPDATE BAR SET bar_name = %s, bar_location = %s, bar_detail = %s, bar_image = %s WHERE bar_id = %s',
+        (data.get('bar_name'), data.get('bar_location'), data.get('bar_detail'), data.get('bar_image'), bar_id)
     )
     updated = cur.rowcount > 0
     conn.commit()
