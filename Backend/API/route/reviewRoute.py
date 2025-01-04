@@ -12,8 +12,9 @@ def get_all_reviews():
             'user_id': r.user_id,
             'restaurant_id': r.restaurant_id,
             'rating': r.rating,
-            'comment': r.comment,
-            'created_at': r.created_at,
+            'comment': r.review_comment,
+            'created_time': r.created_time,
+            'update_time': r.update_time,
             'review_image': r.review_image  # เพิ่มฟิลด์ review_image
         }
         for r in reviews
@@ -31,8 +32,9 @@ def get_review_by_id(review_id):
         'user_id': review.user_id,
         'restaurant_id': review.restaurant_id,
         'rating': review.rating,
-        'comment': review.comment,
-        'created_at': review.created_at,
+        'comment': review.review_comment,
+        'created_time': review.created_time,
+        'update_time': review.update_time,
         'review_image': review.review_image  # เพิ่มฟิลด์ review_image
     })
 

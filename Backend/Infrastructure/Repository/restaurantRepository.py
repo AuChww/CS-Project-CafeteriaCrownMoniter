@@ -1,6 +1,7 @@
 import psycopg2
 from Infrastructure.db_connection import db_conn
 from Domain.entity.restaurantEntity import RestaurantEntity
+from Domain.entity.reviewEntity import ReviewEntity
 
 def get_all_restaurants():
     conn = db_conn()
@@ -13,7 +14,7 @@ def get_all_restaurants():
     restaurants = [
         RestaurantEntity(
             restaurant_id=row[0],
-            bar_id=row[1],
+            zone_id=row[1],  # แก้ไขเป็น zone_id จาก row[1]
             restaurant_name=row[2],
             restaurant_location=row[3],
             restaurant_detail=row[4],
@@ -36,7 +37,7 @@ def get_restaurant_by_id(restaurant_id):
     if row:
         return RestaurantEntity(
             restaurant_id=row[0],
-            bar_id=row[1],
+            zone_id=row[1],  # แก้ไขเป็น zone_id จาก row[1]
             restaurant_name=row[2],
             restaurant_location=row[3],
             restaurant_detail=row[4],
@@ -45,8 +46,6 @@ def get_restaurant_by_id(restaurant_id):
             restaurant_image=row[7]  # เพิ่มฟิลด์ restaurant_image
         )
     return None
-
-from Domain.entity.reviewEntity import ReviewEntity
 
 def get_all_reviews_by_restaurant_id(restaurant_id):
     conn = db_conn()
@@ -74,12 +73,12 @@ def get_all_reviews_by_restaurant_id(restaurant_id):
     ]
     return reviews
 
-def add_restaurant(bar_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image):
+def add_restaurant(zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image=None):
     conn = db_conn()
     cur = conn.cursor()
     cur.execute(
-        'INSERT INTO RESTAURANT (bar_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image) VALUES (%s, %s, %s, %s, %s) RETURNING restaurant_id',
-        (bar_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image)
+        'INSERT INTO restaurant (zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image) VALUES (%s, %s, %s, %s, %s) RETURNING restaurant_id',
+        (zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image)
     )
     restaurant_id = cur.fetchone()[0]
     conn.commit()
@@ -96,12 +95,12 @@ def update_restaurant(restaurant_id, data):
 
     if restaurant_image:
         cur.execute(
-            'UPDATE RESTAURANT SET restaurant_name = %s, restaurant_location = %s, restaurant_detail = %s, restaurant_image = %s WHERE restaurant_id = %s',
+            'UPDATE restaurant SET restaurant_name = %s, restaurant_location = %s, restaurant_detail = %s, restaurant_image = %s WHERE restaurant_id = %s',
             (data.get('restaurant_name'), data.get('restaurant_location'), data.get('restaurant_detail'), restaurant_image, restaurant_id)
         )
     else:
         cur.execute(
-            'UPDATE RESTAURANT SET restaurant_name = %s, restaurant_location = %s, restaurant_detail = %s WHERE restaurant_id = %s',
+            'UPDATE restaurant SET restaurant_name = %s, restaurant_location = %s, restaurant_detail = %s WHERE restaurant_id = %s',
             (data.get('restaurant_name'), data.get('restaurant_location'), data.get('restaurant_detail'), restaurant_id)
         )
     
@@ -114,7 +113,7 @@ def update_restaurant(restaurant_id, data):
 def delete_restaurant(restaurant_id):
     conn = db_conn()
     cur = conn.cursor()
-    cur.execute('DELETE FROM RESTAURANT WHERE restaurant_id = %s', (restaurant_id,))
+    cur.execute('DELETE FROM restaurant WHERE restaurant_id = %s', (restaurant_id,))
     deleted = cur.rowcount > 0
     conn.commit()
     cur.close()

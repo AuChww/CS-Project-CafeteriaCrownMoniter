@@ -3,6 +3,7 @@ from Application.Service.feature.userService import (
     get_all_users_service,
     get_user_by_id_service,
     get_reviews_by_user_id_service,
+    get_all_reports_by_user_id_service,
     add_user_service,
     update_user_service,
     delete_user_service,
@@ -53,6 +54,23 @@ def get_reviews_by_user_id(user_id):
         for r in reviews
     ]
     return jsonify({'reviews': review_list})
+
+@user_bp.route('/api/v1/getReportsByUserId/<int:user_id>/reports', methods=['GET'])
+def get_reports_by_user_id(user_id):
+    reports = get_all_reports_by_user_id_service(user_id)
+    report_list = [
+        {
+            'report_id': r.report_id,
+            'zone_id': r.zone_id,
+            'report_status': r.report_status,
+            'report_type': r.report_type,
+            'report_message': r.report_message,
+            'created_time': r.created_time,
+            'report_image': r.report_image
+        }
+        for r in reports
+    ]
+    return jsonify({'reports': report_list})
 
 @user_bp.route('/api/v1/addUser', methods=['POST'])
 def add_user():
