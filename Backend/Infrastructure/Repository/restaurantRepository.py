@@ -51,7 +51,7 @@ def get_all_reviews_by_restaurant_id(restaurant_id):
     conn = db_conn()
     cur = conn.cursor()
     query = '''
-        SELECT review_id, user_id, restaurant_id, rating, comment, created_at
+        SELECT review_id, user_id, restaurant_id, rating, review_comment, created_time, update_time, review_image
         FROM review
         WHERE restaurant_id = %s
     '''
@@ -66,8 +66,10 @@ def get_all_reviews_by_restaurant_id(restaurant_id):
             user_id=row[1],
             restaurant_id=row[2],
             rating=row[3],
-            comment=row[4],
-            created_at=row[5]
+            review_comment=row[4],  # แก้ไขเป็น review_comment
+            created_time=row[5],    # แก้ไขเป็น created_time
+            update_time=row[6],     # แก้ไขเป็น update_time
+            review_image=row[7]  
         )
         for row in data
     ]
