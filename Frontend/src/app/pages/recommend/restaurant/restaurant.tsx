@@ -1,28 +1,41 @@
-import React, { useEffect, useState } from 'react';
+"use client";
+import RestaurantCard from "@/components/RestaurantCard";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { FaFireAlt } from "react-icons/fa";
 
-interface Bar {
-  bar_id: number;
-  bar_name: string;
-  bar_location: string;
-  bar_detail: string;
+interface Restaurant {
+  restaurant_id: number;
+  restaurant_name: string;
+  restaurant_location: string;
+  restaurant_detail: string;
   total_rating: number;
   total_reviews: number;
+  restaurant_image: string;
 }
 
-const BarPage: React.FC = () => {
-  const [bars, setBars] = useState<Bar[]>([]);
+const AllRestaurant: React.FC = () => {
+  const router = useRouter();
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchBars = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/v1/getAllBars'); // แก้ไข URL ให้ตรงกับ API ของคุณ
+        const response = await fetch("http://127.0.0.1:8000/api/v1/getAllRestaurants");
+
         if (!response.ok) {
-          throw new Error('Failed to fetch bars');
+          throw new Error("Failed to fetch data");
         }
-        const data: Bar[] = await response.json();
-        setBars(data);
+
+        const data: { restaurants: Restaurant[] } = await response.json();
+
+        const sortedRestaurants = data.restaurants.sort(
+          (a, b) => b.total_rating - a.total_rating || b.total_reviews - a.total_reviews
+        );
+
+        setRestaurants(sortedRestaurants);
         setLoading(false);
       } catch (err: any) {
         setError(err.message);
@@ -30,27 +43,55 @@ const BarPage: React.FC = () => {
       }
     };
 
-    fetchBars();
+    fetchData();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
-
   return (
-    <div>
-      <h1>All Bars</h1>
-      <ul>
-        {bars.map((bar) => (
-          <li key={bar.bar_id}>
-            <h2>{bar.bar_name}</h2>
-            <p>Location: {bar.bar_location}</p>
-            <p>Details: {bar.bar_detail}</p>
-            <p>Rating: {bar.total_rating} ({bar.total_reviews} reviews)</p>
-          </li>
-        ))}
-      </ul>
+    <div className="p-6">
+      <h1 className="text-3xl font-bold mb-4">All Restaurants</h1>
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p className="text-red-500">{error}</p>
+      ) : (
+        <div className="grid grid-cols-5 gap-2">
+          {restaurants.map((restaurant, index) => (
+            <div
+              key={restaurant.restaurant_id}
+              onClick={() => router.push(`/pages/recommend/restaurant/${restaurant.restaurant_id}`)}
+              className="relative w-60"
+            >
+              {/* Top 3 Sticker */}
+              {index < 3 && (
+                <div className="absolute flex top-2 right-2 bg-gradient-to-r
+            from-orange-500
+            via-red-600
+            to-red-800  text-white text-xs py-1 px-2 rounded-full">
+                  <div>
+                    Popular
+                  </div>
+                  <div>
+                    <FaFireAlt className="w-4 h-4 ml-1" />
+                  </div>
+                </div>
+              )}
+
+              <RestaurantCard
+                key={restaurant.restaurant_id}
+                restaurant_id={restaurant.restaurant_id}
+                restaurant_name={restaurant.restaurant_name}
+                restaurant_location={restaurant.restaurant_location}
+                restaurant_detail={restaurant.restaurant_detail}
+                total_rating={restaurant.total_rating}
+                total_reviews={restaurant.total_reviews}
+                restaurant_image={restaurant.restaurant_image}
+              />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
-export default BarPage;
+export default AllRestaurant;
