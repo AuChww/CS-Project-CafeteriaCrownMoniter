@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import TopBar from "./bar/topBar";
+import TopBar from "./bar/topBar/topBar";
 import TopRestaurant from "./restaurant/topRestaurant";
-import AllBar from "./bar/allBar"
+import AllBar from "./bar/allBar/allBar"
 
 interface Bar {
   bar_id: number;
