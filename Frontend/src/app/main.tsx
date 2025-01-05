@@ -1,10 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Swipe from "./swipe";
+import Swipe from "@/components/swipe";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import CrowdCard from "@/components/CrowdCard";
+import YouTubeEmbed from "@/components/youtubeEmbed";
 
 interface Bar {
   bar_id: number;
@@ -44,7 +45,34 @@ export default function HomePage() {
       <div>
         <Swipe />
       </div>
-      <div className="flex items-center text-4xl my-8">
+      <div className="flex mt-2 grid grid-cols-5 gap-2 bg-green-500 p-2 rounded-lg">
+        <YouTubeEmbed
+          src="https://www.youtube.com/embed/GuI4SZtgYYY?autohide=1&modestbranding=1&rel=0"
+          title="YouTube Video 1"
+        />
+
+        <YouTubeEmbed
+          src="https://www.youtube.com/embed/dAK_ovr45d4?autohide=1&modestbranding=1&rel=0"
+          title="YouTube Video 2"
+        />
+
+        <YouTubeEmbed
+          src="https://www.youtube.com/embed/1P-49Wz41Lo?autohide=1&modestbranding=1&rel=0"
+          title="YouTube Video 3"
+        />
+
+        <YouTubeEmbed
+          src="https://www.youtube.com/embed/sTi8AzZjn5o?autohide=1&modestbranding=1&rel=0"
+          title="YouTube Video 4"
+        />
+
+        <YouTubeEmbed
+          src="https://www.youtube.com/embed/nQHuu9W0l6Y?autohide=1&modestbranding=1&rel=0"
+          title="YouTube Video 5"
+        />
+
+      </div>
+      <div className="text-center text-4xl my-16 text-green-500 font-bold">
         Bar Crowd
       </div>
       <div className="grid grid-cols-1 mt-6 sm:grid-cols-3 lg:grid-cols-5 gap-6">
