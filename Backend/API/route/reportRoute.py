@@ -11,7 +11,6 @@ report_bp = Blueprint('reports', __name__)
 
 @report_bp.route('/api/v1/getAllReports', methods=['GET'])
 def get_all_reports_endpoint():
-    print("get_all_reports_endpoint called")
     reports = get_all_reports_service()  # Use the service function here
     report_list = [
         {

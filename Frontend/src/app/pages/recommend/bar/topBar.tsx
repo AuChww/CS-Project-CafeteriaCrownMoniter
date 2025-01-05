@@ -1,5 +1,6 @@
 import React from "react";
-import BarCard from "@/components/ฺBarCard";
+import BarCard from "@/components/BarCard";
+import { useRouter } from "next/navigation";
 
 interface Bar {
   bar_id: number;
@@ -15,7 +16,9 @@ interface TopBarProps {
   bars: Bar[];
 }
 
+
 const TopBar: React.FC<TopBarProps> = ({ bars }) => {
+  const router = useRouter();
   return (
     <div>
       <h1 className="text-3xl font-bold mb-4">Top Bars</h1>
