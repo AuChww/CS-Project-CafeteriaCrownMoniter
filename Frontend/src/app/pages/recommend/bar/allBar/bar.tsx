@@ -65,7 +65,7 @@ const BarPage: React.FC = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-6">
       <AllBar bars={bars} restaurants={restaurants} />
     </div>
   );

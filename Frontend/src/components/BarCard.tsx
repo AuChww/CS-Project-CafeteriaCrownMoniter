@@ -20,45 +20,26 @@ const BarCard: React.FC<BarCardProps> = ({
   bar_image,
 }) => {
   return (
-    // <div
-    //   key={bar_id}
-    //   classNameNameName="bg-white rounded-lg shadow-lg p-4 border border-gray-200"
-    // >
-    //   <h2 classNameNameName="text-2xl font-semibold mb-2">{bar_name}</h2>
-    //   {bar_image && (
-    //     <img
-    //       src={bar_image}
-    //       alt={bar_name}
-    //       classNameNameName="w-full h-48 object-cover rounded-md mb-4"
-    //     />
-    //   )}
-    //   <p classNameNameName="text-sm text-gray-600 mb-2">Location: {bar_location}</p>
-    //   <p classNameNameName="text-sm text-gray-600 mb-2">Details: {bar_detail}</p>
-    //   <p classNameNameName="text-sm text-gray-600">
-    //     Rating: {total_rating} ({total_reviews} reviews)
-    //   </p>
-    // </div>
-
     <div
       key={bar_id}
-      className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+      className="max-w-sm w-60 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
     >
-      <a href="#">
+      <div className="h-48">
         <img
-          className="rounded-t-lg"
+          className="rounded-t-lg h-full w-full"
           src={`/image/barImages/${bar_image}`}
           alt="{bar_name}"
         />
-      </a>
-      <div className="p-5">
+      </div>
+      <div className="p-5 h-60">
         <a href="#">
-          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          <div className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             {bar_name}
-          </h5>
+          </div>
         </a>
-        <p className="mb-3 text-sm font-normal text-gray-500 dark:text-gray-400">
+        <div className="mb-3 text-sm font-normal text-gray-500 dark:text-gray-400">
           {bar_detail}
-        </p>
+        </div>
 
         {/* Bar Location */}
         <div className="flex space-x-1 text-sm text-gray-500 dark:text-gray-400 ">
