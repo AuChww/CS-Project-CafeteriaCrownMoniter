@@ -28,7 +28,7 @@ const CrowdCard: React.FC<CrowdCardProps> = ({
         >
             <div className="h-48">
                 <img
-                    className="rounded-t-lg h-full"
+                    className="rounded-t-lg w-full h-full"
                     src={`/image/barImages/${bar_image}`}
                     alt="{bar_name}"
                 />

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import TopBar from "./bar/topBar/topBar";
-import TopRestaurant from "./restaurant/topRestaurant";
+import TopRestaurant from "./bar/topBar/topRestaurant";
 import AllBar from "./bar/allBar/allBar"
 
 interface Bar {
@@ -68,8 +68,6 @@ const RecommendPage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <TopBar bars={bars} />
-      <TopRestaurant restaurants={restaurants} />
       <AllBar bars={bars} restaurants={restaurants} />
     </div>
   );
