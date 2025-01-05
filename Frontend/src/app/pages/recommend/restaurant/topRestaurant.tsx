@@ -1,4 +1,5 @@
 import React from "react";
+import RestaurantCard from "@/components/RestaurantCard";
 
 interface Restaurant {
   restaurant_id: number;
@@ -20,24 +21,16 @@ const TopRestaurant: React.FC<TopRestaurantProps> = ({ restaurants }) => {
       <h1 className="text-3xl font-bold mb-4">Top Restaurants</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {restaurants.map((restaurant) => (
-          <div
+          <RestaurantCard
             key={restaurant.restaurant_id}
-            className="bg-white rounded-lg shadow-lg p-4 border border-gray-200"
-          >
-            <h2 className="text-2xl font-semibold mb-2">{restaurant.restaurant_name}</h2>
-            {restaurant.restaurant_image && (
-              <img
-                src={restaurant.restaurant_image}
-                alt={restaurant.restaurant_name}
-                className="w-full h-48 object-cover rounded-md mb-4"
-              />
-            )}
-            <p className="text-sm text-gray-600 mb-2">Location: {restaurant.restaurant_location}</p>
-            <p className="text-sm text-gray-600 mb-2">Details: {restaurant.restaurant_detail}</p>
-            <p className="text-sm text-gray-600">
-              Rating: {restaurant.total_rating} ({restaurant.total_reviews} reviews)
-            </p>
-          </div>
+            restaurant_id={restaurant.restaurant_id}
+            restaurant_name={restaurant.restaurant_name}
+            restaurant_location={restaurant.restaurant_location}
+            restaurant_detail={restaurant.restaurant_detail}
+            total_rating={restaurant.total_rating}
+            total_reviews={restaurant.total_reviews}
+            restaurant_image={restaurant.restaurant_image}
+          />
         ))}
       </div>
     </div>

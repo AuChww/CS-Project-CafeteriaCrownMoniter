@@ -1,13 +1,13 @@
 import React from "react";
 
-interface BarCardProps {
-  bar_id: number;
-  bar_name: string;
-  bar_location: string;
-  bar_detail: string;
+interface restaurantCardProps {
+  restaurant_id: number;
+  restaurant_name: string;
+  restaurant_location: string;
+  restaurant_detail: string;
   total_rating: number;
   total_reviews: number;
-  bar_image: string;
+  restaurant_image: string;
 }
 
 function renderStars(totalRating: number) {
@@ -71,87 +71,65 @@ function renderStars(totalRating: number) {
   return stars;
 }
 
-const BarCard: React.FC<BarCardProps> = ({
-  bar_id,
-  bar_name,
-  bar_location,
-  bar_detail,
+const RestaurantCard: React.FC<restaurantCardProps> = ({
+  restaurant_id,
+  restaurant_name,
+  restaurant_location,
+  restaurant_detail,
   total_rating,
   total_reviews,
-  bar_image,
+  restaurant_image,
 }) => {
   return (
-    // <div
-    //   key={bar_id}
-    //   classNameNameName="bg-white rounded-lg shadow-lg p-4 border border-gray-200"
-    // >
-    //   <h2 classNameNameName="text-2xl font-semibold mb-2">{bar_name}</h2>
-    //   {bar_image && (
-    //     <img
-    //       src={bar_image}
-    //       alt={bar_name}
-    //       classNameNameName="w-full h-48 object-cover rounded-md mb-4"
-    //     />
-    //   )}
-    //   <p classNameNameName="text-sm text-gray-600 mb-2">Location: {bar_location}</p>
-    //   <p classNameNameName="text-sm text-gray-600 mb-2">Details: {bar_detail}</p>
-    //   <p classNameNameName="text-sm text-gray-600">
-    //     Rating: {total_rating} ({total_reviews} reviews)
-    //   </p>
-    // </div>
-
     <div
-      key={bar_id}
+      key={restaurant_id}
       className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
     >
-      {/* Bar Images */}
       <a href="#">
         <img
           className="rounded-t-lg"
-          src={`/image/barImages/${bar_image}`}
-          alt="{bar_name}"
+          src={`/image/restaurantImages/${restaurant_image}`}
+          alt={restaurant_name}
         />
       </a>
-
       <div className="p-5">
-        
-        {/* Bar Name */}
+        {/* Restaurant Name */}
         <a href="#">
           <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            {bar_name}
+            {restaurant_name}
           </h5>
         </a>
 
-        {/* Bar Details */}
+        {/* Restaurant Detail */}
         <p className="mb-3 text-sm font-normal text-gray-500 dark:text-gray-400">
-          {bar_detail}
+          {restaurant_detail}
         </p>
 
-        {/* Bar Location */}
-        <div className="flex space-x-1 text-sm text-gray-500 dark:text-gray-400 ">
+        {/* Restaurant Images */}
+        <div className="flex space-x-1 text-sm text-gray-500 dark:text-gray-400">
           <img src="/image/icons/location.svg" alt="location pin" />
-          <p>{bar_location}</p>
+          <p>{restaurant_location}</p>
         </div>
 
         <div className="flex items-center mt-2.5 mb-5 space-x-2">
-          {/* Bar Score */}
+          {/* Restaurant Score */}
           <div className="flex items-center space-x-1 rtl:space-x-reverse">
             {renderStars(total_rating)}
+
+            {/* Restaurant Rating */}
+            <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-800 ml-3">
+              {total_rating}
+            </span>
+
+            {/* Restaurant Reviews */}
+            <span className="text-gray-500 dark:text-gray-400 text-sm">
+              ({total_reviews} reviews)
+            </span>
           </div>
-
-          {/* Bar Rating */}
-          <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-800 ms-3">
-            {total_rating}
-          </span>
-
-          {/* Bar Reviews */}
-          <span className="text-gray-500 dark:text-gray-400 text-sm">
-            ({total_reviews} reviews)
-          </span>
         </div>
       </div>
     </div>
   );
 };
 
-export default BarCard;
+export default RestaurantCard;
