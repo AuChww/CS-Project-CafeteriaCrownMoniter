@@ -26,7 +26,7 @@ const Swipe = () => {
         <div className="w-full h-80 flex">
             <div className="w-1/3 h-full flex">
                 <div className="w-2/3">
-                    <div onClick={() => router.push("/pages/recommend")} className="h-full  hover:scale-110 duration-300 hover:text-green-500 hover:bg-green-300 text-white bg-green-500 rounded-lg flex items-center justify-center flex-col">
+                    <div onClick={() => router.push("/pages/recommend/bar/topBar")} className="h-full  hover:scale-110 duration-300 hover:text-green-500 hover:bg-green-300 text-white bg-green-500 rounded-lg flex items-center justify-center flex-col">
                         <div className="flex mt-2">
                             <BiSolidLike className="w-12 h-12" />
                             <MdOutlineRestaurant className="w-12 h-12" />
@@ -38,14 +38,14 @@ const Swipe = () => {
                     </div>
                 </div>
                 <div className="w-1/3 h-full">
-                    <div onClick={() => router.push("/pages/recommend")} className="h-1/2 mx-1 hover:scale-110 duration-300 hover:text-green-500 hover:bg-green-300 text-white bg-green-500 rounded-lg flex items-center justify-center flex-col">
+                    <div onClick={() => router.push("/pages/recommend/bar/allBar/")} className="h-1/2 mx-1 hover:scale-110 duration-300 hover:text-green-500 hover:bg-green-300 text-white bg-green-500 rounded-lg flex items-center justify-center flex-col">
                         <div>
                             <FaWarehouse className="w-8 h-8" />
                         </div>
                         <span>All Bar</span>
                     </div>
 
-                    <div onClick={() => router.push("/pages/recommend")} className="h-1/2 mx-1 my-1 hover:scale-110 duration-300 hover:text-green-500 hover:bg-green-300 text-white bg-green-500 rounded-lg flex items-center justify-center flex-col text-center">
+                    <div onClick={() => router.push("/pages/recommend/restaurant/")} className="h-1/2 mx-1 my-1 hover:scale-110 duration-300 hover:text-green-500 hover:bg-green-300 text-white bg-green-500 rounded-lg flex items-center justify-center flex-col text-center">
                         <div>
                             <MdOutlineRestaurant className="w-8 h-8" />
                         </div>

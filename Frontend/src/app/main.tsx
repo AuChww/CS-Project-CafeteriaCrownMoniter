@@ -49,15 +49,17 @@ export default function HomePage() {
       </div>
       <div className="grid grid-cols-1 mt-6 sm:grid-cols-3 lg:grid-cols-5 gap-6">
         {bars.map((bar) => (
-          <CrowdCard
-            key={bar.bar_id}
-            bar_id={bar.bar_id}
-            bar_name={bar.bar_name}
-            bar_location={bar.bar_location}
-            max_people_in_bar={bar.max_people_in_bar}
-            bar_image={bar.bar_image}
-            bar_detail={bar.bar_detail}
-          />
+          <div key={bar.bar_id} onClick={() => router.push(`/pages/recommend/bar/${bar.bar_id}`)}>
+            <CrowdCard
+              key={bar.bar_id}
+              bar_id={bar.bar_id}
+              bar_name={bar.bar_name}
+              bar_location={bar.bar_location}
+              max_people_in_bar={bar.max_people_in_bar}
+              bar_image={bar.bar_image}
+              bar_detail={bar.bar_detail}
+            />
+          </div>
         ))}
       </div>
     </div>
