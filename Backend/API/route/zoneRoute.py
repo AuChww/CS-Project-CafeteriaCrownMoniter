@@ -49,11 +49,17 @@ def get_zone_by_id_endpoint(zone_id):
 
 @zone_bp.route('/api/v1/getVisitorHistoryByZoneId/<int:zone_id>', methods=['GET'])
 def get_visitor_history_by_zone_id_endpoint(zone_id):
-    visitor_history = get_visitor_history_by_zone_id_service(zone_id)  # Use the service function here
-    if not visitor_history:
-        return jsonify({'message': 'No visitor history found for this zone'}), 404
-
-    return jsonify({'visitor_history': visitor_history})
+    visitor_histories = get_visitor_history_by_zone_id_service(zone_id)
+    if not visitor_histories:
+        return jsonify({'message': 'No visitor history found for the given zone ID'}), 404
+    return jsonify([
+        {
+            'date_time': history.date_time,
+            'zone_id': history.zone_id,
+            'visitor_count': history.visitor_count
+        }
+        for history in visitor_histories
+    ])
 
 @zone_bp.route('/api/v1/getRestaurantByZoneId/<int:zone_id>', methods=['GET'])
 def get_restaurant_by_zone_id_endpoint(zone_id):
