@@ -1,6 +1,7 @@
 import psycopg2
 from Infrastructure.db_connection import db_conn
 from Domain.entity.zoneEntity import ZoneEntity
+from Domain.entity.visitorHistoryEntity import VisitorHistoryEntity
 
 def get_all_zones():
     conn = db_conn()
@@ -49,26 +50,27 @@ def get_zone_by_id(zone_id):
 def get_visitor_history_by_zone_id(zone_id):
     conn = db_conn()
     cur = conn.cursor()
-    query = '''
-        SELECT v.visitor_id, v.zone_id, v.visitor_count, v.timestamp
-        FROM visitor_history v
-        WHERE v.zone_id = %s
-    '''
+    query = """
+        SELECT zone_id, visitor_count, date_time
+        FROM visitor_history
+        WHERE zone_id = %s
+    """
     cur.execute(query, (zone_id,))
-    data = cur.fetchall()
+    rows = cur.fetchall()
     cur.close()
     conn.close()
 
-    visitor_history = [
-        {
-            'visitor_id': row[0],
-            'zone_id': row[1],
-            'visitor_count': row[2],
-            'timestamp': row[3]
-        }
-        for row in data
-    ]
-    return visitor_history
+    if rows:
+        return [
+            VisitorHistoryEntity(
+                date_time=row[2],  # date_time corresponds to row[2]
+                zone_id=row[0],
+                visitor_count=row[1]
+            )
+            for row in rows
+        ]
+    return []
+
 
 def get_restaurant_by_zone_id(zone_id):
     conn = db_conn()

@@ -1,16 +1,24 @@
 from Infrastructure.Repository.visitorHistoryRepository import (
     get_all_visitor_histories,
-    get_visitor_history_by_id,
+    get_visitor_history_by_zone_id,
     add_visitor_history,
     update_visitor_history,
     delete_visitor_history
 )
+from Infrastructure.Repository.zoneRepository import (
+    get_all_zones
+)
+
+def get_all_zones_service():
+    zones = get_all_zones()  # Get all ZoneEntity objects
+    # Extract and return only the zone_id from each ZoneEntity
+    return [zone.zone_id for zone in zones]
 
 def get_all_visitor_histories_service():
     return get_all_visitor_histories()
 
-def get_visitor_history_by_id_service(visitor_history_id):
-    return get_visitor_history_by_id(visitor_history_id)
+def get_visitor_history_by_zone_id_service(visitor_history_id):
+    return get_visitor_history_by_zone_id(visitor_history_id)
 
 def add_visitor_history_service(date_time, zone_id, visitor_count):
     return add_visitor_history(date_time, zone_id, visitor_count)
