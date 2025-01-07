@@ -12,29 +12,39 @@ def get_all_visitor_histories():
 
     visitor_histories = [
         VisitorHistoryEntity(
-            date_time=row[0],
-            zone_id=row[1],
-            visitor_count=row[2]
+            visitor_history_id=row[0],
+            date_time=row[1],
+            zone_id=row[2],
+            visitor_count=row[3]
         )
         for row in data
     ]
     return visitor_histories
 
-def get_visitor_history_by_id(visitor_history_id):
+def get_visitor_history_by_zone_id(zone_id):
     conn = db_conn()
     cur = conn.cursor()
-    cur.execute('SELECT * FROM visitor_history WHERE visitor_history_id = %s', (visitor_history_id,))
-    row = cur.fetchone()
+    query = """
+        SELECT zone_id, visitor_count, date_time
+        FROM visitor_history
+        WHERE zone_id = %s
+    """
+    cur.execute(query, (zone_id,))
+    rows = cur.fetchall()
     cur.close()
     conn.close()
 
-    if row:
-        return VisitorHistoryEntity(
-            date_time=row[0],
-            zone_id=row[1],
-            visitor_count=row[2]
-        )
-    return None
+    if rows:
+        return [
+            VisitorHistoryEntity(
+                date_time=row[2],  # date_time corresponds to row[2]
+                zone_id=row[0],
+                visitor_count=row[1]
+            )
+            for row in rows
+        ]
+    return []
+
 
 def add_visitor_history(date_time, zone_id, visitor_count):
     conn = db_conn()
