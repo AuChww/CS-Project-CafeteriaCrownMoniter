@@ -50,10 +50,17 @@ def post_visitor_history():
     # Debugging: Ensure the output is as expected
     print(f"Zone IDs: {zone_ids}")
 
+    # Use timezone-aware datetime
+    tz = pytz.timezone('Asia/Bangkok')
+    now = datetime.now(tz)
+
+    # Format the datetime correctly as 'YYYY-MM-DD HH:MM:SS'
+    formatted_time = now.strftime('%Y-%m-%d %H:%M:%S')
+
     for zone_id in zone_ids:
-        # Define the payload for the request
+        # Define the payload for the request with the formatted, timezone-aware date_time
         data = {
-            'date_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'date_time': formatted_time,
             'zone_id': zone_id,  # zone_id is now an integer
             'visitor_count': 60
         }
