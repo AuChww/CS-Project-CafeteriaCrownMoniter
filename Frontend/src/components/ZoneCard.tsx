@@ -1,13 +1,14 @@
 import React from "react";
 
-interface BarCardProps {
-  bar_id: number;
-  bar_name: string;
-  bar_location: string;
-  bar_detail: string;
-  total_rating: number;
-  total_reviews: number;
-  bar_image: string;
+interface ZoneCardProps {
+  zone_id: number;
+  bar_id: string;
+  zone_name: string;
+  zone_detail: string;
+  max_people_in_zone: number;
+  current_visitor_count: number;
+  update_date_time: string ;
+  zone_time: number;
 }
 
 function renderStars(totalRating: number) {
@@ -71,87 +72,58 @@ function renderStars(totalRating: number) {
   return stars;
 }
 
-const BarCard: React.FC<BarCardProps> = ({
-  bar_id,
-  bar_name,
-  bar_location,
-  bar_detail,
-  total_rating,
-  total_reviews,
-  bar_image,
+const ZoneCard: React.FC<ZoneCardProps> = ({
+    zone_id,
+    bar_id,
+    zone_name,
+    zone_detail,
+    max_people_in_zone,
+    current_visitor_count,
+    update_date_time,
+    zone_time
 }) => {
   return (
-    // <div
-    //   key={bar_id}
-    //   classNameNameName="bg-white rounded-lg shadow-lg p-4 border border-gray-200"
-    // >
-    //   <h2 classNameNameName="text-2xl font-semibold mb-2">{bar_name}</h2>
-    //   {bar_image && (
-    //     <img
-    //       src={bar_image}
-    //       alt={bar_name}
-    //       classNameNameName="w-full h-48 object-cover rounded-md mb-4"
-    //     />
-    //   )}
-    //   <p classNameNameName="text-sm text-gray-600 mb-2">Location: {bar_location}</p>
-    //   <p classNameNameName="text-sm text-gray-600 mb-2">Details: {bar_detail}</p>
-    //   <p classNameNameName="text-sm text-gray-600">
-    //     Rating: {total_rating} ({total_reviews} reviews)
-    //   </p>
-    // </div>
+
 
     <div
-      key={bar_id}
+      key={zone_id}
       className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 "
     >
-      {/* Bar Images */}
-      <a href="#">
-        <img
-          className="rounded-t-lg"
-          src={`/image/barImages/${bar_image}`}
-          alt="{bar_name}"
-        />
-      </a>
+     
 
       <div className="p-5 ">
         
-        {/* Bar Name */}
+        {/* zone Name */}
         <a href="#">
           <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            {bar_name}
+            {zone_name}
           </h5>
         </a>
 
-        {/* Bar Details */}
+        {/* zone Details */}
         <p className="mb-3 text-sm font-normal text-gray-500 dark:text-gray-400">
-          {bar_detail}
+          {zone_detail}
         </p>
 
-        {/* Bar Location */}
+        {/* zone Location */}
         <div className="flex space-x-1 text-sm text-gray-500 dark:text-gray-400 ">
-          <img src="/image/icons/location.svg" alt="location pin" />
-          <p>{bar_location}</p>
+         <p>Max perople in zone:</p>
+          <p>{max_people_in_zone}</p>
         </div>
 
         <div className="flex items-center mt-2.5 mb-5 space-x-2">
-          {/* Bar Score */}
+        
           <div className="flex items-center space-x-1 rtl:space-x-reverse">
-            {renderStars(total_rating)}
+            <p>{current_visitor_count}</p>
           </div>
 
-          {/* Bar Rating */}
-          <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-800 ms-3">
-            {total_rating}
-          </span>
+          <p>{zone_time}</p>
 
-          {/* Bar Reviews */}
-          <span className="text-gray-500 dark:text-gray-400 text-sm">
-            ({total_reviews} reviews)
-          </span>
+         
         </div>
       </div>
     </div>
   );
 };
 
-export default BarCard;
+export default ZoneCard;
