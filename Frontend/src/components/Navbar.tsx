@@ -21,6 +21,9 @@ const Navbar = () => {
 
                 {/* Navigation links */}
                 <div className="space-x-4 flex mr-4 mt-0.5">
+                    <Link href="/pages/admin/">
+                        <div className="text-white mt-0.5 mx-4">Admin</div>
+                    </Link>
                     <Link href="/pages/authenticate/login">
                         <div className="flex">
                             <div className="mt-0.5 mr-2">
