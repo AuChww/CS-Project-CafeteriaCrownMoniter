@@ -58,6 +58,7 @@ export default function HomePage() {
               max_people_in_bar={bar.max_people_in_bar}
               bar_image={bar.bar_image}
               bar_detail={bar.bar_detail}
+             
             />
           </div>
         ))}
