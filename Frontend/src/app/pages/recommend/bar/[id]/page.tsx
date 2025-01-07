@@ -25,11 +25,22 @@ interface Bar {
   bar_image: string;
 }
 
+interface Zone {
+  bar_id: number;
+  zone_id: number;
+  zone_name: string;
+  zone_detail: string;
+  max_people_in_zone: number;
+  current_visitor_count: number;
+  update_date_time: string;
+  zone_time: number;
+}
+
 const BarPage = () => {
-  const { id } = useParams(); // ดึง id จาก URL
-  const [bar, setBar] = useState<Bar | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // const { id } = useParams(); // ดึง id จาก URL
+  // const [bar, setBar] = useState<Bar | null>(null);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState<string | null>(null);
 
   const data = [
     { month: "Sunday", sales: 50 },
@@ -41,35 +52,41 @@ const BarPage = () => {
     { month: "Saturday", sales: 200 },
   ];
 
+  const { id } = useParams(); // ดึง id จาก URL
+  const [bar, setBar] = useState<Bar | null>(null);
+  const [zones, setZones] = useState<Zone[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
-    if (!id) return; // รอให้ id โหลดเสร็จก่อน
-
-    const fetchBar = async () => {
+    const fetchBarAndZones = async () => {
       try {
-        const response = await fetch(
-          `http://127.0.0.1:8000/api/v1/getBarId/${id}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch bar details");
+        setLoading(true);
+
+        const [getBarResponse, getAllZoneByBarIdResponse] = await Promise.all([
+          fetch(`http://127.0.0.1:8000/api/v1/getBarId/${id}`),
+          fetch(`http://127.0.0.1:8000/api/v1/getAllZonesByBarId/${id}`),
+        ]);
+
+        if (!getBarResponse.ok || !getAllZoneByBarIdResponse.ok) {
+          throw new Error("Failed to fetch bar details or zones");
         }
 
-        const data = await response.json();
-        console.log(data); // Log the response to verify its structure
+        const barData: Bar = await getBarResponse.json();
+        const zonesData: { zones: Zone[] } =
+          await getAllZoneByBarIdResponse.json(); // กำหนดให้รับข้อมูลเป็น object ที่มี key zones
 
-        if (data) {
-          // Check directly if the data exists
-          setBar(data); // Set the bar data directly from the response
-        } else {
-          setError("Bar details not found.");
-        }
-        setLoading(false);
+        setBar(barData);
+        setZones(zonesData.zones || []); // เข้าถึงข้อมูลใน key zones
+        setError(null); // Clear any previous errors
       } catch (err: any) {
         setError(err.message);
-        setLoading(false);
+      } finally {
+        setLoading(false); // Always stop loading
       }
     };
 
-    fetchBar();
+    fetchBarAndZones();
   }, [id]);
 
   if (loading) return <p>Loading...</p>;
@@ -77,7 +94,7 @@ const BarPage = () => {
   if (!bar) return <p>No bar details found.</p>;
 
   return (
-    <div className="container mx-auto p-4  w-full h-screen overflow-y-auto">
+    <div className="container mx-auto p-4  w-full h-screen overflow-y-auto space-y-12">
       <div className="xl:grid grid-cols-2 gap-6 xl:pt-10">
         <div className="">
           {bar.bar_image && (
@@ -100,7 +117,7 @@ const BarPage = () => {
           </div>
 
           <div className="flex space-x-1">
-          <img src="/image/icons/star.svg" alt="location pin" />
+            <img src="/image/icons/star.svg" alt="location pin" />
             <p className="text-base text-gray-500">
               {bar.total_rating} ({bar.total_reviews}
               reviews)
@@ -149,32 +166,168 @@ const BarPage = () => {
       </div>
 
       {/* ZoneCard */}
-      <ZoneCard
-      
-      key={bar.bar_id}></ZoneCard>
+      <div className="grid grid-cols-4 gap-4">
+        {zones &&
+          Array.isArray(zones) &&
+          zones.map((zone) => (
+            <ZoneCard
+              key={zone.bar_id}
+              zone_id={zone.zone_id}
+              bar_id={zone.bar_id}
+              zone_name={zone.zone_name}
+              zone_detail={zone.zone_detail}
+              max_people_in_zone={zone.max_people_in_zone}
+              current_visitor_count={zone.current_visitor_count}
+              update_date_time={zone.update_date_time}
+              zone_time={zone.zone_time}
+            ></ZoneCard>
+          ))}
+      </div>
 
-      <form>
-        <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
-          <div className="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">
-            <label className="sr-only">Your comment</label>
-            <textarea
-              id="comment"
-              rows={4}
-              className="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
-              placeholder="Write a comment..."
-              required
-            ></textarea>
-          </div>
-          <div className="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600">
-            <button
-              type="submit"
-              className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-green-500 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800"
-            >
-              Post comment
-            </button>
+      <section className="py-24 relative">
+        <div className="w-full max-w-7xl px-4 md:px-5 lg:px-5 mx-auto">
+          <div className="w-full flex-col justify-start items-start lg:gap-14 gap-7 inline-flex">
+            <h2 className="text-gray-900 text-4xl font-bold font-manrope leading-normal">
+              Comments
+            </h2>
+            <div className="w-full flex-col justify-start items-start gap-8 flex">
+              <div className="w-full lg:p-8 p-5 bg-white rounded-3xl border border-gray-200 flex-col justify-start items-end gap-2.5 flex">
+                <div className="w-full flex-col justify-start items-end gap-3.5 flex">
+                  <div className="w-full justify-between items-center inline-flex">
+                    <div className="w-full justify-start items-center gap-2.5 flex">
+                      <div className="w-10 h-10 bg-slate-400 rounded-full justify-start items-start gap-2.5 flex">
+                        <img
+                          className="w-10 h-10 rounded-full object-cover"
+                          src="https://pagedone.io/asset/uploads/1710237485.png"
+                          alt="Danial Harrison image"
+                        />
+                      </div>
+                      <div className="flex-col justify-start items-start gap-1 inline-flex">
+                        <h5 className="text-gray-900 text-sm font-semibold leading-snug">
+                          Danial Harrison
+                        </h5>
+                        <h6 className="text-gray-500 text-xs font-normal leading-5">
+                          5 Hour ago
+                        </h6>
+                      </div>
+                    </div>
+                    <div className="group justify-end items-center flex">
+                      <div className="px-5 py-2.5 rounded-xl shadow-[0px_1px_2px_0px_rgba(16,_24,_40,_0.05)] border border-gray-400 hover:border-green-600 transition-all duration-700 ease-in-out  justify-center items-center flex">
+                        <a href="" className="">
+                          <svg
+                            className="group-hover:text-green-600 text-gray-400 group-hover:fill-green-600 fill-white transition-all duration-700 ease-in-out"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                          >
+                            <path
+                              d="M2.62629 3.43257C4.64001 1.44869 7.82082 1.31134 9.99614 3.02053C12.1723 1.31134 15.3589 1.44869 17.3726 3.43257L17.3734 3.43334C19.5412 5.57611 19.5412 9.04382 17.3804 11.1867L17.378 11.1891L10.4631 17.9764C10.2035 18.2312 9.78765 18.2309 9.52844 17.9758L2.62629 11.1821C0.457252 9.04516 0.457252 5.56947 2.62629 3.43257Z"
+                              stroke="currentColor"
+                            />
+                          </svg>
+                        </a>
+                        <div className="px-2 justify-center items-center flex">
+                          <h6 className="group-hover:text-green-600 text-gray-400 transition-all duration-700 ease-in-out text-base font-semibold leading-relaxed">
+                            80
+                          </h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-gray-800 text-sm font-normal leading-snug">
+                    Malesuada rhoncus senectus amet dui tincidunt. Porttitor
+                    lectus diam sit sit pellentesque ultrices. Molestie libero
+                    ac odio at tristique sapien est venenatis. Egestas vitae
+                    velit vestibulum egestas felis euismod. Morbi ac vel
+                    scelerisque morbi eu nisi gravida tellus. Pulvinar orci at
+                    elementum massa morbi pellentesque non nulla. Elementum
+                    faucibus urna est mattis. Non aliquet in molestie id nisl.
+                    Bibendum mauris dolor nisl elit ut eu viverra. Ut facilisi
+                    turpis neque eu risus etiam senectus vel. Orci pharetra
+                    ornare amet massa. Tempus orci vestibulum pulvinar tincidunt
+                    amet dictum sit tempor.
+                  </p>
+                  <div className="w-full justify-end items-start gap-6 inline-flex">
+                    <button className="sm:w-fit w-full px-5 py-2.5 rounded-xl shadow-[0px_1px_2px_0px_rgba(16,_24,_40,_0.05)] hover:bg-gray-200 hover:border-transparent transition-all duration-700 ease-in-out border border-gray-200 justify-center items-center flex">
+                      <span className="px-2 text-gray-900 text-base font-semibold leading-relaxed">
+                        Delete
+                      </span>
+                    </button>
+                    <button className="sm:w-fit w-full px-5 py-2.5 bg-green-600 hover:bg-green-700 transition-all duration-700 ease-in-out rounded-xl shadow-[0px_1px_2px_0px_rgba(16,_24,_40,_0.05)] justify-center items-center flex">
+                      <span className="px-2 py-px text-white text-base font-semibold leading-relaxed">
+                        Edit
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <form className="w-full relative flex justify-between gap-2">
+                <input
+                  type="text"
+                  className="w-full py-3 px-5 rounded-lg border border-gray-300 bg-white shadow-[0px_1px_2px_0px_rgba(16,_24,_40,_0.05)] focus:outline-none text-gray-900 placeholder-gray-400 text-lg font-normal leading-relaxed"
+                  placeholder="Leave a constructive comment..."
+                />
+                <a
+                  href="#"
+                  className="absolute right-6 top-[18px]"
+                  onClick={(e) => {
+                    e.preventDefault(); // ป้องกันการทำงานตามปกติของลิงค์
+                    // ใส่ฟังก์ชันที่ต้องการทำที่นี่
+                    alert("Action clicked!");
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                  >
+                    <g clipPath="url(#clip0_2063_2504)">
+                      <path
+                        d="M10.0194 1.66699V5.6556C1.69526 5.6556 1.54178 14.4163 1.69573 18.3337C1.69573 16.4818 5.84659 10.0003 10.0194 10.6414V14.63L18.3332 8.14847L10.0194 1.66699Z"
+                        stroke="#111827"
+                        strokeWidth="1.6"
+                        strokeLinejoin="round"
+                      />
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_2063_2504">
+                        <rect width="20" height="20" fill="white" />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </a>
+              </form>
+
+              {/* <form>
+                <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                  <div className="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">
+                    <label className="sr-only">Your comment</label>
+                    <textarea
+                      id="comment"
+                      rows={4}
+                      className="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
+                      placeholder="Write a comment..."
+                      required
+                    ></textarea>
+                  </div>
+                  <div className="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600">
+                    <button
+                      type="submit"
+                      className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-green-500 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800"
+                    >
+                      Post comment
+                    </button>
+                  </div>
+                </div>
+              </form> */}
+            </div>
           </div>
         </div>
-      </form>
+      </section>
     </div>
   );
 };

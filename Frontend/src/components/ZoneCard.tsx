@@ -2,7 +2,7 @@ import React from "react";
 
 interface ZoneCardProps {
   zone_id: number;
-  bar_id: string;
+  bar_id: number;
   zone_name: string;
   zone_detail: string;
   max_people_in_zone: number;
