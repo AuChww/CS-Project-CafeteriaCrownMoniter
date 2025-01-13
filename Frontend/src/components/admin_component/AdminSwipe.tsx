@@ -4,11 +4,15 @@ import { useRouter } from "next/navigation";
 import { MdOutlineRestaurant } from "react-icons/md";
 import { FaWarehouse } from "react-icons/fa";
 import { BiSolidLike } from "react-icons/bi";
-import ZoneVisitorBarChart from "./ZoneBarChart";
+import ZoneVisitorBarChart from "./WeekZoneBarChart";
 import TodayZoneVisitorBarChart from "./TodayZoneBarChart";
-import BarVisitorBarChart from "./BarBarChart";
+import BarVisitorBarChart from "./WeekBarBarChart";
 import TodayBarVisitorBarChart from "./TodayBarBarChart";
-import TodayBarVisitorPieChart from "./TodayBarPieChart";
+import TodayBarVisitorPieChart from "./MonthBarPieChart";
+import WeekZoneVisitorBarChart from "./WeekZoneBarChart";
+import WeekBarVisitorBarChart from "./WeekBarBarChart";
+import MonthBarVisitorBarChart from "./MonthBarBarChart";
+import MonthZoneVisitorBarChart from "./MonthZoneBarChart";
 
 
 const AdminSwipe = () => {
@@ -29,7 +33,7 @@ const AdminSwipe = () => {
 
     return (
         <div className="w-full flex gap-x-1">
-            <div className="w-1/6 mt-10 h-full gap-1">
+            <div className="w-1/6 mt-4 h-full gap-1">
                 <div className="w-full mb-1">
                     <div onClick={() => router.push("/pages/recommend/bar/topBar")} className="h-full duration-300 hover:text-green-500 hover:bg-green-300 text-white bg-green-500 rounded-lg flex items-center justify-center flex-col">
                         <div className="flex mt-1">
@@ -59,11 +63,15 @@ const AdminSwipe = () => {
             <div className="relative">
                 <div className="flex">
                     <TodayZoneVisitorBarChart />
-                    <ZoneVisitorBarChart />
+                    <TodayBarVisitorBarChart />
                 </div>
                 <div className="flex">
-                    <TodayBarVisitorBarChart />
-                    <BarVisitorBarChart />
+                    <WeekZoneVisitorBarChart />
+                    <WeekBarVisitorBarChart />
+                </div>
+                <div className="flex">
+                    <MonthZoneVisitorBarChart />
+                    <MonthBarVisitorBarChart />
                 </div>
             </div>
         </div>

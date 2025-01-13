@@ -41,7 +41,7 @@ export default function Admin() {
 
   return (
     <div className="container mx-auto p-4 bg-gray-100 w-full h-screen overflow-y-auto">
-      <div>
+      <div className="mt-14">
         <AdminSwipe />
       </div>
       <div className="grid grid-cols-1 mt-10 sm:grid-cols-4 lg:grid-cols-6 gap-6">

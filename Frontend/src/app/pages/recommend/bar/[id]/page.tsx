@@ -8,51 +8,53 @@ import ZoneCard from "@/components/ZoneCard";
 import ContextDropdown from "@/components/SimpleComponent/ContextDropdown";
 
 import {
-  BarChart,
-  Bar as RechartsBar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
+    BarChart,
+    Bar as RechartsBar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
 } from "recharts";
+import DayOfWeekVisitorChart from "@/components/bar/DayBarBarChart";
+import VisitorBarChart from "@/components/bar/BarBarChart";
 
 interface Bar {
-  bar_id: number;
-  bar_name: string;
-  bar_location: string;
-  bar_detail: string;
-  total_rating: number;
-  total_reviews: number;
-  bar_image: string;
+    bar_id: number;
+    bar_name: string;
+    bar_location: string;
+    bar_detail: string;
+    total_rating: number;
+    total_reviews: number;
+    bar_image: string;
 }
 
 interface Zone {
-  bar_id: number;
-  zone_id: number;
-  zone_name: string;
-  zone_detail: string;
-  max_people_in_zone: number;
-  current_visitor_count: number;
-  update_date_time: string;
-  zone_time: number;
+    bar_id: number;
+    zone_id: number;
+    zone_name: string;
+    zone_detail: string;
+    max_people_in_zone: number;
+    current_visitor_count: number;
+    update_date_time: string;
+    zone_time: number;
 }
 
 const BarPage = () => {
-  // const { id } = useParams(); // ดึง id จาก URL
-  // const [bar, setBar] = useState<Bar | null>(null);
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState<string | null>(null);
+    // const { id } = useParams(); // ดึง id จาก URL
+    // const [bar, setBar] = useState<Bar | null>(null);
+    // const [loading, setLoading] = useState(true);
+    // const [error, setError] = useState<string | null>(null);
 
-  const data = [
-    { month: "Sunday", sales: 50 },
-    { month: "Monday", sales: 40 },
-    { month: "Tuesday", sales: 300 },
-    { month: "Wednesday", sales: 320 },
-    { month: "Thursday", sales: 500 },
-    { month: "Friday", sales: 350 },
-    { month: "Saturday", sales: 200 },
-  ];
+    const data = [
+        { month: "Sunday", sales: 50 },
+        { month: "Monday", sales: 40 },
+        { month: "Tuesday", sales: 300 },
+        { month: "Wednesday", sales: 320 },
+        { month: "Thursday", sales: 500 },
+        { month: "Friday", sales: 350 },
+        { month: "Saturday", sales: 200 },
+    ];
 
   const { id } = useParams(); // ดึง id จาก URL
   const [bar, setBar] = useState<Bar | null>(null);
@@ -65,76 +67,78 @@ const BarPage = () => {
     setIsOpen(!isOpen);
   };
 
-  useEffect(() => {
-    const fetchBarAndZones = async () => {
-      try {
-        setLoading(true);
+    useEffect(() => {
+        const fetchBarAndZones = async () => {
+            try {
+                setLoading(true);
 
-        const [getBarResponse, getAllZoneByBarIdResponse] = await Promise.all([
-          fetch(`http://127.0.0.1:8000/api/v1/getBarId/${id}`),
-          fetch(`http://127.0.0.1:8000/api/v1/getAllZonesByBarId/${id}`),
-        ]);
+                const [getBarResponse, getAllZoneByBarIdResponse] = await Promise.all([
+                    fetch(`http://127.0.0.1:8000/api/v1/getBarId/${id}`),
+                    fetch(`http://127.0.0.1:8000/api/v1/getAllZonesByBarId/${id}`),
+                ]);
 
-        if (!getBarResponse.ok || !getAllZoneByBarIdResponse.ok) {
-          throw new Error("Failed to fetch bar details or zones");
-        }
+                if (!getBarResponse.ok || !getAllZoneByBarIdResponse.ok) {
+                    throw new Error("Failed to fetch bar details or zones");
+                }
 
-        const barData: Bar = await getBarResponse.json();
-        const zonesData: { zones: Zone[] } =
-          await getAllZoneByBarIdResponse.json(); // กำหนดให้รับข้อมูลเป็น object ที่มี key zones
+                const barData: Bar = await getBarResponse.json();
+                const zonesData: { zones: Zone[] } =
+                    await getAllZoneByBarIdResponse.json(); // กำหนดให้รับข้อมูลเป็น object ที่มี key zones
 
-        setBar(barData);
-        setZones(zonesData.zones || []); // เข้าถึงข้อมูลใน key zones
-        setError(null); // Clear any previous errors
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false); // Always stop loading
-      }
-    };
+                setBar(barData);
+                setZones(zonesData.zones || []); // เข้าถึงข้อมูลใน key zones
+                setError(null); // Clear any previous errors
+            } catch (err: any) {
+                setError(err.message);
+            } finally {
+                setLoading(false); // Always stop loading
+            }
+        };
 
-    fetchBarAndZones();
-  }, [id]);
+        fetchBarAndZones();
+    }, [id]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p className="text-red-500">Error: {error}</p>;
-  if (!bar) return <p>No bar details found.</p>;
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p className="text-red-500">Error: {error}</p>;
+    if (!bar) return <p>Error fetching bar details.</p>;
+    if (!zones || zones.length === 0) return <p>No zones available for this bar.</p>;
 
-  return (
-    <div className="container mx-auto p-4  w-full h-screen overflow-y-auto space-y-12">
-      <div className="xl:grid grid-cols-2 gap-6 xl:pt-10">
-        <div className="">
-          {bar.bar_image && (
-            <img
-              src={`/image/barImages/${bar.bar_image}`}
-              alt={bar.bar_name}
-              className="w-full  object-cover rounded-md mb-4"
-            />
-          )}
-        </div>
-        <div className="space-y-3">
-          <h1 className="text-3xl font-bold mb-4 text-green-500">
-            {bar.bar_name}
-          </h1>
-          <p className="text-lg text-gray-700">{bar.bar_detail}</p>
 
-          <div className="text-base text-gray-500 flex space-x-1">
-            <img src="/image/icons/location.svg" alt="location pin" />
-            <span>{bar.bar_location}</span>
-          </div>
+    return (
+        <div className="container mt-12 mx-auto p-4  w-full h-screen overflow-y-auto space-y-12">
+            <div className="xl:grid grid-cols-2 gap-6 xl:pt-10">
+                <div className="">
+                    {bar.bar_image && (
+                        <img
+                            src={`/image/barImages/${bar.bar_image}`}
+                            alt={bar.bar_name}
+                            className="w-full  object-cover rounded-md mb-4"
+                        />
+                    )}
+                </div>
+                <div className="space-y-3">
+                    <h1 className="text-3xl font-bold mb-4 text-green-500">
+                        {bar.bar_name}
+                    </h1>
+                    <p className="text-lg text-gray-700">{bar.bar_detail}</p>
 
-          <div className="flex space-x-1">
-            <img src="/image/icons/star.svg" alt="location pin" />
-            <p className="text-base text-gray-500">
-              {bar.total_rating} ({bar.total_reviews}
-              reviews)
-            </p>{" "}
-          </div>
+                    <div className="text-base text-gray-500 flex space-x-1">
+                        <img src="/image/icons/location.svg" alt="location pin" />
+                        <span>{bar.bar_location}</span>
+                    </div>
 
-          <p className="text-lg text-gray-700">
-            <strong>เวลาให้บริการ:</strong> {bar.total_rating} (
-            {bar.total_reviews} reviews)
-          </p>
+                    <div className="flex space-x-1">
+                        <img src="/image/icons/star.svg" alt="location pin" />
+                        <p className="text-base text-gray-500">
+                            {bar.total_rating} ({bar.total_reviews}
+                            reviews)
+                        </p>{" "}
+                    </div>
+
+                    <p className="text-lg text-gray-700">
+                        <strong>เวลาให้บริการ:</strong> {bar.total_rating} (
+                        {bar.total_reviews} reviews)
+                    </p>
 
           <div className="relative flex flex-col rounded-xl bg-white ">
             <div className="flex items-center gap-4">
@@ -298,13 +302,10 @@ const BarPage = () => {
                     </button>
                   </div>
                 </div>
-              </form> */}
             </div>
-          </div>
+
         </div>
-      </section>
-    </div>
-  );
+    );
 };
 
 export default BarPage;

@@ -14,11 +14,11 @@ export function Register() {
         via-blue-500
         to-purple-500
         background-animate">
-                            <h2 className={` text-white text-4xl font-bold `}>Agent</h2>
+                            <h2 className={` text-white text-4xl font-bold `}>KU CROWD</h2>
 
-                            <p className="max-w-xl mt-3 text-gray-300">Warehouse Web App</p>
+                            <p className="max-w-xl mt-3 text-gray-300">Crowd Moniter Web App</p>
                         </div>
-                        
+
                     </div>
                 </div>
 
@@ -32,32 +32,19 @@ export function Register() {
                                 </span>
                             </div>
                             <div className={`text-gray-800 mt-4 ml-7 text-4xl font-bold text-center`}>
-                                Create an Account
+                                Create an KU Account
                             </div>
                         </div>
-                        <div className="mb-4 md:flex md:justify-between mt-16">
-                            <div className="mb-4 md:mr-2 md:mb-0">
-                                <label className={`text-gray-800 block font-bold text-sm `} >
-                                    First Name
-                                </label>
-                                <input
-                                    className="w-full px-3 py-2 text-sm leading-tight text-gray-700 dark:text-white border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                                    id="firstName"
-                                    type="text"
-                                    placeholder="First Name"
-                                />
-                            </div>
-                            <div className="md:ml-2">
-                                <label className={`text-gray-800 block font-bold text-sm `} >
-                                    Last Name
-                                </label>
-                                <input
-                                    className="w-full px-3 py-2 text-sm leading-tight text-gray-700 dark:text-white border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                                    id="lastName"
-                                    type="text"
-                                    placeholder="Last Name"
-                                />
-                            </div>
+                        <div className="mb-4 mt-16">
+                            <label className={`text-gray-800 block font-bold text-sm `} >
+                                Username
+                            </label>
+                            <input
+                                className="w-full px-3 py-2 text-sm leading-tight text-gray-700 dark:text-white border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                                id="firstName"
+                                type="text"
+                                placeholder="First Name"
+                            />
                         </div>
                         <div className="mb-4">
                             <label className={`text-gray-800 block font-bold text-sm `} >
@@ -109,8 +96,8 @@ export function Register() {
                             </a>
                         </div>
                         <div className="text-center">
-                            <a 
-                            onClick={() => router.push('/pages/authenticate/login/')}  className="inline-block text-sm text-blue-500 dark:text-blue-500 align-baseline hover:text-blue-800"
+                            <a
+                                onClick={() => router.push('/pages/authenticate/login/')} className="inline-block text-sm text-blue-500 dark:text-blue-500 align-baseline hover:text-blue-800"
                                 href="#">
                                 Already have an account? Login!
                             </a>

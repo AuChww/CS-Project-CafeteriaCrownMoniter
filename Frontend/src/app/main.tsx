@@ -42,7 +42,7 @@ export default function HomePage() {
 
   return (
     <div className="container mx-auto p-4 bg-gray-100 w-full h-screen overflow-y-auto">
-      <div>
+      <div className="mt-14">
         <Swipe />
       </div>
       <div className="flex mt-2 grid grid-cols-5 gap-2 bg-green-500 p-2 rounded-lg">

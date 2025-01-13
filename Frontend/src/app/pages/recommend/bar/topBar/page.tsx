@@ -3,7 +3,7 @@ import TopRestaurant from "./topRestaurant"
 
 export default function Home() {
     return (
-        <div className="">
+        <div className="mt-12">
             <TopBar />
             <TopRestaurant />
         </div>
