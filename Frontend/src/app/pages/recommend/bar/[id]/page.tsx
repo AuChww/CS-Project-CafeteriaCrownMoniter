@@ -1,7 +1,20 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useParams } from "next/navigation"; // ใช้ useParams แทน useRouter
+import React, { useEffect, useState, useRef } from "react";
+import ApexCharts from "apexcharts";
+import dynamic from "next/dynamic";
+import ZoneCard from "@/components/ZoneCard";
+import {
+    BarChart,
+    Bar as RechartsBar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+} from "recharts";
+import DayOfWeekVisitorChart from "@/components/bar/DayBarBarChart";
 import VisitorBarChart from "@/components/bar/BarBarChart";
 
 interface Bar {
@@ -15,117 +28,154 @@ interface Bar {
 }
 
 interface Zone {
+    bar_id: number;
     zone_id: number;
     zone_name: string;
     zone_detail: string;
-    current_visitor_count: number;
     max_people_in_zone: number;
-    zone_time: string;
+    current_visitor_count: number;
+    update_date_time: string;
+    zone_time: number;
 }
 
 const BarPage = () => {
-    const { id } = useParams();
+    // const { id } = useParams(); // ดึง id จาก URL
+    // const [bar, setBar] = useState<Bar | null>(null);
+    // const [loading, setLoading] = useState(true);
+    // const [error, setError] = useState<string | null>(null);
+
+    const data = [
+        { month: "Sunday", sales: 50 },
+        { month: "Monday", sales: 40 },
+        { month: "Tuesday", sales: 300 },
+        { month: "Wednesday", sales: 320 },
+        { month: "Thursday", sales: 500 },
+        { month: "Friday", sales: 350 },
+        { month: "Saturday", sales: 200 },
+    ];
+
+    const { id } = useParams(); // ดึง id จาก URL
     const [bar, setBar] = useState<Bar | null>(null);
-    const [zones, setZones] = useState<Zone[]>([]);
+    const [zones, setZones] = useState<Zone[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!id) return;
-
-        const fetchData = async () => {
+        const fetchBarAndZones = async () => {
             try {
-                // Fetch Bar details
-                const barResponse = await fetch(`http://127.0.0.1:8000/api/v1/getBarId/${id}`);
-                if (!barResponse.ok) {
-                    throw new Error("Failed to fetch bar details");
+                setLoading(true);
+
+                const [getBarResponse, getAllZoneByBarIdResponse] = await Promise.all([
+                    fetch(`http://127.0.0.1:8000/api/v1/getBarId/${id}`),
+                    fetch(`http://127.0.0.1:8000/api/v1/getAllZonesByBarId/${id}`),
+                ]);
+
+                if (!getBarResponse.ok || !getAllZoneByBarIdResponse.ok) {
+                    throw new Error("Failed to fetch bar details or zones");
                 }
-                const barData = await barResponse.json();
+
+                const barData: Bar = await getBarResponse.json();
+                const zonesData: { zones: Zone[] } =
+                    await getAllZoneByBarIdResponse.json(); // กำหนดให้รับข้อมูลเป็น object ที่มี key zones
+
                 setBar(barData);
-
-                // Fetch Zones in the Bar
-                const zonesResponse = await fetch(`http://127.0.0.1:8000/api/v1/getAllZonesByBarId/${id}`);
-                if (!zonesResponse.ok) {
-                    throw new Error("Failed to fetch zones");
-                }
-                const zonesData = await zonesResponse.json();
-                setZones(zonesData.zones);
-
-                setLoading(false);
+                setZones(zonesData.zones || []); // เข้าถึงข้อมูลใน key zones
+                setError(null); // Clear any previous errors
             } catch (err: any) {
                 setError(err.message);
-                setLoading(false);
+            } finally {
+                setLoading(false); // Always stop loading
             }
         };
 
-        fetchData();
+        fetchBarAndZones();
     }, [id]);
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p className="text-red-500">Error: {error}</p>;
-    if (!bar) return <p>No bar details found.</p>;
+    if (!bar) return <p>Error fetching bar details.</p>;
+    if (!zones || zones.length === 0) return <p>No zones available for this bar.</p>;
+
 
     return (
-        <div className="p-6">
-            <h1 className="text-3xl font-bold mb-4">{bar.bar_name}</h1>
-            <div className="grid gap-6">
-                {bar.bar_image && (
-                    <img
-                        src={bar.bar_image}
-                        alt={bar.bar_name}
-                        className="w-full h-32 object-cover rounded-md mb-4"
-                    />
-                )}
-                <p className="text-lg text-gray-700">
-                    <strong>Location:</strong> {bar.bar_location}
-                </p>
-                <p className="text-lg text-gray-700">
-                    <strong>Details:</strong> {bar.bar_detail}
-                </p>
-                <p className="text-lg text-gray-700">
-                    <strong>Rating:</strong> {bar.total_rating} ({bar.total_reviews} reviews)
-                </p>
-            </div>
+        <div className="container mt-12 mx-auto p-4  w-full h-screen overflow-y-auto space-y-12">
+            <div className="xl:grid grid-cols-2 gap-6 xl:pt-10">
+                <div className="">
+                    {bar.bar_image && (
+                        <img
+                            src={`/image/barImages/${bar.bar_image}`}
+                            alt={bar.bar_name}
+                            className="w-full  object-cover rounded-md mb-4"
+                        />
+                    )}
+                </div>
+                <div className="space-y-3">
+                    <h1 className="text-3xl font-bold mb-4 text-green-500">
+                        {bar.bar_name}
+                    </h1>
+                    <p className="text-lg text-gray-700">{bar.bar_detail}</p>
 
-            {/* แสดง VisitorBarChart */}
-            <div className="mt-6">
-                <h2 className="text-2xl font-semibold mb-4">Visitor Count by Time</h2>
-                <VisitorBarChart barId={parseInt(id as string)} />
-            </div>
+                    <div className="text-base text-gray-500 flex space-x-1">
+                        <img src="/image/icons/location.svg" alt="location pin" />
+                        <span>{bar.bar_location}</span>
+                    </div>
 
-            {/* แสดงข้อมูล Zones */}
-            <div className="mt-6">
-                <h2 className="text-2xl font-semibold mb-4">Zones in this Bar</h2>
-                <div className="grid grid-cols-1 gap-6">
-                    {zones.map((zone) => (
-                        <div
-                            key={zone.zone_id}
-                            className="p-4 border rounded-md shadow-sm bg-white"
-                        >
-                            <h3 className="text-lg font-bold">{zone.zone_name}</h3>
-                            <p className="text-gray-700">{zone.zone_detail}</p>
-                            <p className="text-gray-700">
-                                <strong>Current Visitors:</strong> {zone.current_visitor_count}
-                            </p>
-                            <p className="text-gray-700">
-                                <strong>Max Capacity:</strong> {zone.max_people_in_zone}
-                            </p>
-                            <p className="text-gray-700">
-                                <strong>Operating Time:</strong> {zone.zone_time}
-                            </p>
-                        </div>
-                    ))}
+                    <div className="flex space-x-1">
+                        <img src="/image/icons/star.svg" alt="location pin" />
+                        <p className="text-base text-gray-500">
+                            {bar.total_rating} ({bar.total_reviews}
+                            reviews)
+                        </p>{" "}
+                    </div>
+
+                    <p className="text-lg text-gray-700">
+                        <strong>เวลาให้บริการ:</strong> {bar.total_rating} (
+                        {bar.total_reviews} reviews)
+                    </p>
+
+                    <div className="grid grid-cols-3 gap-4 pt-6">
+                        {zones &&
+                            Array.isArray(zones) &&
+                            zones.map((zone) => (
+                                <ZoneCard
+                                    key={zone.bar_id}
+                                    zone_id={zone.zone_id}
+                                    bar_id={zone.bar_id}
+                                    zone_name={zone.zone_name}
+                                    zone_detail={zone.zone_detail}
+                                    max_people_in_zone={zone.max_people_in_zone}
+                                    current_visitor_count={zone.current_visitor_count}
+                                    update_date_time={zone.update_date_time}
+                                    zone_time={zone.zone_time}
+                                ></ZoneCard>
+                            ))}
+                    </div>
                 </div>
             </div>
 
-            <iframe
-                width="600"
-                height="450"
-                loading="lazy"
-                allowFullScreen
-                referrerPolicy="no-referrer-when-downgrade"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3531.1268091151996!2d100.56791021146884!3d13.848421183966101!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e29cdd97ccda83%3A0x4a542530b310e9e9!2z4LmC4Lij4LiH4Lit4Liy4Lir4Liy4Lij4LiB4Lil4Liy4LiHIDEgKOC4muC4suC4o-C5jOC5g-C4q-C4oeC5iCk!5e0!3m2!1sth!2sth!4v1736263263951!5m2!1sth!2sth">
-            </iframe>
+            <div className="flex">
+                <iframe
+                    width="600"
+                    height="450"
+                    loading="lazy"
+                    allowFullScreen
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.835434509306!2d-122.08424908468879!3d37.42206597982483!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808fba27c0bd6fd3%3A0x5d98e2b511eed377!2sGoogleplex!5e0!3m2!1sen!2sus!4v1633560792881!5m2!1sen!2sus">
+                </iframe>
+                <div className="relative flex flex-col rounded-xl bg-white w-2/3">
+                    <div className="text-center">
+                        <div className="mb-4">
+                            People Count in Day
+                        </div>
+                        <VisitorBarChart barId={bar.bar_id} />
+                        <div className="mb-4 mt-2">
+                            People Count in Week
+                        </div>
+                        <DayOfWeekVisitorChart />
+                    </div>
+                </div>
+            </div>
+
         </div>
     );
 };

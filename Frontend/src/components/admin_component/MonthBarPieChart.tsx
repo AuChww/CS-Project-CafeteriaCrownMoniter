@@ -89,7 +89,7 @@ const TodayBarVisitorPieChart: React.FC = () => {
           data={chartData} // Use the calculated average data for the pie chart
           dataKey="value"
           nameKey="name"
-          outerRadius={100}
+          outerRadius={80}
           fill="#33CC99"
           label={({ name }) => <Label value={name} fontSize={14} />} // Display label with custom font size
           labelLine={false} // Remove the label line that connects to the pie slices
