@@ -7,7 +7,7 @@ from API.route.userRoute import user_bp
 from API.route.reportRoute import report_bp
 from API.route.zoneRoute import zone_bp
 from API.route.visitorHistoryRoute import visitor_history_bp
-
+from API.route.authRoute import auth_bp
 
 app = Flask(__name__)
 app.register_blueprint(bar_bp)
@@ -17,8 +17,11 @@ app.register_blueprint(user_bp)
 app.register_blueprint(report_bp)
 app.register_blueprint(zone_bp)
 app.register_blueprint(visitor_history_bp)
+app.register_blueprint(auth_bp)
 
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000", 
+                                  "methods": ["GET", "POST", "OPTIONS"], 
+                                  "allow_headers": ["Authorization", "Content-Type"]}})
 
 if __name__ == "__main__":
     app.run(port=8000, debug=True)  # Update port to match docker-compose.yml
