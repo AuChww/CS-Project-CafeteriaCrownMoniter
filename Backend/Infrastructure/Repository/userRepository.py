@@ -87,18 +87,48 @@ def get_reviews_by_user_id(user_id):
     ]
     return reviews
 
+def get_user_by_username(username):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM "USER" WHERE username = %s', (username,))
+    row = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    if row:
+        return UserEntity(
+            user_id=row[0],
+            user_image=row[1],
+            username=row[2],
+            password=row[3],
+            role=row[4],
+            email=row[5],
+        )
+    return None
+
+
 def add_user(username, email, password, role, user_image=None):
     conn = db_conn()
     cur = conn.cursor()
-    cur.execute(
-        'INSERT INTO "USER" (username, email, password, role, user_image) VALUES (%s, %s, %s, %s, %s) RETURNING user_id',
-        (username, email, password, role, user_image)
-    )
-    user_id = cur.fetchone()[0]
-    conn.commit()
-    cur.close()
-    conn.close()
-    return user_id
+    try:
+        cur.execute(
+            '''
+            INSERT INTO "USER" (username, email, password, role, user_image)
+            VALUES (%s, %s, %s, %s, %s) RETURNING user_id
+            ''',
+            (username, email, password, role, user_image)
+        )
+        user_id = cur.fetchone()[0]
+        conn.commit()
+        return user_id
+    except Exception as e:
+        conn.rollback()
+        print(f"Error adding user: {e}")
+        return None
+    finally:
+        cur.close()
+        conn.close()
+
 
 def update_user(user_id, data):
     conn = db_conn()

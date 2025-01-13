@@ -6,7 +6,7 @@ import "/assets/css/main.css";
 
 const Navbar = () => {
     return (
-        <nav className="absolute w-full top-0 sticky bg-gradient-to-r
+        <nav className="fixed w-full top-0 bg-gradient-to-r
             from-[#AEF359]
             via-emerald-300
             to-[#03A96B]

@@ -104,7 +104,7 @@ const BarCard: React.FC<BarCardProps> = ({
         </a>
 
         {/* Bar Details */}
-        <p className="mb-3 text-sm font-normal text-gray-500 dark:text-gray-400">
+        <div className="mb-3 text-sm font-normal text-gray-500 dark:text-gray-400">
           {bar_detail}
         </div>
 
