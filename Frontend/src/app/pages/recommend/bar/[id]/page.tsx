@@ -105,42 +105,41 @@ const BarPage = () => {
 
 
     return (
-        <div className="container mt-12 mx-auto p-4  w-full h-screen overflow-y-auto space-y-12">
-            <div className="xl:grid grid-cols-2 gap-6 xl:pt-10">
-                <div className="">
-                    {bar.bar_image && (
-                        <img
-                            src={`/image/barImages/${bar.bar_image}`}
-                            alt={bar.bar_name}
-                            className="w-full  object-cover rounded-md mb-4"
-                        />
-                    )}
-                </div>
-                <div className="space-y-3">
-                    <h1 className="text-3xl font-bold mb-4 text-green-500">
-                        {bar.bar_name}
-                    </h1>
-                    <p className="text-lg text-gray-700">{bar.bar_detail}</p>
-
-                    <div className="text-base text-gray-500 flex space-x-1">
-                        <img src="/image/icons/location.svg" alt="location pin" />
-                        <span>{bar.bar_location}</span>
-                    </div>
-
-                    <div className="flex space-x-1">
-                        <img src="/image/icons/star.svg" alt="location pin" />
-                        <p className="text-base text-gray-500">
-                            {bar.total_rating} ({bar.total_reviews}
-                            reviews)
-                        </p>{" "}
-                    </div>
-
-                    <p className="text-lg text-gray-700">
-                        <strong>เวลาให้บริการ:</strong> {bar.total_rating} (
-                        {bar.total_reviews} reviews)
-                    </p>
-
-          <div className="relative flex flex-col rounded-xl bg-white ">
+      <div className="container mt-12 mx-auto p-4 w-full h-screen overflow-y-auto space-y-12">
+      <div className="xl:grid grid-cols-2 gap-6 xl:pt-10">
+        <div>
+          {bar.bar_image && (
+            <img
+              src={`/image/barImages/${bar.bar_image}`}
+              alt={bar.bar_name}
+              className="w-full object-cover rounded-md mb-4"
+            />
+          )}
+        </div>
+        <div className="space-y-3">
+          <h1 className="text-3xl font-bold mb-4 text-green-500">
+            {bar.bar_name}
+          </h1>
+          <p className="text-lg text-gray-700">{bar.bar_detail}</p>
+    
+          <div className="text-base text-gray-500 flex space-x-1">
+            <img src="/image/icons/location.svg" alt="location pin" />
+            <span>{bar.bar_location}</span>
+          </div>
+    
+          <div className="flex space-x-1">
+            <img src="/image/icons/star.svg" alt="location pin" />
+            <p className="text-base text-gray-500">
+              {bar.total_rating} ({bar.total_reviews} reviews)
+            </p>
+          </div>
+    
+          <p className="text-lg text-gray-700">
+            <strong>เวลาให้บริการ:</strong> {bar.total_rating} (
+            {bar.total_reviews} reviews)
+          </p>
+    
+          <div className="relative flex flex-col rounded-xl bg-white">
             <div className="flex items-center gap-4">
               <div>
                 <h6 className="font-sans text-base font-semibold leading-relaxed text-blue-gray-900">
@@ -175,7 +174,7 @@ const BarPage = () => {
           </div>
         </div>
       </div>
-
+    
       {/* ZoneCard */}
       <div className="grid grid-cols-4 gap-4">
         {zones &&
@@ -191,17 +190,18 @@ const BarPage = () => {
               current_visitor_count={zone.current_visitor_count}
               update_date_time={zone.update_date_time}
               zone_time={zone.zone_time}
-            ></ZoneCard>
+            />
           ))}
       </div>
-
+    
+      {/* Comments Section */}
       <section className="py-8 relative">
         <div className="w-full max-w-7xl px-4 md:px-5 lg:px-20 mx-auto">
-          <div className="w-full flex-col justify-start items-start  gap-7 inline-flex">
+          <div className="w-full flex-col justify-start items-start gap-7 inline-flex">
             <h2 className="text-gray-900 text-4xl font-bold font-manrope leading-normal">
               Comments
             </h2>
-
+    
             <div className="w-full flex-col justify-start items-start gap-8 flex">
               <div className="w-full lg:py-8 lg:px-14 p-5 bg-white rounded-3xl border border-gray-200 flex-col justify-start items-end gap-2.5 flex">
                 <div className="w-full flex-col justify-start items-end gap-3.5 flex">
@@ -223,27 +223,19 @@ const BarPage = () => {
                         </h6>
                       </div>
                     </div>
-
+    
                     {/* Dropdown Icons */}
-                    <ContextDropdown/>
-                    {/* End Dropdown Icons */}
+                    <ContextDropdown />
                   </div>
-
+    
                   <p className="text-gray-800 text-sm font-normal leading-snug">
-                    Malesuada rhoncus senectus amet dui tincidunt. Porttitor
-                    lectus diam sit sit pellentesque ultrices. Molestie libero
-                    ac odio at tristique sapien est venenatis. Egestas vitae
-                    velit vestibulum egestas felis euismod. Morbi ac vel
-                    scelerisque morbi eu nisi gravida tellus. Pulvinar orci at
-                    elementum massa morbi pellentesque non nulla. Elementum
-                    faucibus urna est mattis. Non aliquet in molestie id nisl.
-                    Bibendum mauris dolor nisl elit ut eu viverra. Ut facilisi
-                    turpis neque eu risus etiam senectus vel. Orci pharetra
-                    ornare amet massa. Tempus orci vestibulum pulvinar tincidunt
-                    amet dictum sit tempor.
+                    Malesuada rhoncus senectus amet dui tincidunt. Porttitor lectus
+                    diam sit sit pellentesque ultrices. Molestie libero ac odio at
+                    tristique sapien est venenatis.
                   </p>
+    
                   <div className="group justify-end items-center flex">
-                    <div className="px-5 py-2.5 rounded-xl shadow-[0px_1px_2px_0px_rgba(16,_24,_40,_0.05)] border border-gray-400 hover:border-green-600 transition-all duration-700 ease-in-out  justify-center items-center flex">
+                    <div className="px-5 py-2.5 rounded-xl shadow-[0px_1px_2px_0px_rgba(16,_24,_40,_0.05)] border border-gray-400 hover:border-green-600 transition-all duration-700 ease-in-out justify-center items-center flex">
                       <a href="" className="">
                         <svg
                           className="group-hover:text-green-600 text-gray-400 group-hover:fill-green-600 fill-white transition-all duration-700 ease-in-out"
@@ -268,43 +260,23 @@ const BarPage = () => {
                   </div>
                 </div>
               </div>
-
-              <form className="w-full relative flex justify-between ">
+    
+              <form className="w-full relative flex justify-between">
                 <input
                   type="text"
                   className="w-full py-3 px-5 rounded-lg border border-gray-300 bg-white shadow-[0px_1px_2px_0px_rgba(16,_24,_40,_0.05)] focus:outline-none text-gray-900 placeholder-gray-400 text-lg font-normal leading-relaxed"
                   placeholder="Leave a constructive comment..."
                 />
-
-                <button className="text-base bg-green-500 text-white border  px-4 py-2 rounded-lg">
+                <button className="text-base bg-green-500 text-white border px-4 py-2 rounded-lg">
                   Submit
                 </button>
               </form>
-
-              {/* <form>
-                <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
-                  <div className="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">
-                    <label className="sr-only">Your comment</label>
-                    <textarea
-                      id="comment"
-                      rows={4}
-                      className="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
-                      placeholder="Write a comment..."
-                      required
-                    ></textarea>
-                  </div>
-                  <div className="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600">
-                    <button
-                      type="submit"
-                      className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-green-500 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800"
-                    >
-                      Post comment
-                    </button>
-                  </div>
-                </div>
             </div>
-
+          </div>
         </div>
+      </section>
+    </div>
+    
     );
 };
 
