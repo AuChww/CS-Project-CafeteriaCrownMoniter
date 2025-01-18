@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
+import { setCookie } from "nookies";
 
 export function Login() {
     const [username, setUsername] = useState("");
@@ -11,32 +12,42 @@ export function Login() {
     const { login } = useAuth();
     const router = useRouter();
 
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-
+    const handleLogin = async (username: string, password: string) => {
         try {
-            const response = await axios.post("http://localhost:8000/api/auth/login", {
-                username,
-                password,
+            const response = await fetch('http://127.0.0.1:8000/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
             });
+            
+            const text = await response.text(); // Get the raw response text
+            
+            console.log("Response:", text); // Log the raw response text
+            
+            if (response.ok) {
+                const data = JSON.parse(text); // Now parse JSON if response is valid
+                localStorage.setItem('token', data.token);
+                login(data.token); // Set the user in context
 
-            const { role, token } = response.data;
+                console.log('Logged in successfully:', data.role);
 
-            login(token, role);
-            console.log(role, token);
-
-            if (role === "admin") {
-                console.log(role);
-                router.push("/pages/admin/");
-            } else if (role === "user") {
-                console.log(role);
-                router.push("/");
+                // Redirect based on role
+                if (data.role === 'admin') {
+                    router.push('/pages/recommend/admin'); // Admin route
+                } else {
+                    router.push('/pages/recommend/'); // User route
+                }
+            } else {
+                console.log('Login failed:', text);
             }
         } catch (error) {
-            console.error("Login failed:", error);
-            alert("Login failed. Please check your username and password.");
+            console.error('Error logging in:', error);
         }
     };
+    
+
 
     return (
         <div className={`bg-white buttonClick duration-500 `}>
@@ -63,7 +74,11 @@ export function Login() {
                         </div>
 
                         <div className="mt-8">
-                            <form onSubmit={handleLogin}>
+                            <form onSubmit={(e) => {
+                                e.preventDefault(); // ป้องกันการโหลดหน้าใหม่เมื่อฟอร์มถูกส่ง
+                                handleLogin(username, password); // ส่ง username และ password ไป
+                            }}>
+
                                 <div>
                                     <label className="block mb-2 text-sm font-bold text-gray-800">Username</label>
                                     <input

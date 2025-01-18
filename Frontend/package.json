@@ -11,10 +11,13 @@
   "dependencies": {
     "apexcharts": "^4.3.0",
     "axios": "^1.7.9",
+    "cookie": "^1.0.2",
     "date-fns": "^4.1.0",
     "flowbite-react": "^0.10.2",
+    "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "next": "15.1.2",
+    "nookies": "^2.5.2",
     "react": "^19.0.0",
     "react-apexcharts": "^1.7.0",
     "react-dom": "^19.0.0",

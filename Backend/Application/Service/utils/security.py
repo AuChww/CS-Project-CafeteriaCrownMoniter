@@ -8,7 +8,6 @@ new_hashed_password = bcrypt.hashpw("new_password".encode('utf-8'), bcrypt.gensa
 
 def hash_password(password):
     salt = bcrypt.gensalt()  # Generate salt
-    print("111")
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)  # Hash password
     print(hashed_password)
     return hashed_password.decode('utf-8')  # Save hashed password as string
