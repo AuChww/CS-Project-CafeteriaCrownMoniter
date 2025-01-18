@@ -87,7 +87,7 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
       key={zone_id}
       className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 "
     >
-      <div className="p-5 ">
+      <div className="p-5 space-y-3 ">
         {/* zone Name */}
         <a href="#">
           <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -113,10 +113,10 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
           
         </div>
 
-        <div className="flex items-center text-sm mt-2.5 mb-5 space-x-2 text-gray-700">
+        {/* <div className="flex items-center text-sm mt-2.5 mb-5 space-x-2 text-gray-700">
           <p>เวลาที่เปิดให้ปริการ: </p>
           <p>{zone_time}</p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

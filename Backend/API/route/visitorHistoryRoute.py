@@ -7,6 +7,8 @@ from Application.Service.feature.visitorHistoryService import (
     delete_visitor_history_service,
     get_all_zones_service
 )
+
+from Application.objroi import get_human_count
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta
 import requests
@@ -44,6 +46,11 @@ def get_all_visitor_histories_endpoint():
 #     ])
 
 def post_visitor_history():
+    
+    all_human_counts = get_human_count()
+    
+    total_visitor_count = sum(all_human_counts) 
+    
     # Get a list of all zone_ids
     zone_ids = get_all_zones_service()
 
@@ -56,6 +63,7 @@ def post_visitor_history():
 
     # Format the datetime correctly as 'YYYY-MM-DD HH:MM:SS'
     formatted_time = now.strftime('%Y-%m-%d %H:%M:%S')
+    
 
     for zone_id in zone_ids:
         # Define the payload for the request with the formatted, timezone-aware date_time
