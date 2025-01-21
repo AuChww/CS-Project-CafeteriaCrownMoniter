@@ -29,8 +29,13 @@ def add_user_service(username, email, password, role, user_image=None):
     hashed_password = hash_password(password)
     return add_user(username, email, hashed_password, role, user_image)
 
-def update_user_service(user_id, data):
-    return update_user(user_id, data)
+def update_user_service(user_id, data, file):
+    print(f"Updating user {user_id} with data: {data}, file: {file}")
+    updated = update_user(user_id, data, file)
+    print("Update successful:", updated)
+    return updated
+
+
 
 def delete_user_service(user_id):
     return delete_user(user_id)
