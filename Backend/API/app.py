@@ -19,9 +19,11 @@ app.register_blueprint(zone_bp)
 app.register_blueprint(visitor_history_bp)
 app.register_blueprint(auth_bp)
 
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000", 
-                                  "methods": ["GET", "POST", "OPTIONS"], 
-                                  "allow_headers": ["Authorization", "Content-Type"]}})
+CORS(app, resources={r"/api/*": {
+    "origins": "http://localhost:3000",
+    "methods": ["GET", "POST", "OPTIONS", "PUT", "DELETE"],  # เพิ่ม PUT และ DELETE
+    "allow_headers": ["Authorization", "Content-Type"]
+}})
 
 if __name__ == "__main__":
     app.run(port=8000, debug=True)  # Update port to match docker-compose.yml
