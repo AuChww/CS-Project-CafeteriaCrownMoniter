@@ -16,6 +16,7 @@ import {
 } from "recharts";
 import DayOfWeekVisitorChart from "@/components/bar/DayBarBarChart";
 import VisitorBarChart from "@/components/bar/BarBarChart";
+import { useRouter } from "next/navigation";
 
 interface Bar {
     bar_id: number;
@@ -43,6 +44,7 @@ const BarPage = () => {
     // const [bar, setBar] = useState<Bar | null>(null);
     // const [loading, setLoading] = useState(true);
     // const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
 
     const data = [
         { month: "Sunday", sales: 50 },
@@ -98,7 +100,7 @@ const BarPage = () => {
 
 
     return (
-        <div className="container mt-12 mx-auto p-4  w-full h-screen overflow-y-auto space-y-12">
+        <div className="container mt-12 mx-auto p-4  w-full h-screen  space-y-12">
             <div className="xl:grid grid-cols-2 gap-6 xl:pt-10">
                 <div className="">
                     {bar.bar_image && (
@@ -137,17 +139,19 @@ const BarPage = () => {
                         {zones &&
                             Array.isArray(zones) &&
                             zones.map((zone) => (
-                                <ZoneCard
-                                    key={zone.zone_id} // Use zone_id instead of bar_id
-                                    zone_id={zone.zone_id}
-                                    bar_id={zone.bar_id}
-                                    zone_name={zone.zone_name}
-                                    zone_detail={zone.zone_detail}
-                                    max_people_in_zone={zone.max_people_in_zone}
-                                    current_visitor_count={zone.current_visitor_count}
-                                    update_date_time={zone.update_date_time}
-                                    zone_time={zone.zone_time}
-                                />
+                                <div key={zone.zone_id} onClick={() => router.push(`/pages/recommend/zone/${zone.zone_id}`)}>
+                                    <ZoneCard
+                                        key={zone.zone_id} // Use zone_id instead of bar_id
+                                        zone_id={zone.zone_id}
+                                        bar_id={zone.bar_id}
+                                        zone_name={zone.zone_name}
+                                        zone_detail={zone.zone_detail}
+                                        max_people_in_zone={zone.max_people_in_zone}
+                                        current_visitor_count={zone.current_visitor_count}
+                                        update_date_time={zone.update_date_time}
+                                        zone_time={zone.zone_time}
+                                    />
+                                </div>
                             ))}
                     </div>
                 </div>
