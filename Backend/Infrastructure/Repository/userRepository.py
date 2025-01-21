@@ -2,6 +2,29 @@ from Infrastructure.db_connection import db_conn
 from Domain.entity.userEntity import UserEntity
 from Domain.entity.reviewEntity import ReviewEntity
 from Domain.entity.reportEntity import ReportEntity
+import os
+from werkzeug.utils import secure_filename
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+UPLOAD_FOLDER = '/path/to/your/upload/folder'  # Set the appropriate path for your server
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def save_image(file):
+    try:
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(filepath)
+            return filename
+        else:
+            print("Invalid file format.")
+            return None
+    except Exception as e:
+        print(f"Error saving image: {e}")
+        return None
+
 
 def get_all_users():
     conn = db_conn()
@@ -130,18 +153,31 @@ def add_user(username, email, password, role, user_image=None):
         conn.close()
 
 
-def update_user(user_id, data):
+def update_user(user_id, data, file=None):
     conn = db_conn()
     cur = conn.cursor()
-    cur.execute(
-        'UPDATE "USER" SET username = %s, email = %s, role = %s, user_image = %s WHERE user_id = %s',
-        (data.get('username'), data.get('email'), data.get('role'), data.get('user_image'), user_id)
-    )
-    updated = cur.rowcount > 0
-    conn.commit()
-    cur.close()
-    conn.close()
-    return updated
+
+    if file:
+        filename = save_image(file)
+    else:
+        filename = data.get('user_image', '')
+
+    try:
+        cur.execute(
+            'UPDATE "USER" SET username = %s, email = %s, role = %s, user_image = %s WHERE user_id = %s',
+            (data.get('username'), data.get('email'), data.get('role'), filename, user_id)
+        )
+        updated = cur.rowcount > 0
+        conn.commit()
+        print(f"Updated {cur.rowcount} row(s)")  # Log the number of affected rows
+        return updated
+    except Exception as e:
+        print(f"Error updating user: {e}")
+        conn.rollback()
+        return False
+    finally:
+        cur.close()
+        conn.close()
 
 def delete_user(user_id):
     conn = db_conn()

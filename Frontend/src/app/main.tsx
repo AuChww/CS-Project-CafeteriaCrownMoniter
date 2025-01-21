@@ -40,15 +40,6 @@ export default function HomePage() {
     fetchBars();
   }, []);
 
-  const checkLoginStatus = () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      console.log('User is logged in');
-    } else {
-      console.log('User is not logged in');
-    }
-  };
-
   return (
     <div className="container p-4 mx-auto bg-gray-100 w-full h-screen overflow-y-auto" >
       <div className="lg:mt-16 md:mt-20 mt-24">

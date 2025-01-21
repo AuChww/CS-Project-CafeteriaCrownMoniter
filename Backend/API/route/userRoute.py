@@ -89,12 +89,16 @@ def add_user():
 
 @user_bp.route('/api/v1/updateUser/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
-    data = request.json
-    updated = update_user_service(user_id, data)
+    print(f"Received user_id: {user_id}")  # Log the received user_id
+    data = request.form
+    file = request.files.get('user_image')
+    
+    updated = update_user_service(user_id, data, file)
     if not updated:
         return jsonify({'message': 'User not found'}), 404
 
     return jsonify({'message': 'User updated successfully'})
+
 
 @user_bp.route('/api/v1/deleteUser/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):

@@ -50,7 +50,7 @@ def add_review(user_id, restaurant_id, rating, review_comment, review_image=None
     conn = db_conn()
     cur = conn.cursor()
     query = '''
-        INSERT INTO review (user_id, restaurant_id, rating, comment, review_image)
+        INSERT INTO review (user_id, restaurant_id, rating, review_comment, review_image)
         VALUES (%s, %s, %s, %s, %s) RETURNING review_id
     '''
     cur.execute(query, (user_id, restaurant_id, rating, review_comment, review_image))
@@ -64,7 +64,7 @@ def update_review(review_id, user_id, restaurant_id, rating, review_comment, rev
     conn = db_conn()
     cur = conn.cursor()
     cur.execute(''' 
-        UPDATE review SET user_id = %s, restaurant_id = %s, rating = %s, comment = %s, review_image = %s
+        UPDATE review SET user_id = %s, restaurant_id = %s, rating = %s, review_comment = %s, review_image = %s
         WHERE review_id = %s
     ''', (user_id, restaurant_id, rating, review_comment, review_image, review_id))
     updated = cur.rowcount > 0
