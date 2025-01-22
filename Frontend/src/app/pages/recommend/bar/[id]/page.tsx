@@ -5,8 +5,6 @@ import React, { useEffect, useState, useRef } from "react";
 import ApexCharts from "apexcharts";
 import dynamic from "next/dynamic";
 import ZoneCard from "@/components/ZoneCard";
-import ContextDropdown from "@/components/SimpleComponent/ContextDropdown";
-
 import {
     BarChart,
     Bar as RechartsBar,
@@ -18,6 +16,7 @@ import {
 } from "recharts";
 import DayOfWeekVisitorChart from "@/components/bar/DayBarBarChart";
 import VisitorBarChart from "@/components/bar/BarBarChart";
+import { useRouter } from "next/navigation";
 
 interface Bar {
     bar_id: number;
@@ -45,6 +44,7 @@ const BarPage = () => {
     // const [bar, setBar] = useState<Bar | null>(null);
     // const [loading, setLoading] = useState(true);
     // const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
 
     const data = [
         { month: "Sunday", sales: 50 },
@@ -56,16 +56,11 @@ const BarPage = () => {
         { month: "Saturday", sales: 200 },
     ];
 
-  const { id } = useParams(); // ดึง id จาก URL
-  const [bar, setBar] = useState<Bar | null>(null);
-  const [zones, setZones] = useState<Zone[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
+    const { id } = useParams(); // ดึง id จาก URL
+    const [bar, setBar] = useState<Bar | null>(null);
+    const [zones, setZones] = useState<Zone[] | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchBarAndZones = async () => {
