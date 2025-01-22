@@ -23,33 +23,33 @@ const Swipe = () => {
     }, []);
 
     return (
-        <div className="w-full h-60 flex gap-x-1">
+        <div className="w-full lg:h-60 md:h-40 h-20 flex gap-x-1">
             <div className="w-1/3 h-full flex gap-1">
                 <div className="w-2/3">
                     <div onClick={() => router.push("/pages/recommend/bar/topBar")} className="h-full duration-300 hover:text-green-500 hover:bg-green-300 text-white bg-green-500 rounded-lg flex items-center justify-center flex-col">
                         <div className="flex mt-2">
-                            <BiSolidLike className="w-12 h-12" />
-                            <MdOutlineRestaurant className="w-12 h-12" />
+                            <BiSolidLike className="lg:w-12 lg:h-12 w-4 h-4" />
+                            <MdOutlineRestaurant className="lg:w-12 lg:h-12 w-4 h-4" />
                         </div>
-                        <div className="text-2xl mb-2 font-bold">
+                        <div className="lg:text-2xl md:text-lg text-sm mb-2 font-bold">
                             Top
                         </div>
-                        <span>Bar & Restaurant 2025</span>
+                        <span className="hidden md:text-md lg:text-lg md:block">Bar & Restaurant 2025</span>
                     </div>
                 </div>
                 <div className="w-1/3 h-full flex flex-col gap-y-1">
                     <div onClick={() => router.push("/pages/recommend/bar/allBar/")} className="h-1/2 duration-300 hover:text-green-500 hover:bg-green-300 text-white bg-green-500 rounded-lg flex items-center justify-center flex-col">
                         <div>
-                            <FaWarehouse className="w-8 h-8" />
+                            <FaWarehouse className="lg:w-8 lg:h-8 w-3 h-3" />
                         </div>
-                        <span>All Bar</span>
+                        <span className="hidden md:text-md lg:text-lg md:block">All Bar</span>
                     </div>
 
                     <div onClick={() => router.push("/pages/recommend/restaurant/")} className="h-1/2 duration-300 hover:text-green-500 hover:bg-green-300 text-white bg-green-500 rounded-lg flex items-center justify-center flex-col text-center">
                         <div>
-                            <MdOutlineRestaurant className="w-8 h-8" />
+                            <MdOutlineRestaurant className="lg:w-8 lg:h-8 w-3 h-3" />
                         </div>
-                        <span>All Restaurant</span>
+                        <span className="hidden md:text-md lg:text-lg md:block">All Restaurant</span>
                     </div>
 
                 </div>

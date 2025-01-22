@@ -41,8 +41,11 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="container mx-auto p-4 bg-gray-100 w-full h-screen overflow-y-auto">
-      <div className="mt-14">
+    <div className="container p-4 mx-auto bg-gray-100 w-full h-screen overflow-y-auto" >
+      <div className="lg:mt-16 md:mt-20 mt-24">
+        <div className="text-center text-4xl text-green-500 py-6 mb-8 font-bold">
+          Recommend Bar&Restaurant
+        </div>
         <Swipe />
       </div>
       <div className="flex mt-2 grid grid-cols-5 gap-2 bg-green-500 p-2 rounded-lg">
@@ -72,10 +75,10 @@ export default function HomePage() {
         />
 
       </div>
-      <div className="text-center text-4xl my-16 text-green-500 font-bold">
+      <div className="text-center text-4xl my-8 py-6 text-green-500 font-bold">
         Bar Crowd
       </div>
-      <div className="grid grid-cols-1 mt-6 sm:grid-cols-3 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-2 mt-6 sm:grid-cols-3 lg:grid-cols-5 gap-6">
         {bars.map((bar) => (
           <div key={bar.bar_id} onClick={() => router.push(`/pages/recommend/bar/${bar.bar_id}`)}>
             <CrowdCard
@@ -86,7 +89,7 @@ export default function HomePage() {
               max_people_in_bar={bar.max_people_in_bar}
               bar_image={bar.bar_image}
               bar_detail={bar.bar_detail}
-             
+
             />
           </div>
         ))}

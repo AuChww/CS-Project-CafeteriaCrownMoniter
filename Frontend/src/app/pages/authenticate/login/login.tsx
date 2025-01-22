@@ -4,49 +4,58 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
+import { setCookie } from "nookies";
 
 export function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState(""); // State to store error message
     const { login } = useAuth();
     const router = useRouter();
 
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-
+    const handleLogin = async (username: string, password: string) => {
         try {
-            const response = await axios.post("http://localhost:8000/api/auth/login", {
-                username,
-                password,
+            const response = await fetch('http://127.0.0.1:8000/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
             });
-
-            const { role, token } = response.data;
-
-            login(token, role);
-            console.log(role, token);
-
-            if (role === "admin") {
-                console.log(role);
-                router.push("/pages/admin/");
-            } else if (role === "user") {
-                console.log(role);
-                router.push("/");
+    
+            const text = await response.text(); // Get the raw response text
+            
+            if (response.ok) {
+                const data = JSON.parse(text); // Now parse JSON if response is valid
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('userId', data.userId); // Store userId
+                login(data.token); // Set the user in context
+    
+                // Redirect based on role
+                if (data.role === 'admin') {
+                    router.push('/pages/admin'); // Admin route
+                } else {
+                    router.push('/'); // User route
+                }
+            } else {
+                setError('Invalid username or password');
             }
         } catch (error) {
-            console.error("Login failed:", error);
-            alert("Login failed. Please check your username and password.");
+            console.error('Error logging in:', error);
+            setError('An error occurred while logging in');
         }
     };
+    
 
     return (
-        <div className={`bg-white buttonClick duration-500 `}>
+        <div className={`bg-white buttonClick duration-500`}>
             <div className="flex justify-center h-screen ">
                 <div className={`text-gray-800 bg-white transition-opacity hidden bg-cover lg:block lg:w-2/3`}>
                     <div className={`h-full`}>
                         <div className={`h-full transition-opacity duration-200 ease-in-out`}>
                             <div className="flex items-center h-full bg-gray-900 bg-opacity-40">
                                 <div className="flex w-full h-full flex-col justify-center px-10 py-16 lg:px- z-10 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 background-animate">
-                                    <h2 className={`text-white text-4xl font-bold lg:mt-60 lg:ml-10 `}>KU CROWD</h2>
+                                    <h2 className={`text-white text-4xl font-bold lg:mt-60 lg:ml-10`}>KU CROWD</h2>
                                     <div className="max-w-xl lg:ml-10 mt-3 text-gray-300">
                                         Crowd Monitor Web App
                                     </div>
@@ -63,7 +72,11 @@ export function Login() {
                         </div>
 
                         <div className="mt-8">
-                            <form onSubmit={handleLogin}>
+                            <form onSubmit={(e) => {
+                                e.preventDefault(); // Prevent page reload on form submit
+                                handleLogin(username, password); // Send username and password
+                            }}>
+
                                 <div>
                                     <label className="block mb-2 text-sm font-bold text-gray-800">Username</label>
                                     <input
@@ -84,6 +97,8 @@ export function Login() {
                                         className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md"
                                     />
                                 </div>
+                                {error && <div className="mt-4 text-red-500">{error}</div>} {/* Show error message */}
+
                                 <div className="mt-6">
                                     <button
                                         type="submit"
