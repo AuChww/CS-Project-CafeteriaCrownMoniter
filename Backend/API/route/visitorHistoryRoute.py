@@ -47,9 +47,8 @@ def get_all_visitor_histories_endpoint():
 
 def post_visitor_history():
     
-    all_human_counts = get_human_count()
-    
-    total_visitor_count = sum(all_human_counts) 
+    # all_human_counts = get_human_count()
+    # total_visitor_count = sum(all_human_counts) 
     
     # Get a list of all zone_ids
     zone_ids = get_all_zones_service()
