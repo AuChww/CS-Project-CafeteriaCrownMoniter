@@ -150,7 +150,6 @@
 
 # Face blur
 
-
 import torch
 import cv2
 import numpy as np
@@ -166,11 +165,12 @@ face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fronta
 # # เปิดการเข้าถึงกล้อง
 # cap = cv2.VideoCapture(0)
 
-# สร้าง path ไปยังไฟล์วิดีโอ
-video_path = os.path.join(os.path.dirname(__file__), "../public/video/vidva.mp4")
 
 # เปิดวิดีโอด้วย OpenCV
 def get_human_count():
+    
+    # สร้าง path ไปยังไฟล์วิดีโอ
+    video_path = os.path.join(os.path.dirname(__file__), "../public/video/vidva.mp4")
     cap = cv2.VideoCapture(video_path)
 
 
@@ -181,6 +181,7 @@ def get_human_count():
     # ตัวแปรนับจำนวนคนใน ROI
     human_count = 0
     previous_people = []
+    frame_number = 0
 
     # ฟังก์ชันตรวจสอบว่าคนอยู่ในพื้นที่ ROI หรือไม่
     def is_within_roi(left, top, right, bottom, roi_top_left, roi_bottom_right):
@@ -194,6 +195,8 @@ def get_human_count():
         ret, frame = cap.read()
         if not ret:
             break
+        
+        frame_number += 1
 
         results = model(frame)
         frame_h, frame_w, _ = frame.shape
@@ -240,14 +243,18 @@ def get_human_count():
 
         # แสดงจำนวนคนที่ตรวจจับได้
         cv2.putText(frame, f"Human Count: {human_count}", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
-        cv2.rectangle(frame, roi_top_left, roi_bottom_right, (0, 255, 0), 2)  # วาด ROI
+        cv2.rectangle(frame, roi_top_left, roi_bottom_right, (0, 0, 255), 2)  # วาด ROI
 
         cv2.imshow('YOLOv8 Object Detection - Human Count & Face Blur', frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
         
-        print("Human counts in all frames:", all_human_counts)
+        # print("Human counts in all frames:", all_human_counts)
+        
+        if frame_number % 60 == 0:  # พิมพ์ทุก 10 เฟรม
+            print("Human counts in all frames:", all_human_counts)
+        
         
         test = sum(all_human_counts)
         
@@ -255,13 +262,8 @@ def get_human_count():
         # cap.release()
     return all_human_counts
 
-get_human_count()
+# get_human_count()
     
 # ปิดการเข้าถึงกล้อง
 # cap.release()
-# cv2.destroyAllWindows()
-
-
-
-
-
+cv2.destroyAllWindows()
