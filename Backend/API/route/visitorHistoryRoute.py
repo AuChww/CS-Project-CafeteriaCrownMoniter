@@ -15,6 +15,7 @@ import requests
 import pytz  # สำหรับจัดการไทม์โซน
 
 visitor_history_bp = Blueprint('visitor_history', __name__)
+visitor_counts_cache = {}
 
 @visitor_history_bp.route('/api/v1/getAllVisitorHistories', methods=['GET'])
 def get_all_visitor_histories_endpoint():
@@ -45,10 +46,26 @@ def get_all_visitor_histories_endpoint():
 #         for history in visitor_histories
 #     ])
 
-def post_visitor_history():
+
+def get_human_count(zone_id):
+    # ฟังก์ชันเก็บค่าจำนวนคนล่าสุดที่ xx:59:00
+    count = get_human_count(zone_id)  # สมมติว่าเป็นฟังก์ชันจริงที่ใช้
+    visitor_counts_cache[zone_id] = count
+    return count
+
+def objroi_scheduler():
+    tz = pytz.timezone('Asia/Bangkok')
+    scheduler = BackgroundScheduler(timezone=tz)
     
-    # all_human_counts = get_human_count()
-    # total_visitor_count = sum(all_human_counts) 
+    # ดึงค่าคนทุก xx:59:00
+    scheduler.add_job(lambda: [get_human_count(zone) for zone in get_all_zones_service()], 'cron', minute=59)
+    
+    scheduler.start()
+
+# เรียกใช้ฟังก์ชัน Scheduler
+objroi_scheduler()
+
+def post_visitor_history():
     
     # Get a list of all zone_ids
     zone_ids = get_all_zones_service()
@@ -65,11 +82,14 @@ def post_visitor_history():
     
 
     for zone_id in zone_ids:
+        # ใช้ get_human_count(zone_id) เพื่อดึงค่า visitor count
+        visitor_count = visitor_counts_cache.get(zone_id, 0)
+        
         # Define the payload for the request with the formatted, timezone-aware date_time
         data = {
             'date_time': formatted_time,
             'zone_id': zone_id,  # zone_id is now an integer
-            'visitor_count': 60
+            'visitor_count': visitor_count
         }
 
         # Post the data to your endpoint
@@ -108,6 +128,9 @@ def start_scheduler():
 
 # เรียกใช้งาน Scheduler
 start_scheduler()
+
+
+    
 
 @visitor_history_bp.route('/api/v1/addVisitorHistory', methods=['POST'])
 def add_visitor_history_endpoint():

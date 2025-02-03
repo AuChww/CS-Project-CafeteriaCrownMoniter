@@ -167,10 +167,16 @@ face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fronta
 
 
 # เปิดวิดีโอด้วย OpenCV
-def get_human_count():
+def get_human_count(zone_id):
     
     # สร้าง path ไปยังไฟล์วิดีโอ
-    video_path = os.path.join(os.path.dirname(__file__), "../public/video/vidva.mp4")
+    video_filename = f"vid_zone_{zone_id}.mp4"
+    video_path = os.path.join(os.path.dirname(__file__), "../public/video/{video_filename}")
+    # ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่
+    if not os.path.exists(video_path):
+        print(f"Video file for zone {zone_id} not found.")
+        return 0  # ถ้าไม่มีวิดีโอ ให้คืนค่า 0 ไปเลย
+    
     cap = cv2.VideoCapture(video_path)
 
 
@@ -243,26 +249,26 @@ def get_human_count():
 
         # แสดงจำนวนคนที่ตรวจจับได้
         cv2.putText(frame, f"Human Count: {human_count}", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
+        
+        
         cv2.rectangle(frame, roi_top_left, roi_bottom_right, (0, 0, 255), 2)  # วาด ROI
 
-        cv2.imshow('YOLOv8 Object Detection - Human Count & Face Blur', frame)
+        # cv2.imshow('YOLOv8 Object Detection - Human Count & Face Blur', frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
         
         # print("Human counts in all frames:", all_human_counts)
         
-        if frame_number % 60 == 0:  # พิมพ์ทุก 10 เฟรม
+        if frame_number % 60 == 0:  # พิมพ์ทุก 60 เฟรม
             print("Human counts in all frames:", all_human_counts)
         
         
-        test = sum(all_human_counts)
+        # test = sum(all_human_counts)
         
-        print(test)
+        # print(test)
         # cap.release()
-    return all_human_counts
-
-# get_human_count()
+    return all_human_counts[-1] if all_human_counts else 0
     
 # ปิดการเข้าถึงกล้อง
 # cap.release()
