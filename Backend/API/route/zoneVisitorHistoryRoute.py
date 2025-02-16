@@ -1,10 +1,10 @@
 from flask import Blueprint, jsonify, request
-from Application.Service.feature.visitorHistoryService import (
-    get_all_visitor_histories_service,
+from Application.Service.feature.zoneVisitorHistoryService import (
+    get_all_zone_visitor_histories_service,
     get_visitor_history_by_zone_id_service,
-    add_visitor_history_service,
-    update_visitor_history_service,
-    delete_visitor_history_service,
+    add_zone_visitor_history_service,
+    update_zone_visitor_history_service,
+    delete_zone_visitor_history_service,
     get_all_zones_service
 )
 
@@ -14,15 +14,15 @@ from datetime import datetime, timedelta
 import requests
 import pytz  # สำหรับจัดการไทม์โซน
 
-visitor_history_bp = Blueprint('visitor_history', __name__)
+zone_visitor_history_bp = Blueprint('zone_visitor_history', __name__)
 visitor_counts_cache = {}
 
-@visitor_history_bp.route('/api/v1/getAllVisitorHistories', methods=['GET'])
-def get_all_visitor_histories_endpoint():
-    visitor_histories = get_all_visitor_histories_service()
+@zone_visitor_history_bp.route('/api/v1/getAllVisitorHistories', methods=['GET'])
+def get_all_zone_visitor_histories_endpoint():
+    visitor_histories = get_all_zone_visitor_histories_service()
     visitor_histories_dicts = [
         {
-            'visitor_history_id': vh.visitor_history_id,
+            'zone_visitor_history_id': vh.zone_visitor_history_id,
             'date_time': vh.date_time,
             'zone_id': vh.zone_id,
             'visitor_count': vh.visitor_count
@@ -32,7 +32,7 @@ def get_all_visitor_histories_endpoint():
     return jsonify({'visitor_histories': visitor_histories_dicts})
 
 
-# @visitor_history_bp.route('/api/v1/getVisitorHistoryByZoneId/<int:zone_id>', methods=['GET'])
+# @zone_visitor_history_bp.route('/api/v1/getVisitorHistoryByZoneId/<int:zone_id>', methods=['GET'])
 # def get_visitor_history_by_zone_id_endpoint(zone_id):
 #     visitor_histories = get_visitor_history_by_zone_id_service(zone_id)
 #     if not visitor_histories:
@@ -65,8 +65,7 @@ def objroi_scheduler():
 # เรียกใช้ฟังก์ชัน Scheduler
 objroi_scheduler()
 
-def post_visitor_history():
-    
+def post_zone_visitor_history():
     # Get a list of all zone_ids
     zone_ids = get_all_zones_service()
 
@@ -121,7 +120,7 @@ def start_scheduler():
     scheduler = BackgroundScheduler(timezone=tz)
 
     # เพิ่ม Job ที่จะเริ่มในเวลาที่คำนวณได้ และทำซ้ำทุกๆ 1 ชั่วโมง
-    scheduler.add_job(post_visitor_history, 'interval', hours=1, next_run_time=next_run)
+    scheduler.add_job(post_zone_visitor_history, 'interval', hours=1, next_run_time=next_run)
 
     # เริ่ม Scheduler
     scheduler.start()
@@ -129,11 +128,8 @@ def start_scheduler():
 # เรียกใช้งาน Scheduler
 start_scheduler()
 
-
-    
-
-@visitor_history_bp.route('/api/v1/addVisitorHistory', methods=['POST'])
-def add_visitor_history_endpoint():
+@zone_visitor_history_bp.route('/api/v1/addVisitorHistory', methods=['POST'])
+def add_zone_visitor_history_endpoint():
     data = request.json
     date_time = data.get('date_time')
     zone_id = data.get('zone_id')
@@ -142,10 +138,10 @@ def add_visitor_history_endpoint():
     if not date_time or not zone_id or visitor_count is None:
         return jsonify({'message': 'Missing required fields'}), 400
 
-    visitor_history_id = add_visitor_history_service(date_time, zone_id, visitor_count)
-    return jsonify({'message': 'Visitor history added successfully', 'visitor_history_id': visitor_history_id}), 201
+    zone_visitor_history_id = add_zone_visitor_history_service(date_time, zone_id, visitor_count)
+    return jsonify({'message': 'Visitor history added successfully', 'zone_visitor_history_id': zone_visitor_history_id}), 201
 
-# @visitor_history_bp.route('/api/v1/addVisitorHistory', methods=['POST'])
+# @zone_visitor_history_bp.route('/api/v1/addVisitorHistory', methods=['POST'])
 # def add_visitor_history_endpoint():
 #     data = request.json
 #     date_time = data.get('date_time')
@@ -158,17 +154,17 @@ def add_visitor_history_endpoint():
 #     visitor_history_id = add_visitor_history_service(date_time, zone_id, visitor_count)
 #     return jsonify({'message': 'Visitor history added successfully', 'visitor_history_id': visitor_history_id}), 201
 
-@visitor_history_bp.route('/api/v1/updateVisitorHistory/<int:visitor_history_id>', methods=['PUT'])
-def update_visitor_history_endpoint(visitor_history_id):
+@zone_visitor_history_bp.route('/api/v1/updateVisitorHistory/<int:zone_visitor_history_id>', methods=['PUT'])
+def update_zone_visitor_history_endpoint(zone_visitor_history_id):
     data = request.json
-    updated = update_visitor_history_service(visitor_history_id, data)
+    updated = update_zone_visitor_history_service(zone_visitor_history_id, data)
     if not updated:
         return jsonify({'message': 'Visitor history not found'}), 404
     return jsonify({'message': 'Visitor history updated successfully'})
 
-@visitor_history_bp.route('/api/v1/deleteVisitorHistory/<int:visitor_history_id>', methods=['DELETE'])
-def delete_visitor_history_endpoint(visitor_history_id):
-    deleted = delete_visitor_history_service(visitor_history_id)
+@zone_visitor_history_bp.route('/api/v1/deleteVisitorHistory/<int:zone_visitor_history_id>', methods=['DELETE'])
+def delete_zone_visitor_history_endpoint(zone_visitor_history_id):
+    deleted = delete_zone_visitor_history_service(zone_visitor_history_id)
     if not deleted:
         return jsonify({'message': 'Visitor history not found'}), 404
     return jsonify({'message': 'Visitor history deleted successfully'})
