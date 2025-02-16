@@ -15,6 +15,7 @@ def get_all_restaurants():
             'restaurant_detail': r.restaurant_detail,
             'total_rating': r.total_rating,
             'total_reviews': r.total_reviews,
+            'current_visitor_count': r.current_visitor_count,
             'restaurant_image': r.restaurant_image  # เพิ่ม restaurant_image ในการตอบกลับ
         }
         for r in restaurants
@@ -35,6 +36,7 @@ def get_restaurant_by_id(restaurant_id):
         'restaurant_detail': restaurant.restaurant_detail,
         'total_rating': restaurant.total_rating,
         'total_reviews': restaurant.total_reviews,
+        'current_visitor_count': restaurant.current_visitor_count,
         'restaurant_image': restaurant.restaurant_image  # เพิ่ม restaurant_image ในการตอบกลับ
     })
 
