@@ -1,7 +1,17 @@
 import psycopg2
 from Infrastructure.db_connection import db_conn
 from Domain.entity.zoneEntity import ZoneEntity
-from Domain.entity.visitorHistoryEntity import VisitorHistoryEntity
+from Domain.entity.zoneVisitorHistoryEntity import ZoneVisitorHistoryEntity
+
+def get_total_visitors_by_bar(bar_id):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute('SELECT SUM(current_visitor_count) FROM zone WHERE bar_id = %s', (bar_id))
+    total = cur.fetchone()[0]
+    cur.close()
+    conn.close()
+    return total if total else 0  # ถ้า NULL ให้คืนค่าเป็น 0
+
 
 def get_all_zones():
     conn = db_conn()
@@ -52,7 +62,7 @@ def get_visitor_history_by_zone_id(zone_id):
     cur = conn.cursor()
     query = """
         SELECT zone_id, visitor_count, date_time
-        FROM visitor_history
+        FROM zone_visitor_history
         WHERE zone_id = %s
     """
     cur.execute(query, (zone_id,))
@@ -62,7 +72,7 @@ def get_visitor_history_by_zone_id(zone_id):
 
     if rows:
         return [
-            VisitorHistoryEntity(
+            ZoneVisitorHistoryEntity(
                 date_time=row[2],  # date_time corresponds to row[2]
                 zone_id=row[0],
                 visitor_count=row[1]

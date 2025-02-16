@@ -2,6 +2,7 @@ import psycopg2
 from Infrastructure.db_connection import db_conn
 from Domain.entity.restaurantEntity import RestaurantEntity
 from Domain.entity.reviewEntity import ReviewEntity
+from Domain.entity.restaurantVisitorHistoryEntity import RestaurantVisitorHistoryEntity
 
 def get_all_restaurants():
     conn = db_conn()
@@ -20,7 +21,8 @@ def get_all_restaurants():
             restaurant_detail=row[4],
             total_rating=row[5],
             total_reviews=row[6],
-            restaurant_image=row[7]  # เพิ่มฟิลด์ restaurant_image
+            current_visitor_count=row[7],
+            restaurant_image=row[8]  # เพิ่มฟิลด์ restaurant_image
         )
         for row in data
     ]
@@ -43,9 +45,34 @@ def get_restaurant_by_id(restaurant_id):
             restaurant_detail=row[4],
             total_rating=row[5],
             total_reviews=row[6],
-            restaurant_image=row[7]  # เพิ่มฟิลด์ restaurant_image
+            current_visitor_count=row[7],
+            restaurant_image=row[8]  
         )
     return None
+
+def get_visitor_history_by_restaurant_id(restaurant_id):
+    conn = db_conn()
+    cur = conn.cursor()
+    query = """
+        SELECT restaurant_id, visitor_count, date_time
+        FROM restaurant_visitor_history
+        WHERE restaurant_id = %s
+    """
+    cur.execute(query, (restaurant_id,))
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    if rows:
+        return [
+            RestaurantVisitorHistoryEntity(
+                date_time=row[2],  # date_time corresponds to row[2]
+                restaurant_id=row[0],
+                visitor_count=row[1]
+            )
+            for row in rows
+        ]
+    return []
 
 def get_all_reviews_by_restaurant_id(restaurant_id):
     conn = db_conn()

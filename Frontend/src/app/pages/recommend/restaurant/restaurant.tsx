@@ -11,6 +11,7 @@ interface Restaurant {
   restaurant_detail: string;
   total_rating: number;
   total_reviews: number;
+  current_visitor_count: number;
   restaurant_image: string;
 }
 
@@ -84,6 +85,7 @@ const AllRestaurant: React.FC = () => {
                 restaurant_detail={restaurant.restaurant_detail}
                 total_rating={restaurant.total_rating}
                 total_reviews={restaurant.total_reviews}
+                current_visitor_count={restaurant.current_visitor_count}
                 restaurant_image={restaurant.restaurant_image}
               />
             </div>
