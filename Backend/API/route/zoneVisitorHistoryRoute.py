@@ -7,12 +7,15 @@ from Application.Service.feature.zoneVisitorHistoryService import (
     delete_zone_visitor_history_service,
     get_all_zones_service
 )
+
+from Application.objroi import get_human_count
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta
 import requests
 import pytz  # สำหรับจัดการไทม์โซน
 
 zone_visitor_history_bp = Blueprint('zone_visitor_history', __name__)
+visitor_counts_cache = {}
 
 @zone_visitor_history_bp.route('/api/v1/getAllVisitorHistories', methods=['GET'])
 def get_all_zone_visitor_histories_endpoint():
@@ -43,6 +46,25 @@ def get_all_zone_visitor_histories_endpoint():
 #         for history in visitor_histories
 #     ])
 
+
+def get_human_count(zone_id):
+    # ฟังก์ชันเก็บค่าจำนวนคนล่าสุดที่ xx:59:00
+    count = get_human_count(zone_id)  # สมมติว่าเป็นฟังก์ชันจริงที่ใช้
+    visitor_counts_cache[zone_id] = count
+    return count
+
+def objroi_scheduler():
+    tz = pytz.timezone('Asia/Bangkok')
+    scheduler = BackgroundScheduler(timezone=tz)
+    
+    # ดึงค่าคนทุก xx:59:00
+    scheduler.add_job(lambda: [get_human_count(zone) for zone in get_all_zones_service()], 'cron', minute=59)
+    
+    scheduler.start()
+
+# เรียกใช้ฟังก์ชัน Scheduler
+objroi_scheduler()
+
 def post_zone_visitor_history():
     # Get a list of all zone_ids
     zone_ids = get_all_zones_service()
@@ -56,13 +78,17 @@ def post_zone_visitor_history():
 
     # Format the datetime correctly as 'YYYY-MM-DD HH:MM:SS'
     formatted_time = now.strftime('%Y-%m-%d %H:%M:%S')
+    
 
     for zone_id in zone_ids:
+        # ใช้ get_human_count(zone_id) เพื่อดึงค่า visitor count
+        visitor_count = visitor_counts_cache.get(zone_id, 0)
+        
         # Define the payload for the request with the formatted, timezone-aware date_time
         data = {
             'date_time': formatted_time,
             'zone_id': zone_id,  # zone_id is now an integer
-            'visitor_count': 60
+            'visitor_count': visitor_count
         }
 
         # Post the data to your endpoint
