@@ -1,4 +1,10 @@
-from Infrastructure.Repository.barRepository import get_all_bars, get_bar_by_id, get_all_restaurants_by_bar_id, get_all_reviews_by_bar_id, get_all_zones_by_bar_id, add_bar, update_bar, delete_bar
+from Infrastructure.Repository.barRepository import update_bar_visitor_count, get_all_bars, get_bar_by_id, get_all_restaurants_by_bar_id, get_all_reviews_by_bar_id, get_all_zones_by_bar_id, add_bar, update_bar, delete_bar
+from Infrastructure.Repository.zoneRepository import get_total_visitors_by_bar
+
+def update_bar_visitors(bar_id):
+    total_visitors = get_total_visitors_by_bar(bar_id)
+    update_bar_visitor_count(bar_id, total_visitors)
+    return total_visitors  # ส่งค่ากลับเพื่อใช้แสดงผล
 
 def get_all_bars_service():
     return get_all_bars()
