@@ -5,6 +5,15 @@ from Domain.entity.restaurantEntity import RestaurantEntity
 from Domain.entity.reviewEntity import ReviewEntity
 from Domain.entity.zoneEntity import ZoneEntity
 
+def update_bar_visitor_count(bar_id, visitor_count):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute('UPDATE bar SET current_visitor_count = %s WHERE bar_id = %s', (visitor_count, bar_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
 def get_all_bars():
     conn = db_conn()
     cur = conn.cursor()
@@ -19,10 +28,11 @@ def get_all_bars():
             bar_name=row[1],
             bar_location=row[2],
             bar_detail=row[3],
-            max_people_in_bar=row[4],  # Mapping to max_people_in_bar from DB
-            total_rating=row[5],        # Mapping to total_rating from DB
-            total_reviews=row[6],       # Mapping to total_reviews from DB
-            bar_image=row[7]            # Mapping to bar_image from DB
+            current_visitor_count=row[4],
+            max_people_in_bar=row[5],  # Mapping to max_people_in_bar from DB
+            total_rating=row[6],        # Mapping to total_rating from DB
+            total_reviews=row[7],       # Mapping to total_reviews from DB
+            bar_image=row[8]            # Mapping to bar_image from DB
         )
         for row in data
     ]
@@ -43,10 +53,11 @@ def get_bar_by_id(bar_id):
             bar_name=row[1],
             bar_location=row[2],
             bar_detail=row[3],
-            max_people_in_bar=row[4],  # Mapping to max_people_in_bar from DB
-            total_rating=row[5],        # Mapping to total_rating from DB
-            total_reviews=row[6],       # Mapping to total_reviews from DB
-            bar_image=row[7]            # Mapping to bar_image from DB
+            current_visitor_count=row[4],
+            max_people_in_bar=row[5],  # Mapping to max_people_in_bar from DB
+            total_rating=row[6],        # Mapping to total_rating from DB
+            total_reviews=row[7],       # Mapping to total_reviews from DB
+            bar_image=row[8]           # Mapping to bar_image from DB
         )
     return None
 

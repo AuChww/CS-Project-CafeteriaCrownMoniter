@@ -1,7 +1,15 @@
 from flask import Blueprint, jsonify, request
-from Application.Service.feature.barService import get_all_bars_service, get_bar_by_id_service, get_all_restaurants_by_bar_id_service, get_all_reviews_by_bar_id_service, get_all_zones_by_bar_id_service, add_bar_service, update_bar_service, delete_bar_service
+from Application.Service.feature.barService import update_bar_visitors,get_all_bars_service, get_bar_by_id_service, get_all_restaurants_by_bar_id_service, get_all_reviews_by_bar_id_service, get_all_zones_by_bar_id_service, add_bar_service, update_bar_service, delete_bar_service
 
 bar_bp = Blueprint('bars', __name__)
+
+@bar_bp.route('/update_bar_visitors/<int:bar_id>', methods=['POST'])
+def update_bar_visitors(bar_id):
+    total_visitors = update_bar_visitors(bar_id)
+    return jsonify({
+        "bar_id": bar_id,
+        "updated_current_visitor_count": total_visitors
+    }), 200
 
 @bar_bp.route('/api/v1/getAllBars', methods=['GET'])
 def get_all_bars():
@@ -12,6 +20,7 @@ def get_all_bars():
             'bar_name': bar.bar_name,
             'bar_location': bar.bar_location,
             'bar_detail': bar.bar_detail,
+            'current_visitor_count': bar.current_visitor_count,
             'max_people_in_bar': bar.max_people_in_bar,
             'total_rating': bar.total_rating,
             'total_reviews': bar.total_reviews,
@@ -32,6 +41,7 @@ def get_bar_by_id(bar_id):
         'bar_name': bar.bar_name,
         'bar_location': bar.bar_location,
         'bar_detail': bar.bar_detail,
+        'current_visitor_count' : bar.current_visitor_count,
         'max_people_in_bar': bar.max_people_in_bar,
         'total_rating': bar.total_rating,
         'total_reviews': bar.total_reviews,
