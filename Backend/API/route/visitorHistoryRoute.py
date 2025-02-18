@@ -62,7 +62,7 @@ def objroi_scheduler():
     
     scheduler.start()
 
-# เรียกใช้ฟังก์ชัน Scheduler
+# เรียกใช้ฟังก์ชัน objroi_Scheduler
 objroi_scheduler()
 
 def post_visitor_history():
@@ -84,6 +84,7 @@ def post_visitor_history():
     for zone_id in zone_ids:
         # ใช้ get_human_count(zone_id) เพื่อดึงค่า visitor count
         visitor_count = visitor_counts_cache.get(zone_id, 0)
+        # test = get_human_count(zone_id)
         
         # Define the payload for the request with the formatted, timezone-aware date_time
         data = {
