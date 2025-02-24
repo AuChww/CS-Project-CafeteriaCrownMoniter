@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import CrowdCard from "@/components/CrowdCard";
 import YouTubeEmbed from "@/components/youtubeEmbed";
+import UpdateZoneCountButton from "@/components/ZoneCountTest";
 
 interface Bar {
   bar_id: number;
@@ -75,6 +76,7 @@ export default function HomePage() {
         />
 
       </div>
+      <UpdateZoneCountButton />
       <div className="text-center text-4xl my-8 py-6 text-green-500 font-bold">
         Bar Crowd
       </div>
