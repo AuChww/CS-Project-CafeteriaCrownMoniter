@@ -402,6 +402,7 @@ def get_human_count(zone_id):
     # สร้าง path ไปยังไฟล์วิดีโอ
     # zone_id = "{zone_id}.mp4"
     video_path = os.path.join(os.path.dirname(__file__), f"../public/video/{zone_id}.mp4")
+    print(f"start human count zone {zone_id}")
     
     if not os.path.exists(video_path):
         print(f"Video file {zone_id} not found.")
@@ -421,8 +422,11 @@ def get_human_count(zone_id):
     def is_within_roi(left, top, right, bottom, roi_top_left, roi_bottom_right):
         return (left > roi_top_left[0] and right < roi_bottom_right[0] and
                 top > roi_top_left[1] and bottom < roi_bottom_right[1])
+    
+    print(f"before while loop")
 
     while True:
+        print(f"in while loop")
         ret, frame = cap.read()
         if not ret:
             break
@@ -440,6 +444,8 @@ def get_human_count(zone_id):
         detections = results[0].boxes.xyxy.cpu().numpy()
         classes = results[0].boxes.cls.cpu().numpy()
 
+        print(f"before current count")
+
         current_counts = {zone: 0 for zone in roi_areas}
 
         for i, box in enumerate(detections):
@@ -451,9 +457,13 @@ def get_human_count(zone_id):
                     if is_within_roi(left, top, right, bottom, roi_top_left, roi_bottom_right):
                         current_counts[zone] += 1
 
+        print(f"before roi in while")
+
         # บันทึกจำนวนคนในแต่ละ ROI
         for zone in roi_areas:
             human_counts[zone].append(current_counts[zone])
+
+        print(f"before mod")
 
         # แสดงผลแค่ทุกๆ 10 เฟรม
         if frame_number % 10 == 0:
@@ -464,18 +474,19 @@ def get_human_count(zone_id):
 
             # cv2.imshow('YOLOv8 Human Detection', frame)
 
+        print(f"before break")
+
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+
+    print(f"before print roi area")
 
     cap.release()
     cv2.destroyAllWindows()
     
     for zone in roi_areas:
-        print(f"{zone}: {human_counts[zone][-1] if human_counts[zone] else 0}")
+        print(f"zone {zone}: {human_counts[zone][-1] if human_counts[zone] else 0}")
 
     print(f"success human count")
 
-
-    return {zone: human_counts[zone][-1] if human_counts[zone] else 0 for zone in roi_areas}
-
-# get_human_count(1)
+    return {zone : human_counts[zone][-1] if human_counts[zone] else 0 for zone in roi_areas}
