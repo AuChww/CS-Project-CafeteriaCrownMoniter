@@ -1,4 +1,8 @@
 from flask import Blueprint, jsonify, request
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+
 from Application.Service.feature.zoneService import (
     get_all_zones_service,
     get_zone_by_id_service,
@@ -7,10 +11,17 @@ from Application.Service.feature.zoneService import (
     get_all_report_by_zone_id_service,
     add_zone_service,
     update_zone_service,
+    update_zone_count,
     delete_zone_service
 )
 
+from Application.objroi import get_human_count
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime, timedelta
+import pytz 
+
 zone_bp = Blueprint('zones', __name__)
+visitor_counts_cache = {}
 
 @zone_bp.route('/api/v1/getAllZones', methods=['GET'])
 def get_all_zones_endpoint():
@@ -30,11 +41,38 @@ def get_all_zones_endpoint():
     ]
     return jsonify({'zones': zone_list})
 
+# def get_visitor_count(zone_id):
+#     count = get_human_count(zone_id)  
+#     visitor_counts_cache[zone_id] = count
+    
+#     print("test count in zoneroute",count)
+#     return count
+
+# def objroi_scheduler():
+#     tz = pytz.timezone('Asia/Bangkok')
+#     scheduler = BackgroundScheduler(timezone=tz)
+    
+#     # ดึงค่าคนทุกๆ 10 นาที
+#     scheduler.add_job(update_visitor_counts, 'interval', minutes=10)
+    
+#     scheduler.start()
+
 @zone_bp.route('/api/v1/getZoneById/<int:zone_id>', methods=['GET'])
 def get_zone_by_id_endpoint(zone_id):
     zone = get_zone_by_id_service(zone_id)  # Use the service function here
     if not zone:
         return jsonify({'message': 'Zone not found'}), 404
+    
+    # count = visitor_counts_cache.get(zone, zone.current_visitor_count)
+    
+    # zones = get_all_zones_service()  # ดึงรายการโซนทั้งหมด
+    # for zone in zones:
+    #     count = get_human_count(zone.zone_id)  # ดึงค่าจำนวนคนของแต่ละโซน
+    #     visitor_counts_cache[zone.zone_id] = count  # อัปเดตค่าในแคช
+    #     print(f"zone {zone.zone_id}: {count} human count")
+        
+    # count = update_visitor_counts(zone_id)
+    
 
     return jsonify({
         'zone_id': zone.zone_id,
@@ -43,6 +81,7 @@ def get_zone_by_id_endpoint(zone_id):
         'zone_detail': zone.zone_detail,
         'max_people_in_zone': zone.max_people_in_zone,
         'current_visitor_count': zone.current_visitor_count,
+        # 'current_visitor_count': count,
         'update_date_time': zone.update_date_time,
         'zone_time': zone.zone_time
     })
@@ -101,6 +140,68 @@ def update_zone_endpoint(zone_id):
         return jsonify({'message': 'Zone not found'}), 404
 
     return jsonify({'message': 'Zone updated successfully'})
+
+
+def update_visitor_counts():
+    
+    zones = get_all_zones_service()  # ดึงรายการโซนทั้งหมด
+    for zone in zones:
+        count = get_human_count(zone.zone_id)  # ดึงค่าจำนวนคนของแต่ละโซน
+        visitor_counts_cache[zone.zone_id] = count  # อัปเดตค่าในแคช
+        get_all_report_by_zone_id_endpoint(zone.zone_id)
+        print(f"zone {zone.zone_id}: {count} human count")
+        
+# @zone_bp.route('/api/v1/updateZone/<int:zone_id>', methods=['PUT'])
+# def update_zone_and_visitor_count(zone_id):
+#     data = request.json
+#     updated = update_zone_service(zone_id, data)  # อัปเดตข้อมูลโซน
+
+#     if not updated:
+#         return jsonify({'message': 'Zone not found'}), 404
+
+#     # ดึงจำนวนคนล่าสุดจากกล้อง
+#     count = get_human_count(zone_id)
+#     visitor_counts_cache[zone_id] = count  # อัปเดตค่าในแคช
+
+#     # อัปเดตรายงานของโซนนั้น
+#     get_all_report_by_zone_id_endpoint(zone_id)
+
+#     print(f"Zone {zone_id}: {count} human count")
+
+#     return jsonify({
+#         'message': 'Zone and visitor count updated successfully',
+#         'zone_id': zone_id,
+#         'updated_count': count
+#     })
+
+
+
+@zone_bp.route('/api/v1/updateCountAllZones', methods=['PATCH'])
+def update_count_all_zones():
+    zones = get_all_zones_service()  # ดึงข้อมูลทุกโซน
+
+    # สร้าง dictionary เพื่อเก็บจำนวนคนในแต่ละโซน
+    updated_counts = {}
+
+    for zone in zones:
+        count = get_human_count(zone.zone_id)  # ดึงจำนวนคนจากแต่ละโซน
+        zone.current_visitor_count = count  # อัปเดตค่าในข้อมูล
+        visitor_counts_cache[zone.zone_id] = count  # อัปเดตค่าในแคช
+        get_all_report_by_zone_id_endpoint(zone.zone_id)  # อัปเดตรายงาน
+
+        # บันทึกลงฐานข้อมูลผ่าน service
+        update_zone_count(zone.zone_id, count)
+
+        # เก็บข้อมูลจำนวนคนในแต่ละโซน
+        updated_counts[zone.zone_id] = count
+
+        print(f"Zone {zone.zone_id}: {count} human count")
+
+    # ส่งคืน current_visitor_count ทั้งหมด
+    return {"updated_counts": updated_counts}, 200
+
+
+        
 
 @zone_bp.route('/api/v1/deleteZone/<int:zone_id>', methods=['DELETE'])
 def delete_zone_endpoint(zone_id):

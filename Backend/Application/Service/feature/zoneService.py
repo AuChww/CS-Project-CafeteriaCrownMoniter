@@ -6,6 +6,7 @@ from Infrastructure.Repository.zoneRepository import (
     get_all_report_by_zone_id,
     add_zone,
     update_zone,
+    update_zone_count,
     delete_zone
 )
 
@@ -30,5 +31,9 @@ def add_zone_service(bar_id, zone_name, zone_detail=None, max_people_in_zone=0, 
 def update_zone_service(zone_id, data):
     return update_zone(zone_id, data)
 
+def update_zone_visitor_count(zone_id, count):
+    return update_zone_count(zone_id, count)
+
 def delete_zone_service(zone_id):
     return delete_zone(zone_id)
+
