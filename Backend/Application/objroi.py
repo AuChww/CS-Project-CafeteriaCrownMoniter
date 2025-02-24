@@ -473,6 +473,9 @@ def get_human_count(zone_id):
     for zone in roi_areas:
         print(f"{zone}: {human_counts[zone][-1] if human_counts[zone] else 0}")
 
+    print(f"success human count")
+
 
     return {zone: human_counts[zone][-1] if human_counts[zone] else 0 for zone in roi_areas}
 
+# get_human_count(1)

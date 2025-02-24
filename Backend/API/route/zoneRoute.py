@@ -178,30 +178,46 @@ def update_visitor_counts():
 
 @zone_bp.route('/api/v1/updateCountAllZones', methods=['PATCH'])
 def update_count_all_zones():
-    zones = get_all_zones_service()  # ดึงข้อมูลทุกโซน
+    # ดึงข้อมูลทุกโซน
+    zones = get_all_zones_service()  
+
+    # ตรวจสอบว่า zones มีข้อมูลหรือไม่
+    if not zones:
+        return {"error": "No zones found"}, 400
 
     # สร้าง dictionary เพื่อเก็บจำนวนคนในแต่ละโซน
     updated_counts = {}
 
+    # วนลูปอัปเดตข้อมูล
     for zone in zones:
-        count = get_human_count(zone.zone_id)  # ดึงจำนวนคนจากแต่ละโซน
-        zone.current_visitor_count = count  # อัปเดตค่าในข้อมูล
-        visitor_counts_cache[zone.zone_id] = count  # อัปเดตค่าในแคช
-        get_all_report_by_zone_id_endpoint(zone.zone_id)  # อัปเดตรายงาน
+        # ดึงจำนวนคนจากแต่ละโซน
+        print(f"before human count")
+        human_count = get_human_count(zone.zone_id)  # ค่าที่ได้จะเป็น int เช่น 5, 3
+        print(f"count = {human_count}")
+
+        # เพิ่ม log เพื่อตรวจสอบค่าที่ได้
+        print(f"Updating zone {zone.zone_id} with human count: {human_count}")
+
+        # ตรวจสอบว่า human_count เป็น int หรือไม่
+        if not isinstance(human_count, int):
+            return {"error": f"Invalid human count for zone {zone.zone_id}"}, 400
+
+        # อัปเดตข้อมูลจำนวนคนในโซน
+        zone.current_visitor_count = human_count  # อัปเดตค่าในข้อมูล
+        visitor_counts_cache[zone.zone_id] = human_count  # อัปเดตค่าในแคช
 
         # บันทึกลงฐานข้อมูลผ่าน service
-        update_zone_count(zone.zone_id, count)
+        update_zone_count(zone.zone_id, human_count)  # ตรวจสอบว่า human_count เป็น int ที่ส่งไปที่นี่
+
+        print(f"Zone {zone.zone_name}: {human_count} human count")
 
         # เก็บข้อมูลจำนวนคนในแต่ละโซน
-        updated_counts[zone.zone_id] = count
-
-        print(f"Zone {zone.zone_id}: {count} human count")
+        updated_counts[zone.zone_id] = human_count
 
     # ส่งคืน current_visitor_count ทั้งหมด
     return {"updated_counts": updated_counts}, 200
 
 
-        
 
 @zone_bp.route('/api/v1/deleteZone/<int:zone_id>', methods=['DELETE'])
 def delete_zone_endpoint(zone_id):

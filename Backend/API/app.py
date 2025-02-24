@@ -23,7 +23,7 @@ app.register_blueprint(auth_bp)
 
 CORS(app, resources={r"/api/*": {
     "origins": "http://localhost:3000",
-    "methods": ["GET", "POST", "OPTIONS", "PUT", "DELETE"],  # เพิ่ม PUT และ DELETE
+    "methods": ["GET", "POST", "OPTIONS", "PUT", "DELETE", "PATCH"],  # เพิ่ม PUT และ DELETE
     "allow_headers": ["Authorization", "Content-Type"]
 }})
 
