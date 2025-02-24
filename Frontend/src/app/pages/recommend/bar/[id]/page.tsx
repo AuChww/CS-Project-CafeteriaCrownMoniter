@@ -220,7 +220,6 @@ const BarPage = () => {
                     </div>
     
                     {/* Dropdown Icons */}
-                    <ContextDropdown />
                   </div>
     
                   <p className="text-gray-800 text-sm font-normal leading-snug">
