@@ -46,8 +46,6 @@ def get_all_zone_visitor_histories_endpoint():
 #     ])
 
 
-
-
 # เรียกใช้ฟังก์ชัน objroi_Scheduler
 
 def post_zone_visitor_history():
@@ -73,7 +71,7 @@ def post_zone_visitor_history():
         data = {
             'date_time': formatted_time,
             'zone_id': zone_id,  # zone_id is now an integer
-            'visitor_count': visitor_count
+            'current_visitor_count': visitor_count
         }
 
         # Post the data to your endpoint

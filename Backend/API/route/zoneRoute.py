@@ -63,16 +63,6 @@ def get_zone_by_id_endpoint(zone_id):
     if not zone:
         return jsonify({'message': 'Zone not found'}), 404
     
-    # count = visitor_counts_cache.get(zone, zone.current_visitor_count)
-    
-    # zones = get_all_zones_service()  # ดึงรายการโซนทั้งหมด
-    # for zone in zones:
-    #     count = get_human_count(zone.zone_id)  # ดึงค่าจำนวนคนของแต่ละโซน
-    #     visitor_counts_cache[zone.zone_id] = count  # อัปเดตค่าในแคช
-    #     print(f"zone {zone.zone_id}: {count} human count")
-        
-    # count = update_visitor_counts(zone_id)
-    
 
     return jsonify({
         'zone_id': zone.zone_id,
@@ -81,7 +71,6 @@ def get_zone_by_id_endpoint(zone_id):
         'zone_detail': zone.zone_detail,
         'max_people_in_zone': zone.max_people_in_zone,
         'current_visitor_count': zone.current_visitor_count,
-        # 'current_visitor_count': count,
         'update_date_time': zone.update_date_time,
         'zone_time': zone.zone_time
     })
@@ -142,40 +131,6 @@ def update_zone_endpoint(zone_id):
     return jsonify({'message': 'Zone updated successfully'})
 
 
-def update_visitor_counts():
-    
-    zones = get_all_zones_service()  # ดึงรายการโซนทั้งหมด
-    for zone in zones:
-        count = get_human_count(zone.zone_id)  # ดึงค่าจำนวนคนของแต่ละโซน
-        visitor_counts_cache[zone.zone_id] = count  # อัปเดตค่าในแคช
-        get_all_report_by_zone_id_endpoint(zone.zone_id)
-        print(f"zone {zone.zone_id}: {count} human count")
-        
-# @zone_bp.route('/api/v1/updateZone/<int:zone_id>', methods=['PUT'])
-# def update_zone_and_visitor_count(zone_id):
-#     data = request.json
-#     updated = update_zone_service(zone_id, data)  # อัปเดตข้อมูลโซน
-
-#     if not updated:
-#         return jsonify({'message': 'Zone not found'}), 404
-
-#     # ดึงจำนวนคนล่าสุดจากกล้อง
-#     count = get_human_count(zone_id)
-#     visitor_counts_cache[zone_id] = count  # อัปเดตค่าในแคช
-
-#     # อัปเดตรายงานของโซนนั้น
-#     get_all_report_by_zone_id_endpoint(zone_id)
-
-#     print(f"Zone {zone_id}: {count} human count")
-
-#     return jsonify({
-#         'message': 'Zone and visitor count updated successfully',
-#         'zone_id': zone_id,
-#         'updated_count': count
-#     })
-
-
-
 @zone_bp.route('/api/v1/updateCountAllZones', methods=['PATCH'])
 def update_count_all_zones():
     # ดึงข้อมูลทุกโซน
@@ -192,6 +147,7 @@ def update_count_all_zones():
     for zone in zones:
         # ดึงจำนวนคนจากแต่ละโซน
         print(f"before human count")
+        print(f"{zone.zone_id}")
         human_count = get_human_count(zone.zone_id)  # ค่าที่ได้จะเป็น int เช่น 5, 3
         print(f"count = {human_count}")
 
