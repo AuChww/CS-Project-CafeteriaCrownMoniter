@@ -23,6 +23,7 @@ interface Restaurant {
     restaurant_location: string;
     total_rating: number;
     total_reviews: number;
+    current_visitor_count: number;
     zone_id: number;
 }
 
@@ -102,6 +103,7 @@ const ZonePage = () => {
                                 restaurant_image={restaurant.restaurant_image}
                                 restaurant_location={restaurant.restaurant_location}
                                 total_rating={restaurant.total_rating}
+                                current_visitor_count={restaurant.current_visitor_count}
                                 total_reviews={restaurant.total_reviews}
                             />
                         </div>
