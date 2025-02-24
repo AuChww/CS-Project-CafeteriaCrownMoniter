@@ -108,7 +108,7 @@ def get_all_report_by_zone_id(zone_id):
     conn = db_conn()
     cur = conn.cursor()
     query = '''
-        SELECT r.report_id, r.zone_id, r.report_type, r.report_date, r.report_detail
+        SELECT r.report_id, r.zone_id, r.report_type, r.report_message, r.created_time
         FROM report r
         WHERE r.zone_id = %s
     '''
@@ -120,10 +120,10 @@ def get_all_report_by_zone_id(zone_id):
     reports = [
         {
             'report_id': row[0],
-            'zone_id': row[1],
-            'report_type': row[2],
-            'report_date': row[3],
-            'report_detail': row[4]
+            'zone_id': row[2],
+            'report_type': row[4],
+            'report_message': row[5],
+            'created_time': row[6],
         }
         for row in data
     ]
@@ -158,13 +158,13 @@ def update_zone(zone_id, data):
     conn.close()
     return updated
 
-def update_zone_visitor_count(zone_id, count):
+def update_zone_count(zone_id, count):
     """ อัปเดตค่าจำนวนคนที่อยู่ในโซน """
     conn = db_conn()
     cur = conn.cursor()
     cur.execute(
         "UPDATE zone SET current_visitor_count = %s WHERE zone_id = %s",
-        (count, zone_id)
+        (count, zone_id)  # count ต้องเป็น int ที่ส่งไปที่นี่
     )
     updated = cur.rowcount > 0
     conn.commit()
