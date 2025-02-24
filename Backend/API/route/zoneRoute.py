@@ -63,16 +63,6 @@ def get_zone_by_id_endpoint(zone_id):
     if not zone:
         return jsonify({'message': 'Zone not found'}), 404
     
-    # count = visitor_counts_cache.get(zone, zone.current_visitor_count)
-    
-    # zones = get_all_zones_service()  # ดึงรายการโซนทั้งหมด
-    # for zone in zones:
-    #     count = get_human_count(zone.zone_id)  # ดึงค่าจำนวนคนของแต่ละโซน
-    #     visitor_counts_cache[zone.zone_id] = count  # อัปเดตค่าในแคช
-    #     print(f"zone {zone.zone_id}: {count} human count")
-        
-    # count = update_visitor_counts(zone_id)
-    
 
     return jsonify({
         'zone_id': zone.zone_id,
@@ -81,7 +71,6 @@ def get_zone_by_id_endpoint(zone_id):
         'zone_detail': zone.zone_detail,
         'max_people_in_zone': zone.max_people_in_zone,
         'current_visitor_count': zone.current_visitor_count,
-        # 'current_visitor_count': count,
         'update_date_time': zone.update_date_time,
         'zone_time': zone.zone_time
     })

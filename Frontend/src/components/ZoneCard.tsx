@@ -9,6 +9,7 @@ interface ZoneCardProps {
   current_visitor_count: number;
   update_date_time: string;
   zone_time: number;
+  zone_image: string;
 }
 
 function renderStars(totalRating: number) {
@@ -81,16 +82,24 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
   current_visitor_count,
   update_date_time,
   zone_time,
+  zone_image
 }) => {
   return (
     <div
       key={zone_id}
       className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 "
     >
+      <img
+          className="rounded-t-lg w-full max-h-60"
+          src={zone_image ? `/image/zoneImages/${zone_image}` : `/image/zoneImages/placeholder.jpg`}
+          alt={zone_name}
+        />
       <div className="p-5 space-y-3 ">
+
+
         {/* zone Name */}
         <a href="#">
-          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          <h5 className="mb-2 mt-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             {zone_name}
           </h5>
         </a>
@@ -104,13 +113,13 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
 
         {/* zone Location */}
         <div className="flex space-x-1 text-sm text-gray-500 dark:text-gray-400 ">
-          <svg fill="#000000" width="25px" height="25px" viewBox="-3 0 19 19" xmlns="http://www.w3.org/2000/svg" className="cf-icon-svg"><path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z"/></svg>
-          
+          <svg fill="#000000" width="25px" height="25px" viewBox="-3 0 19 19" xmlns="http://www.w3.org/2000/svg" className="cf-icon-svg"><path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z" /></svg>
+
           <div className="flex space-x-1 text-base">
-          <p>{current_visitor_count} / </p>
-          <p>{max_people_in_zone}</p>
+            <p>{current_visitor_count} / </p>
+            <p>{max_people_in_zone}</p>
           </div>
-          
+
         </div>
 
         {/* <div className="flex items-center text-sm mt-2.5 mb-5 space-x-2 text-gray-700">
