@@ -1,2 +1,3 @@
 # from .ContactRepository.interface import *
-# from .Service.interface import *
+from .objroi import get_human_count
+from .Service import *

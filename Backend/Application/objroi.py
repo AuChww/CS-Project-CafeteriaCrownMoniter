@@ -170,8 +170,8 @@
 # def get_human_count(zone_id):
     
 #     # สร้าง path ไปยังไฟล์วิดีโอ
-#     video_filename = f"vid_zone_{zone_id}.mp4"
-#     video_path = os.path.join(os.path.dirname(__file__), "../public/video/{video_filename}")
+#     zone_id = f"vid_zone_{zone_id}.mp4"
+#     video_path = os.path.join(os.path.dirname(__file__), "../public/video/{zone_id}")
 #     # ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่
 #     if not os.path.exists(video_path):
 #         print(f"Video file for zone {zone_id} not found.")
@@ -293,8 +293,8 @@
 # def get_human_count(zone_id):
 #     # สร้าง path ไปยังไฟล์วิดีโอ
 #     zone_id = "vidva.mp4"
-#     # video_filename = f"vid_zone_{zone_id}.mp4"
-#     # video_path = os.path.join(os.path.dirname(__file__), f"../public/video/{video_filename}")
+#     # zone_id = f"vid_zone_{zone_id}.mp4"
+#     # video_path = os.path.join(os.path.dirname(__file__), f"../public/video/{zone_id}")
 #     video_path = os.path.join(os.path.dirname(__file__), f"../public/video/{zone_id}")
     
 #     if not os.path.exists(video_path):
@@ -400,11 +400,11 @@ model = YOLO('yoloModel/yolov8s.pt')
 # เปิดวิดีโอด้วย OpenCV
 def get_human_count(zone_id):
     # สร้าง path ไปยังไฟล์วิดีโอ
-    video_filename = "vidva.mp4"
-    video_path = os.path.join(os.path.dirname(__file__), f"../public/video/{video_filename}")
+    # zone_id = "{zone_id}.mp4"
+    video_path = os.path.join(os.path.dirname(__file__), f"../public/video/{zone_id}.mp4")
     
     if not os.path.exists(video_path):
-        print(f"Video file {video_filename} not found.")
+        print(f"Video file {zone_id} not found.")
         return 0  
     
     cap = cv2.VideoCapture(video_path)
@@ -476,4 +476,3 @@ def get_human_count(zone_id):
 
     return {zone: human_counts[zone][-1] if human_counts[zone] else 0 for zone in roi_areas}
 
-# get_human_count(1)

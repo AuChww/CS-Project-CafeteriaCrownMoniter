@@ -158,6 +158,20 @@ def update_zone(zone_id, data):
     conn.close()
     return updated
 
+def update_zone_count(zone_id, count):
+    """ อัปเดตค่าจำนวนคนที่อยู่ในโซน """
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute(
+        "UPDATE zone SET current_visitor_count = %s WHERE zone_id = %s",
+        (count, zone_id)
+    )
+    updated = cur.rowcount > 0
+    conn.commit()
+    cur.close()
+    conn.close()
+    return updated
+
 def delete_zone(zone_id):
     conn = db_conn()
     cur = conn.cursor()
