@@ -1,4 +1,4 @@
-# CS-Project-CafeteriaCrownMoniter
+# CS-Project-CafeteriaCrowdMoniter
 
 โปรเจคนี้เป็นโปรเจ็คจบการศึกษาของนิสิตวิทยาการคอมพิวเตอร์ KU81 CS36
 - 6410450800 นายชนาวุฒิ วุฑฒินันท์
