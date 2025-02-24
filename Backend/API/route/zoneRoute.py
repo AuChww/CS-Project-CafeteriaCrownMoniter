@@ -131,6 +131,16 @@ def update_zone_endpoint(zone_id):
     return jsonify({'message': 'Zone updated successfully'})
 
 
+def update_visitor_counts():
+    
+    zones = get_all_zones_service()  # ดึงรายการโซนทั้งหมด
+    for zone in zones:
+        count = get_human_count(zone.zone_id)  # ดึงค่าจำนวนคนของแต่ละโซน
+        visitor_counts_cache[zone.zone_id] = count  # อัปเดตค่าในแคช
+        get_all_report_by_zone_id_endpoint(zone.zone_id)
+        print(f"zone {zone.zone_id}: {count} human count")
+
+
 @zone_bp.route('/api/v1/updateCountAllZones', methods=['PATCH'])
 def update_count_all_zones():
     # ดึงข้อมูลทุกโซน
@@ -147,8 +157,9 @@ def update_count_all_zones():
     for zone in zones:
         # ดึงจำนวนคนจากแต่ละโซน
         print(f"before human count")
-        print(f"{zone.zone_id}")
-        human_count = get_human_count(zone.zone_id)  # ค่าที่ได้จะเป็น int เช่น 5, 3
+        # human_count = get_human_count(zone.zone_id)  # ค่าที่ได้จะเป็น int เช่น 5, 3
+        human_count, _ = get_human_count(zone.zone_id)
+
         print(f"count = {human_count}")
 
         # เพิ่ม log เพื่อตรวจสอบค่าที่ได้
@@ -172,6 +183,7 @@ def update_count_all_zones():
 
     # ส่งคืน current_visitor_count ทั้งหมด
     return {"updated_counts": updated_counts}, 200
+
 
 
 
