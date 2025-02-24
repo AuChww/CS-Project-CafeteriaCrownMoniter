@@ -97,6 +97,7 @@ def post_zone_visitor_history():
 
         if response.status_code == 201:
             print(f"Visitor history added for zone_id {zone_id}")
+            print(f"visitor_count: {visitor_count}")
         else:
             print(f"Failed to add visitor history for zone_id {zone_id}, Status: {response.status_code}")
 
