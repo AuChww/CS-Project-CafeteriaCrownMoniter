@@ -76,7 +76,6 @@ export default function HomePage() {
         />
 
       </div>
-      <UpdateZoneCountButton />
       <div className="text-center text-4xl my-8 py-6 text-green-500 font-bold">
         Bar Crowd
       </div>
