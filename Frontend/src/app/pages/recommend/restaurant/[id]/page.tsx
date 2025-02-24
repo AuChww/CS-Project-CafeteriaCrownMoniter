@@ -40,7 +40,7 @@ const RestaurantPage = () => {
     const [reviewImage, setReviewImage] = useState<string>(""); // เก็บ URL รูป
     const [imageFile, setImageFile] = useState<File | null>(null); // เก็บไฟล์ที่เลือก
     const [editingReview, setEditingReview] = useState<Review | null>(null); // state สำหรับการแก้ไขรีวิว
-    
+
 
     const fetchRestaurantAndReviews = async () => {
         try {
@@ -49,15 +49,15 @@ const RestaurantPage = () => {
                 fetch(`http://127.0.0.1:8000/api/v1/getRestaurantId/${id}`),
                 fetch(`http://127.0.0.1:8000/api/v1/getReviewByRestaurantId/${id}`),
             ]);
-    
+
             if (!restaurantResponse.ok || !reviewsResponse.ok) {
                 throw new Error("Failed to fetch restaurant or reviews");
             }
-    
+
             const restaurantData: Restaurant = await restaurantResponse.json();
             const reviewsData: { reviews: Review[] } =
                 await reviewsResponse.json();
-    
+
             const reviewsWithUserNames = await Promise.all(
                 reviewsData.reviews.map(async (review) => {
                     const userResponse = await fetch(
@@ -67,7 +67,7 @@ const RestaurantPage = () => {
                     return { ...review, user_name: userData.username };
                 })
             );
-    
+
             setRestaurant(restaurantData);
             setReviews(reviewsWithUserNames || []);
             setError(null);
@@ -77,7 +77,7 @@ const RestaurantPage = () => {
             setLoading(false);
         }
     };
-    
+
     useEffect(() => {
         fetchRestaurantAndReviews();
     }, [id]);
@@ -99,14 +99,14 @@ const RestaurantPage = () => {
             handleModalClose(); // ปิด modal หลังจากอัพเดต
         }
     };
-    
+
 
     const handleAddReview = async () => {
         if (!user) {
             alert("Please log in to add a review.");
             return;
         }
-    
+
         try {
             const response = await fetch("http://127.0.0.1:8000/api/v1/addReview", {
                 method: "POST",
@@ -121,9 +121,9 @@ const RestaurantPage = () => {
                     review_image: imageFile ? imageFile.name : null, // Send the file name or null
                 }),
             });
-    
+
             const data = await response.json();
-    
+
             if (response.ok) {
                 alert("Review added successfully!");
                 fetchRestaurantAndReviews(); // Refresh reviews after success
@@ -135,13 +135,13 @@ const RestaurantPage = () => {
             alert("An error occurred while adding the review.");
         }
     };
-    
+
     const handleUpdateReview = async (reviewId: number) => {
         if (!user) {
             alert("Please log in to update the review.");
             return;
         }
-    
+
         try {
             const response = await fetch(`http://127.0.0.1:8000/api/v1/updateReview/${reviewId}`, {
                 method: "PUT",
@@ -157,9 +157,9 @@ const RestaurantPage = () => {
                         review_image: imageFile ? imageFile.name : null,  // ส่งแค่ชื่อไฟล์หากมีรูปภาพ
                     }),  // ส่งข้อมูลในรูปแบบ JSON
             });
-    
+
             const data = await response.json();
-    
+
             if (response.ok) {
                 alert("Review updated successfully!");
                 fetchRestaurantAndReviews();  // รีเฟรชข้อมูลรีวิว
@@ -170,7 +170,7 @@ const RestaurantPage = () => {
             alert("An error occurred while updating the review.");
         }
     };
-    
+
 
     const handleDeleteReview = async (reviewId: number) => {
         if (!user) {
@@ -203,92 +203,93 @@ const RestaurantPage = () => {
     if (!restaurant) return <p>Restaurant not found</p>;
 
     return (
-        <div className="container mt-12 mx-auto p-4">
-            <div className="flex flex-col md:flex-row gap-6">
-                <div className="w-full md:w-1/3">
-                    {restaurant.restaurant_image && (
-                        <img
-                            src={`/image/restaurantImages/${restaurant.restaurant_image}`}
-                            alt={restaurant.restaurant_name}
-                            className="w-full rounded-md"
-                        />
-                    )}
-                </div>
-                <div className="w-full md:w-2/3 space-y-4">
-                    <h1 className="text-3xl font-bold">{restaurant.restaurant_name}</h1>
-                    <p className="text-gray-700">{restaurant.restaurant_detail}</p>
-                    <p className="text-gray-500">
-                        Location: {restaurant.restaurant_location}
-                    </p>
-                    <p className="text-gray-500">
-                        Rating: {restaurant.total_rating} ({restaurant.total_reviews}{" "}
-                        reviews)
-                    </p>
-                </div>
-            </div>
+        <div className="container mt-12 mx-auto p-4 w-full h-screen space-y-12">
+            <div className="">
+                <div className="grid grid-cols-2 gap-6 xl:pt-10">
+                    <div className="space-y-3">
+                        <h1 className="text-3xl font-bold text-green-500">{restaurant.restaurant_name}</h1>
+                        {restaurant.restaurant_image && (
+                            <img
+                                src={restaurant.restaurant_image ? `/image/restaurantImages/${restaurant.restaurant_image}` : `/image/restaurantImages/placeholder.jpg`}
+                                alt={restaurant.restaurant_name}
+                                className="w-auto object-cover rounded-md mb-4"
+                            />
+                        )}
+                        <p className="text-lg text-gray-700">{restaurant.restaurant_detail}</p>
+                        <p className="text-base text-gray-500 flex space-x-1">
+                            <img src="/image/icons/location.svg" alt="location" />
+                            <span>{restaurant.restaurant_location}</span>
+                        </p>
+                        <p className="text-base text-gray-500 flex space-x-1">
+                            <img src="/image/icons/star.svg" alt="rating" />
+                            <span>{restaurant.total_rating} ({restaurant.total_reviews} reviews)</span>
+                        </p>
+                    </div>
+                    <div className="mt-8">
+                        <h2 className="text-2xl font-bold mb-4">Reviews</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {reviews && reviews.length > 0 ? (
+                                reviews.map((review) => (
+                                    <div key={review.review_id} className="border p-4 rounded">
+                                        <div className="flex items-center gap-2">
+                                            <p className="font-semibold">{review.user_name}</p>
+                                            <div className="flex text-yellow-500">
+                                                {[...Array(5)].map((_, index) => (
+                                                    <svg
+                                                        key={index}
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        className={`h-5 w-5 ${index < review.rating ? "fill-current" : "text-gray-300"}`}
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    >
+                                                        <path d="M12 17.75l-6.162 3.24 1.174-6.874L2 7.87l6.902-1.004L12 1l2.098 5.866L21 7.87l-5.012 6.246 1.174 6.874z" />
+                                                    </svg>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <p>{review.review_comment}</p>
+                                        {review.review_image && (
+                                            <img
+                                                src={review.review_image ? `/image/reviewImages/${review.review_image}` : ``}
+                                                alt="Review"
+                                                className="mt-4 w-full rounded"
+                                            />
+                                        )}
 
-            <div className="mt-8">
-                <h2 className="text-2xl font-bold mb-4">Reviews</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {reviews && reviews.length > 0 ? (
-                        reviews.map((review) => (
-                            <div key={review.review_id} className="border p-4 rounded">
-                                <div className="flex items-center gap-2">
-                                    <p className="font-semibold">{review.user_name}</p>
-                                    <div className="flex text-yellow-500">
-                                        {[...Array(5)].map((_, index) => (
-                                            <svg
-                                                key={index}
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className={`h-5 w-5 ${index < review.rating ? "fill-current" : "text-gray-300"}`}
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
+                                        {/* ปุ่ม Edit สำหรับอัพเดตรีวิว */}
+                                        {user?.user_id === review.user_id && (
+                                            <button
+                                                onClick={() => handleEditClick(review)}
+                                                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded"
                                             >
-                                                <path d="M12 17.75l-6.162 3.24 1.174-6.874L2 7.87l6.902-1.004L12 1l2.098 5.866L21 7.87l-5.012 6.246 1.174 6.874z" />
-                                            </svg>
-                                        ))}
+                                                Edit
+                                            </button>
+                                        )}
+
+                                        {/* ปุ่ม Delete สำหรับลบรีวิว */}
+                                        {user?.user_id === review.user_id && (
+                                            <button
+                                                onClick={() => handleDeleteReview(review.review_id)}
+                                                className="mt-2 px-4 py-2 bg-red-600 text-white rounded"
+                                            >
+                                                Delete
+                                            </button>
+                                        )}
+
                                     </div>
-                                </div>
-                                <p>{review.review_comment}</p>
-                                {review.review_image && (
-                                    <img
-                                        src={`/image/reviewImages/${review.review_image}`}
-                                        alt="Review"
-                                        className="mt-4 w-full rounded"
-                                    />
-                                )}
-
-                                {/* ปุ่ม Edit สำหรับอัพเดตรีวิว */}
-                                {user?.user_id === review.user_id && (
-                                    <button
-                                        onClick={() => handleEditClick(review)}
-                                        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded"
-                                    >
-                                        Edit
-                                    </button>
-                                )}
-
-                                {/* ปุ่ม Delete สำหรับลบรีวิว */}
-                                {user?.user_id === review.user_id && (
-                                    <button
-                                        onClick={() => handleDeleteReview(review.review_id)}
-                                        className="mt-2 px-4 py-2 bg-red-600 text-white rounded"
-                                    >
-                                        Delete
-                                    </button>
-                                )}
-
-                            </div>
-                        ))
-                    ) : (
-                        <p>No reviews available for this restaurant.</p>
-                    )}
+                                ))
+                            ) : (
+                                <p>No reviews available for this restaurant.</p>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
+
 
             {/* ส่วนเพิ่มรีวิว */}
             <div className="mt-8">
