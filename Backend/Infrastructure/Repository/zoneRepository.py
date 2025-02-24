@@ -158,7 +158,7 @@ def update_zone(zone_id, data):
     conn.close()
     return updated
 
-def update_zone_count(zone_id, count):
+def update_zone_visitor_count(zone_id, count):
     """ อัปเดตค่าจำนวนคนที่อยู่ในโซน """
     conn = db_conn()
     cur = conn.cursor()
