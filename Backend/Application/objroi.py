@@ -395,7 +395,7 @@ import os
 from ultralytics import YOLO
 
 # โหลด YOLOv8 pre-trained model
-model = YOLO('yoloModel/yolov8s.pt')  # ใช้โมเดล YOLOv8
+model = YOLO('yoloModel/yolov8s.pt') 
 
 # เปิดวิดีโอด้วย OpenCV
 def get_human_count(zone_id):
@@ -412,7 +412,7 @@ def get_human_count(zone_id):
     # กำหนด ROI (Region of Interest)
     roi_areas = {
         "Zone 1": [(50, 50), (700, 700)],  
-        "Zone 2": [(800, 50), (1500, 700)]
+        "Restaurant Zone": [(800, 50), (1500, 700)]
     }
 
     frame_number = 0
