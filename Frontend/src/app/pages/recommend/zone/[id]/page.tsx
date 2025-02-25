@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import RestaurantCard from "@/components/RestaurantCard";
+import { IoIosWarning } from "react-icons/io";
 
 interface Zone {
     zone_id: number;
@@ -36,6 +37,10 @@ const ZonePage = () => {
     const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    const navigateToReports = () => {
+        router.push('/pages/report'); // เปลี่ยนเส้นทางไปที่หน้า /pages/report
+    };
 
     useEffect(() => {
         const fetchZoneAndRestaurants = async () => {
@@ -102,30 +107,38 @@ const ZonePage = () => {
                         </div>
                     </div>
 
-                    {/* Restaurant List */}
-                    <div className="grid grid-cols-2 gap-4 p-10 mt-3">
-                        {restaurants &&
-                            Array.isArray(restaurants) &&
-                            restaurants.map((restaurant) => (
-                                <div
-                                    key={restaurant.restaurant_id}
-                                    onClick={() =>
-                                        router.push(`/pages/recommend/restaurant/${restaurant.restaurant_id}`)
-                                    }
-                                    className="cursor-pointer"
-                                >
-                                    <RestaurantCard
-                                        restaurant_id={restaurant.restaurant_id}
-                                        restaurant_name={restaurant.restaurant_name}
-                                        restaurant_detail={restaurant.restaurant_detail}
-                                        restaurant_image={restaurant.restaurant_image}
-                                        restaurant_location={restaurant.restaurant_location}
-                                        total_rating={restaurant.total_rating}
-                                        current_visitor_count={restaurant.current_visitor_count}
-                                        total_reviews={restaurant.total_reviews}
-                                    />
-                                </div>
-                            ))}
+                    <div>
+                        <div className="flex justify-end">
+                            <button onClick={navigateToReports} className="flex bg-red-600 duration-200 rounded-lg px-3 py-2 text-md text-white font-bold hover:bg-yellow-200 hover:text-red-600">
+                            <IoIosWarning className="mt-0.5 mr-2 w-5 h-5" />
+                            Report
+                            </button>
+                        </div>
+                        {/* Restaurant List */}
+                        <div className="grid grid-cols-2 gap-4 p-10">
+                            {restaurants &&
+                                Array.isArray(restaurants) &&
+                                restaurants.map((restaurant) => (
+                                    <div
+                                        key={restaurant.restaurant_id}
+                                        onClick={() =>
+                                            router.push(`/pages/recommend/restaurant/${restaurant.restaurant_id}`)
+                                        }
+                                        className="cursor-pointer"
+                                    >
+                                        <RestaurantCard
+                                            restaurant_id={restaurant.restaurant_id}
+                                            restaurant_name={restaurant.restaurant_name}
+                                            restaurant_detail={restaurant.restaurant_detail}
+                                            restaurant_image={restaurant.restaurant_image}
+                                            restaurant_location={restaurant.restaurant_location}
+                                            total_rating={restaurant.total_rating}
+                                            current_visitor_count={restaurant.current_visitor_count}
+                                            total_reviews={restaurant.total_reviews}
+                                        />
+                                    </div>
+                                ))}
+                        </div>
                     </div>
                 </div>
                 <div></div>

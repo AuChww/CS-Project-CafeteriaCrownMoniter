@@ -35,7 +35,8 @@ def get_all_zones_endpoint():
             'max_people_in_zone': z.max_people_in_zone,
             'current_visitor_count': z.current_visitor_count,
             'update_date_time': z.update_date_time,
-            'zone_time': z.zone_time
+            'zone_time': z.zone_time,
+            'zone_image' : z.zone_image
         }
         for z in zones
     ]
@@ -72,7 +73,8 @@ def get_zone_by_id_endpoint(zone_id):
         'max_people_in_zone': zone.max_people_in_zone,
         'current_visitor_count': zone.current_visitor_count,
         'update_date_time': zone.update_date_time,
-        'zone_time': zone.zone_time
+        'zone_time': zone.zone_time,
+        'zone_image' : zone.zone_image
     })
 
 @zone_bp.route('/api/v1/getVisitorHistoryByZoneId/<int:zone_id>', methods=['GET'])
@@ -114,6 +116,7 @@ def add_zone_endpoint():
     max_people_in_zone = data.get('max_people_in_zone', 0)
     current_visitor_count = data.get('current_visitor_count', 0)
     zone_time = data.get('zone_time', None)
+    zone_image = data.get('zone_image','')
 
     if not bar_id or not zone_name:
         return jsonify({'message': 'Missing required fields'}), 400
