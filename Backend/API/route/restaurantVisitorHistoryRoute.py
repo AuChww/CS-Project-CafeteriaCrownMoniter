@@ -14,7 +14,7 @@ import pytz  # สำหรับจัดการไทม์โซน
 
 restaurant_visitor_history_bp = Blueprint('restaurant_visitor_history', __name__)
 
-@restaurant_visitor_history_bp.route('/api/v1/getAllVisitorHistories', methods=['GET'])
+@restaurant_visitor_history_bp.route('/api/v1/getAllRestaurantVisitorHistory', methods=['GET'])
 def get_all_restaurant_visitor_histories_endpoint():
     visitor_histories = get_all_restaurant_visitor_histories_service()
     visitor_histories_dicts = [
@@ -102,7 +102,7 @@ def start_scheduler():
 # เรียกใช้งาน Scheduler
 start_scheduler()
 
-@restaurant_visitor_history_bp.route('/api/v1/addVisitorHistory', methods=['POST'])
+@restaurant_visitor_history_bp.route('/api/v1/addRestaurantVisitorHistory', methods=['POST'])
 def add_restaurant_visitor_history_endpoint():
     data = request.json
     date_time = data.get('date_time')
@@ -128,7 +128,7 @@ def add_restaurant_visitor_history_endpoint():
 #     visitor_history_id = add_visitor_history_service(date_time, restaurant_id, visitor_count)
 #     return jsonify({'message': 'Visitor history added successfully', 'visitor_history_id': visitor_history_id}), 201
 
-@restaurant_visitor_history_bp.route('/api/v1/updateVisitorHistory/<int:restaurant_visitor_history_id>', methods=['PUT'])
+@restaurant_visitor_history_bp.route('/api/v1/updateRestaurantVisitorHistory/<int:restaurant_visitor_history_id>', methods=['PUT'])
 def update_restaurant_visitor_history_endpoint(restaurant_visitor_history_id):
     data = request.json
     updated = update_restaurant_visitor_history_service(restaurant_visitor_history_id, data)
@@ -136,7 +136,7 @@ def update_restaurant_visitor_history_endpoint(restaurant_visitor_history_id):
         return jsonify({'message': 'Visitor history not found'}), 404
     return jsonify({'message': 'Visitor history updated successfully'})
 
-@restaurant_visitor_history_bp.route('/api/v1/deleteVisitorHistory/<int:restaurant_visitor_history_id>', methods=['DELETE'])
+@restaurant_visitor_history_bp.route('/api/v1/deleteRestaurantVisitorHistory/<int:restaurant_visitor_history_id>', methods=['DELETE'])
 def delete_restaurant_visitor_history_endpoint(restaurant_visitor_history_id):
     deleted = delete_restaurant_visitor_history_service(restaurant_visitor_history_id)
     if not deleted:

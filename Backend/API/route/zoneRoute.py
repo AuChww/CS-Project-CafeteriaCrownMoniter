@@ -2,6 +2,14 @@ from flask import Blueprint, jsonify, request
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime
+import pytz
+import time
+from API.route.zoneVisitorHistoryRoute import (
+    add_zone_visitor_history_endpoint
+)
+
 
 from Application.Service.feature.zoneService import (
     get_all_zones_service,
@@ -11,7 +19,7 @@ from Application.Service.feature.zoneService import (
     get_all_report_by_zone_id_service,
     add_zone_service,
     update_zone_service,
-    update_zone_count,
+    update_zone_count_service,
     delete_zone_service
 )
 
@@ -133,59 +141,144 @@ def update_zone_endpoint(zone_id):
 
     return jsonify({'message': 'Zone updated successfully'})
 
+# กำหนดโซนเวลาประเทศไทย
+timezone = pytz.timezone("Asia/Bangkok")
+visitor_counts_cache = {}
 
-def update_visitor_counts():
-    
-    zones = get_all_zones_service()  # ดึงรายการโซนทั้งหมด
-    for zone in zones:
-        count = get_human_count(zone.zone_id)  # ดึงค่าจำนวนคนของแต่ละโซน
-        visitor_counts_cache[zone.zone_id] = count  # อัปเดตค่าในแคช
-        get_all_report_by_zone_id_endpoint(zone.zone_id)
-        print(f"zone {zone.zone_id}: {count} human count")
+@zone_bp.route('/api/v1/updateCatchCount/<int:zone_id>', methods=['PATCH'])
+def update_catch_count():
+    print(f"update_catch_count {datetime.now(timezone)}")
+    zones = get_all_zones_service()
 
-
-@zone_bp.route('/api/v1/updateCountAllZones', methods=['PATCH'])
-def update_count_all_zones():
-    # ดึงข้อมูลทุกโซน
-    zones = get_all_zones_service()  
-
-    # ตรวจสอบว่า zones มีข้อมูลหรือไม่
     if not zones:
-        return {"error": "No zones found"}, 400
+        print(f"[{datetime.now(timezone)}] No zones found")
+        return
 
-    # สร้าง dictionary เพื่อเก็บจำนวนคนในแต่ละโซน
-    updated_counts = {}
-
-    # วนลูปอัปเดตข้อมูล
     for zone in zones:
-        # ดึงจำนวนคนจากแต่ละโซน
-        print(f"before human count")
-        # human_count = get_human_count(zone.zone_id)  # ค่าที่ได้จะเป็น int เช่น 5, 3
-        human_count, _ = get_human_count(zone.zone_id)
+        print(f"{zone.zone_id}")
+        # แก้ไขจาก unpacking เป็นการดึงค่าเพียงอย่างเดียว
+        human_count = get_human_count(zone.zone_id)
+        print(f"{zone} count = {human_count}")
 
-        print(f"count = {human_count}")
-
-        # เพิ่ม log เพื่อตรวจสอบค่าที่ได้
-        print(f"Updating zone {zone.zone_id} with human count: {human_count}")
-
-        # ตรวจสอบว่า human_count เป็น int หรือไม่
         if not isinstance(human_count, int):
-            return {"error": f"Invalid human count for zone {zone.zone_id}"}, 400
+            print(f"[{datetime.now(timezone)}] Invalid human count for zone {zone.zone_id}")
+            continue
 
-        # อัปเดตข้อมูลจำนวนคนในโซน
-        zone.current_visitor_count = human_count  # อัปเดตค่าในข้อมูล
-        visitor_counts_cache[zone.zone_id] = human_count  # อัปเดตค่าในแคช
 
-        # บันทึกลงฐานข้อมูลผ่าน service
-        update_zone_count(zone.zone_id, human_count)  # ตรวจสอบว่า human_count เป็น int ที่ส่งไปที่นี่
+        # เก็บค่า zone_id, human_count ไว้ใน cache
+        visitor_counts_cache[zone.zone_id] = human_count
 
-        print(f"Zone {zone.zone_name}: {human_count} human count")
+        # ยิง API ไปที่ update_zone_count ทุก 5 นาที
+        update_zone_count_service(zone.zone_id, human_count)
 
-        # เก็บข้อมูลจำนวนคนในแต่ละโซน
-        updated_counts[zone.zone_id] = human_count
+        print(f"[{datetime.now(timezone)}] Updated Zone {zone.zone_id} with count {human_count}")
 
-    # ส่งคืน current_visitor_count ทั้งหมด
-    return {"updated_counts": updated_counts}, 200
+
+@zone_bp.route('/api/v1/addLogZone/<int:zone_id>', methods=['POST'])
+def save_zone_visitor_history():
+    print(f"zone_visitor_history {datetime.now(timezone)}")
+
+    if not visitor_counts_cache:
+        print(f"[{datetime.now(timezone)}] No visitor data to save")
+        return
+
+    for zone_id, visitor_count in visitor_counts_cache.items():
+        # สร้างข้อมูลที่ต้องส่งไปยัง add_zone_visitor_history_endpoint()
+        data = {
+            "date_time": datetime.now(timezone).strftime('%Y-%m-%d %H:%M:%S'),
+            "zone_id": zone_id,
+            "visitor_count": visitor_count
+        }
+
+        # เรียกใช้งานฟังก์ชันโดยตรง
+        response = add_zone_visitor_history_endpoint(data)
+
+        print(f"[{datetime.now(timezone)}] History recorded for Zone {zone_id} with count {visitor_count}, Response: {response}")
+
+def start_scheduler():
+    # ตั้งค่าไทม์โซนเป็นไทย
+    tz = pytz.timezone('Asia/Bangkok')
+
+    # เวลาปัจจุบันในไทม์โซนไทย
+    now = datetime.now(tz)
+    
+    # คำนวณเวลาที่เหลือจนถึงชั่วโมงถัดไปที่ลงท้ายด้วย :00:00
+    next_run = (now + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
+    delay = (next_run - now).total_seconds()
+
+    # Debugging
+    print(f"Current time: {now}")
+    print(f"Next run at: {next_run}")
+    print(f"Delay until next run: {delay} seconds")
+
+    # สร้าง Scheduler
+    scheduler = BackgroundScheduler(timezone=tz)
+
+    # update_catch_count()
+    save_zone_visitor_history()
+
+    # เพิ่ม Job ที่จะเริ่มทำงานทันทีที่โปรแกรมเริ่ม และทำซ้ำทุกๆ 1 นาที
+    scheduler.add_job(update_catch_count, "cron", minute="*/1", timezone=tz, start_date=now)
+
+    # เพิ่ม Job ที่จะเริ่มทำงานทันทีที่โปรแกรมเริ่ม และทำซ้ำทุกๆ 1 ชั่วโมง
+    scheduler.add_job(save_zone_visitor_history, "cron", minute=0, timezone=tz, start_date=now)
+
+    # เริ่ม Scheduler
+    scheduler.start()
+
+# เรียกใช้งาน Scheduler
+start_scheduler()
+
+# # ป้องกันไม่ให้โปรแกรมปิดตัวลง
+# try:
+#     while True:
+#         time.sleep(1)
+# except (KeyboardInterrupt, SystemExit):
+#     scheduler.shutdown()
+
+
+# @zone_bp.route('/api/v1/updateCountAllZones', methods=['PATCH'])
+# def update_count_all_zones():
+#     # ดึงข้อมูลทุกโซน
+#     zones = get_all_zones_service()  
+
+#     # ตรวจสอบว่า zones มีข้อมูลหรือไม่
+#     if not zones:
+#         return {"error": "No zones found"}, 400
+
+#     # สร้าง dictionary เพื่อเก็บจำนวนคนในแต่ละโซน
+#     updated_counts = {}
+
+#     # วนลูปอัปเดตข้อมูล
+#     for zone in zones:
+#         # ดึงจำนวนคนจากแต่ละโซน
+#         print(f"before human count")
+#         # human_count = get_human_count(zone.zone_id)  # ค่าที่ได้จะเป็น int เช่น 5, 3
+#         human_count, _ = get_human_count(zone.zone_id)
+
+#         print(f"count = {human_count}")
+
+#         # เพิ่ม log เพื่อตรวจสอบค่าที่ได้
+#         print(f"Updating zone {zone.zone_id} with human count: {human_count}")
+
+#         # ตรวจสอบว่า human_count เป็น int หรือไม่
+#         if not isinstance(human_count, int):
+#             return {"error": f"Invalid human count for zone {zone.zone_id}"}, 400
+
+#         # อัปเดตข้อมูลจำนวนคนในโซน
+#         zone.current_visitor_count = human_count  # อัปเดตค่าในข้อมูล
+#         visitor_counts_cache[zone.zone_id] = human_count  # อัปเดตค่าในแคช
+
+#         # บันทึกลงฐานข้อมูลผ่าน service
+#         update_zone_count(zone.zone_id, human_count)  # ตรวจสอบว่า human_count เป็น int ที่ส่งไปที่นี่
+
+#         print(f"Zone {zone.zone_name}: {human_count} human count")
+
+#         # เก็บข้อมูลจำนวนคนในแต่ละโซน
+#         updated_counts[zone.zone_id] = human_count
+
+#     # ส่งคืน current_visitor_count ทั้งหมด
+#     return {"updated_counts": updated_counts}, 200
 
 
 
