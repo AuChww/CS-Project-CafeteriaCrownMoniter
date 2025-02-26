@@ -214,8 +214,8 @@ def start_scheduler():
     # สร้าง Scheduler
     scheduler = BackgroundScheduler(timezone=tz)
 
-    # update_catch_count()
-    save_zone_visitor_history()
+    update_catch_count()
+    # save_zone_visitor_history()
 
     # เพิ่ม Job ที่จะเริ่มทำงานทันทีที่โปรแกรมเริ่ม และทำซ้ำทุกๆ 1 นาที
     scheduler.add_job(update_catch_count, "cron", minute="*/1", timezone=tz, start_date=now)
