@@ -89,8 +89,8 @@ const RestaurantCard: React.FC<restaurantCardProps> = ({
     >
       <a href="#">
         <img
-          className="rounded-t-lg"
-          src={`/image/restaurantImages/${restaurant_image}`}
+          className="rounded-t-lg w-full max-h-60"
+          src={restaurant_image ? `/image/restaurantImages/${restaurant_image}` : `/image/restaurantImages/placeholder.jpg`}
           alt={restaurant_name}
         />
       </a>
