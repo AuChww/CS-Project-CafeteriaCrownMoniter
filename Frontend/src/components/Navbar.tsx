@@ -82,6 +82,9 @@ const Navbar = () => {
                             <div className="text-white mt-0.5 mx-4">Dashboard</div>
                         </Link>
                     )}
+                    <Link href="/pages/admin/reportCheck">
+                        <div className="text-white mt-0.5 mx-4">Report</div>
+                    </Link>
 
                     {/* Show the username and dropdown */}
                     {username ? (
