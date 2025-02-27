@@ -31,8 +31,8 @@ def add_zone_service(bar_id, zone_name, zone_detail=None, max_people_in_zone=0, 
 def update_zone_service(zone_id, data):
     return update_zone(zone_id, data)
 
-def update_zone_count_service(zone_id, count):
-    return update_zone_count(zone_id, count)
+def update_zone_count_service(zone_id, count, update_date_time):
+    return update_zone_count(zone_id, count, update_date_time)
 
 def delete_zone_service(zone_id):
     return delete_zone(zone_id)

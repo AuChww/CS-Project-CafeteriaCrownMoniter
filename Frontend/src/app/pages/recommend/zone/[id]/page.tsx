@@ -99,6 +99,9 @@ const ZonePage = () => {
                         <p className="text-lg text-gray-700">
                             <strong>Operating Hours:</strong> {zone.zone_time}
                         </p>
+                        <p className="text-lg text-gray-700">
+                            <strong>Lastest Update:</strong> {zone.update_date_time}
+                        </p>
 
                         <div className="relative flex flex-col rounded-xl bg-white">
                             <div className="flex items-center gap-4">

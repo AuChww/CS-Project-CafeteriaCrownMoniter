@@ -144,6 +144,7 @@ def update_zone_endpoint(zone_id):
 # กำหนดโซนเวลาประเทศไทย
 timezone = pytz.timezone("Asia/Bangkok")
 visitor_counts_cache = {}
+utc_tz = pytz.utc
 
 @zone_bp.route('/api/v1/updateCatchCount/<int:zone_id>', methods=['PATCH'])
 def update_catch_count():
@@ -161,15 +162,17 @@ def update_catch_count():
         print(f"{zone} count = {human_count}")
 
         if not isinstance(human_count, int):
-            print(f"[{datetime.now(timezone)}] Invalid human count for zone {zone.zone_id}")
+            print(f"[{datetime.now}] Invalid human count for zone {zone.zone_id}")
             continue
 
 
         # เก็บค่า zone_id, human_count ไว้ใน cache
         visitor_counts_cache[zone.zone_id] = human_count
+        update_date_time = datetime.now(pytz.utc).astimezone(timezone)
+        update_date_time_str = update_date_time.strftime('%Y-%m-%d %H:%M:%S')
 
         # ยิง API ไปที่ update_zone_count ทุก 5 นาที
-        update_zone_count_service(zone.zone_id, human_count)
+        update_zone_count_service(zone.zone_id, human_count, update_date_time_str)
 
         print(f"[{datetime.now(timezone)}] Updated Zone {zone.zone_id} with count {human_count}")
 
