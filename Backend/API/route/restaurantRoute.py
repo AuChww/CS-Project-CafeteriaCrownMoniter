@@ -1,5 +1,19 @@
 from flask import Blueprint, jsonify, request
-from Application.Service.feature.restaurantService import get_restaurant_by_id_service, get_all_restaurants_service, get_all_reviews_by_restaurant_id_service, add_restaurant_service, update_restaurant_service, delete_restaurant_service
+from Application.Service.feature.restaurantService import (
+     get_restaurant_by_id_service,
+     get_all_restaurants_service,
+     get_all_reviews_by_restaurant_id_service,
+     add_restaurant_service,
+     update_restaurant_service,
+     update_restaurant_count_service,
+     delete_restaurant_service
+)
+from Application.objroi import get_human_count
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime, timedelta
+import pytz 
+from apscheduler.triggers.cron import CronTrigger
+import atexit
 
 restaurant_bp = Blueprint('restaurants', __name__)
 
@@ -72,6 +86,33 @@ def add_restaurant():
 
     restaurant_id = add_restaurant_service(bar_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image)  # ส่ง restaurant_image ไปยัง service
     return jsonify({'message': 'Restaurant added successfully', 'restaurant_id': restaurant_id}), 201
+
+
+
+timezone = pytz.timezone('Asia/Bangkok')
+
+@restaurant_bp.route('/api/v1/updateCountAllRestaurants', methods=['PATCH'])
+def update_count_all_restaurants():
+    print(f"Running scheduled task: update_count_all_restaurants | Time: {timezone}")
+    restaurants = get_all_restaurants_service()
+
+    if not restaurants:
+        print("No restaurants found")
+        return
+
+
+    for restaurant in restaurants:
+        human_count = get_human_count(restaurant.restaurant_id)
+
+        if not isinstance(human_count, int):
+            print(f"Invalid human count for restaurant: {restaurant.restaurant_id}")
+            continue  # ข้ามโซนนั้นถ้ามีปัญหา
+
+        update_restaurant_count_service(restaurant.restaurant_id, human_count)
+        # updated_counts[restaurant.restaurant_id] = human_count
+        print(f"Updated restaurant {restaurant.restaurant_id}: {human_count} human count")
+
+    print(f"Update Human count Amount: {human_count} | Restaurant: {restaurant.restaurant_id}")
 
 @restaurant_bp.route('/api/v1/updateRestaurant/<int:restaurant_id>', methods=['PUT'])
 def update_restaurant(restaurant_id):

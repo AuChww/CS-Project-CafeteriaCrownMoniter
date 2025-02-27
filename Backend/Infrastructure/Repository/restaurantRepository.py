@@ -139,6 +139,19 @@ def update_restaurant(restaurant_id, data):
     conn.close()
     return updated
 
+def update_restaurant_count(restaurant_id, count):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute(
+        "UPDATE restaurant SET current_visitor_count = %s WHERE restaurant_id = %s",
+        (count, restaurant_id)  # count ต้องเป็น int ที่ส่งไปที่นี่
+    )
+    updated = cur.rowcount > 0
+    conn.commit()
+    cur.close()
+    conn.close()
+    return updated
+
 def delete_restaurant(restaurant_id):
     conn = db_conn()
     cur = conn.cursor()

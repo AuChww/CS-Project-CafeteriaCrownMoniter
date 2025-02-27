@@ -4,6 +4,7 @@ from Infrastructure.Repository.restaurantRepository import (
     get_all_reviews_by_restaurant_id,
     add_restaurant, 
     update_restaurant, 
+    update_restaurant_count,
     delete_restaurant
 )
 
@@ -21,6 +22,9 @@ def add_restaurant_service(bar_id, restaurant_name, restaurant_location, restaur
 
 def update_restaurant_service(restaurant_id, data):
     return update_restaurant(restaurant_id, data)
+
+def update_restaurant_count_service(restaurant_id , count):
+    return update_restaurant_count (restaurant_id, count)
 
 def delete_restaurant_service(restaurant_id):
     return delete_restaurant(restaurant_id)

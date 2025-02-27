@@ -136,67 +136,6 @@ def update_zone_endpoint(zone_id):
 
     return jsonify({'message': 'Zone updated successfully'})
 
-
-def update_visitor_counts():
-    
-    zones = get_all_zones_service()  # ดึงรายการโซนทั้งหมด
-    for zone in zones:
-        count = get_human_count(zone.zone_id)  # ดึงค่าจำนวนคนของแต่ละโซน
-        visitor_counts_cache[zone.zone_id] = count  # อัปเดตค่าในแคช
-        get_all_report_by_zone_id_endpoint(zone.zone_id)
-        print(f"zone {zone.zone_id}: {count} human count")
-
-
-# @zone_bp.route('/api/v1/updateCountAllZones', methods=['PATCH'])
-# def update_count_all_zones():
-#     # ดึงข้อมูลทุกโซน
-#     zones = get_all_zones_service()  
-
-#     # ตรวจสอบว่า zones มีข้อมูลหรือไม่
-#     if not zones:
-#         return {"error": "No zones found"}, 400
-
-#     # สร้าง dictionary เพื่อเก็บจำนวนคนในแต่ละโซน
-#     updated_counts = {}
-
-#     # วนลูปอัปเดตข้อมูล
-#     for zone in zones:
-#         # ดึงจำนวนคนจากแต่ละโซน
-#         print(f"before human count")
-#         print(f"{zone.zone_id}")
-#         human_count = get_human_count(zone.zone_id)  # ค่าที่ได้จะเป็น int เช่น 5, 3
-#         print(f"count = {human_count}")
-
-#         # เพิ่ม log เพื่อตรวจสอบค่าที่ได้
-#         print(f"Updating zone {zone.zone_id} with human count: {human_count}")
-
-#         # ตรวจสอบว่า human_count เป็น int หรือไม่
-#         if not isinstance(human_count, int):
-#             return {"error": f"Invalid human count for zone {zone.zone_id}"}, 400
-        
-#         if type(zone.zone_id) == int:
-#             print("zone_id เป็น int")
-#         else:
-#             print("zone_id ไม่ใช่ int")
-
-
-#         # อัปเดตข้อมูลจำนวนคนในโซน
-#         zone.current_visitor_count = human_count  # อัปเดตค่าในข้อมูล
-        
-#         # visitor_counts_cache[zone.zone_id] = human_count  # อัปเดตค่าในแคช
-        
-
-#         # บันทึกลงฐานข้อมูลผ่าน service
-#         update_zone_count_service(zone.zone_id, human_count)  # ตรวจสอบว่า human_count เป็น int ที่ส่งไปที่นี่
-
-#         print(f"Zone {zone.zone_name}: {human_count} human count")
-
-#         # เก็บข้อมูลจำนวนคนในแต่ละโซน
-#         updated_counts[zone.zone_id] = human_count
-
-#     # ส่งคืน current_visitor_count ทั้งหมด
-#     return {"updated_counts": updated_counts}, 200
-
 timezone = pytz.timezone('Asia/Bangkok')
 
 @zone_bp.route('/api/v1/updateCountAllZones', methods=['PATCH'])
