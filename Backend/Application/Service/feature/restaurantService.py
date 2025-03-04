@@ -23,7 +23,7 @@ def add_restaurant_service(bar_id, restaurant_name, restaurant_location, restaur
 def update_restaurant_service(restaurant_id, data):
     return update_restaurant(restaurant_id, data)
 
-def update_restaurant_count_service(restaurant_id , count):
+def update_restaurant_count_service(restaurant_id, count):
     return update_restaurant_count (restaurant_id, count)
 
 def delete_restaurant_service(restaurant_id):

@@ -91,28 +91,87 @@ def add_restaurant():
 
 timezone = pytz.timezone('Asia/Bangkok')
 
-@restaurant_bp.route('/api/v1/updateCountAllRestaurants', methods=['PATCH'])
-def update_count_all_restaurants():
-    print(f"Running scheduled task: update_count_all_restaurants | Time: {timezone}")
+# @restaurant_bp.route('/api/v1/updateCountAllRestaurants', methods=['PATCH'])
+# def update_count_all_restaurants():
+#     print(f"Running scheduled task: update_count_all_restaurants | Time: {timezone}")
+#     restaurants = get_all_restaurants_service()
+
+#     if not restaurants:
+#         print("No restaurants found")
+#         return
+
+
+#     for restaurant in restaurants:
+#         human_count = get_human_count(restaurant.restaurant_id)
+
+#         if not isinstance(human_count, int):
+#             print(f"Invalid human count for restaurant: {restaurant.restaurant_id}")
+#             continue  # ข้ามโซนนั้นถ้ามีปัญหา
+
+#         update_restaurant_count_service(restaurant.restaurant_id, human_count)
+#         # updated_counts[restaurant.restaurant_id] = human_count
+#         print(f"Updated restaurant {restaurant.restaurant_id}: {human_count} human count")
+
+#     print(f"Update Human count Amount: {human_count} | Restaurant: {restaurant.restaurant_id}")
+
+@restaurant_bp.route('/api/v1/updateRestaurantHumanCount/<int:zone_id>', methods=['PATCH'])
+def update_restaurant_human_count():
+    print(f"update_human_count {datetime.now(timezone)}")
     restaurants = get_all_restaurants_service()
 
     if not restaurants:
-        print("No restaurants found")
+        print(f"[{datetime.now(timezone)}] No restaurants found")
         return
 
-
     for restaurant in restaurants:
-        human_count = get_human_count(restaurant.restaurant_id)
+        print(f"restaurant_id: {restaurant.restaurant_id}")
+        # แก้ไขจาก unpacking เป็นการดึงค่าเพียงอย่างเดียว
+        video_path = "restaurant"
+        human_count = get_human_count(restaurant.restaurant_id, video_path)
+        print(f"restaurant_id: {restaurant} | restaurant_count_amount: {human_count}")
 
         if not isinstance(human_count, int):
-            print(f"Invalid human count for restaurant: {restaurant.restaurant_id}")
-            continue  # ข้ามโซนนั้นถ้ามีปัญหา
+            print(f"[{datetime.now}] Invalid human count for restaurant {restaurant.restaurant_id}")
+            continue
 
-        update_restaurant_count_service(restaurant.restaurant_id, human_count)
-        # updated_counts[restaurant.restaurant_id] = human_count
-        print(f"Updated restaurant {restaurant.restaurant_id}: {human_count} human count")
+        update_date_time = datetime.now(pytz.utc).astimezone(timezone)
+        update_date_time_str = update_date_time.strftime('%Y-%m-%d %H:%M:%S')
+        
+        update_restaurant_count_service(restaurant.restaurant_id,human_count)
 
-    print(f"Update Human count Amount: {human_count} | Restaurant: {restaurant.restaurant_id}")
+        print(f"[{datetime.now(timezone)}] Updated Restaurant_id  {restaurant.restaurant_id} with count {human_count}")
+        print(f"-------------------------------------------------------------------------------------------------")
+        
+def start_scheduler():
+    # ตั้งค่าไทม์โซนเป็นไทย
+    tz = pytz.timezone('Asia/Bangkok')
+
+    # เวลาปัจจุบันในไทม์โซนไทย
+    now = datetime.now(tz)
+    
+    # คำนวณเวลาที่เหลือจนถึงชั่วโมงถัดไปที่ลงท้ายด้วย :00:00
+    next_run = (now + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
+    delay = (next_run - now).total_seconds()
+
+    # Debugging
+    print(f"Current time: {now}")
+    print(f"Next run at: {next_run}")
+    print(f"Delay until next run: {delay} seconds")
+
+    # สร้าง Scheduler
+    scheduler = BackgroundScheduler(timezone=tz)
+
+    update_restaurant_human_count()
+    # save_zone_visitor_history()
+
+    # เพิ่ม Job ที่จะเริ่มทำงานทันทีที่โปรแกรมเริ่ม และทำซ้ำทุกๆ 1 นาที
+    scheduler.add_job(update_restaurant_human_count, "cron", minute="*/1", timezone=tz, start_date=now)
+
+    # เริ่ม Scheduler
+    scheduler.start()
+
+# เรียกใช้งาน Scheduler
+start_scheduler()
 
 @restaurant_bp.route('/api/v1/updateRestaurant/<int:restaurant_id>', methods=['PUT'])
 def update_restaurant(restaurant_id):

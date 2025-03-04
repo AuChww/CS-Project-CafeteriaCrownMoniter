@@ -1,153 +1,3 @@
-# import torch
-# import cv2
-# import numpy as np
-# from ultralytics import YOLO
-
-# # โหลด YOLOv8 pre-trained model
-# model = YOLO('yolov8s.pt')  # ใช้โมเดล YOLOv8
-
-# # เปิดการเข้าถึงกล้อง
-# cap = cv2.VideoCapture(0)
-
-# # กำหนดพื้นที่ที่ต้องการนับ (ROI)
-# roi_top_left = (50, 50)  # จุดมุมบนซ้าย
-# roi_bottom_right = (1500, 1500)  # จุดมุมล่างขวา
-
-# # ตัวแปรนับจำนวนคนใน ROI
-# human_count = 0
-# detected_humans = []  # ตัวแปรเก็บข้อมูลของคนที่ตรวจพบ
-
-# # ตัวแปรเก็บ bounding box ของคนในเฟรมก่อนหน้า
-# previous_people = []
-
-# # ฟังก์ชันตรวจสอบว่าคนอยู่ในพื้นที่ ROI หรือไม่
-# def is_within_roi(left, top, right, bottom, roi_top_left, roi_bottom_right):
-#     return (left > roi_top_left[0] and right < roi_bottom_right[0] and
-#             top > roi_top_left[1] and bottom < roi_bottom_right[1])
-
-# while True:
-#     ret, frame = cap.read()
-#     if not ret:
-#         break
-
-#     results = model(frame)
-#     frame_h, frame_w, _ = frame.shape
-#     detections = results[0].boxes.xyxy.cpu().numpy()  # ดึงข้อมูล bounding boxes
-#     classes = results[0].boxes.cls.cpu().numpy()     # ดึงข้อมูล class
-#     human_count = 0
-#     current_people = []
-
-#     for i, box in enumerate(detections):
-#         left, top, right, bottom = map(int, box[:4])
-#         cls = int(classes[i])
-
-#         if cls == 0 and is_within_roi(left, top, right, bottom, roi_top_left, roi_bottom_right):  # ตรวจจับเฉพาะคน
-#             current_people.append((left, top, right, bottom))  # เก็บ bounding box ของคนในเฟรมนี้
-#             cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
-#             cv2.putText(frame, f"Person", (left, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
-#     # นับจำนวนคนใหม่ที่เพิ่มเข้ามาใน ROI
-#     for person in current_people:
-#         if person not in previous_people:
-#             human_count += 1
-
-#     previous_people = current_people  # อัปเดต bounding box ของเฟรมปัจจุบันไปยังตัวแปร previous_people
-
-#     # แสดงจำนวนคนที่ตรวจจับได้
-#     cv2.putText(frame, f"Human Count: {human_count}", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
-#     cv2.rectangle(frame, roi_top_left, roi_bottom_right, (0, 255, 0), 2)  # วาด ROI
-
-#     cv2.imshow('YOLOv8 Object Detection - Human Count', frame)
-
-#     if cv2.waitKey(1) & 0xFF == ord('q'):
-#         break
-
-
-# # ปิดการเข้าถึงกล้อง
-# cap.release()
-# cv2.destroyAllWindows()
-
-
-
-# ----------------------------------------------------------------------------------------------
-# With blur all body
-
-
-# import torch
-# import cv2
-# import numpy as np
-# from ultralytics import YOLO
-
-# # โหลด YOLOv8 pre-trained model
-# model = YOLO('yolov8s.pt')  # ใช้โมเดล YOLOv8
-
-# # เปิดการเข้าถึงกล้อง
-# cap = cv2.VideoCapture(0)
-
-# # กำหนดพื้นที่ที่ต้องการนับ (ROI)
-# roi_top_left = (50, 50)  # จุดมุมบนซ้าย
-# roi_bottom_right = (1500, 1500)  # จุดมุมล่างขวา
-
-# # ตัวแปรนับจำนวนคนใน ROI
-# human_count = 0
-# detected_humans = []  # ตัวแปรเก็บข้อมูลของคนที่ตรวจพบ
-
-# # ตัวแปรเก็บ bounding box ของคนในเฟรมก่อนหน้า
-# previous_people = []
-
-# # ฟังก์ชันตรวจสอบว่าคนอยู่ในพื้นที่ ROI หรือไม่
-# def is_within_roi(left, top, right, bottom, roi_top_left, roi_bottom_right):
-#     return (left > roi_top_left[0] and right < roi_bottom_right[0] and
-#             top > roi_top_left[1] and bottom < roi_bottom_right[1])
-
-# while True:
-#     ret, frame = cap.read()
-#     if not ret:
-#         break
-
-#     results = model(frame)
-#     frame_h, frame_w, _ = frame.shape
-#     detections = results[0].boxes.xyxy.cpu().numpy()  # ดึงข้อมูล bounding boxes
-#     classes = results[0].boxes.cls.cpu().numpy()     # ดึงข้อมูล class
-#     human_count = 0
-#     current_people = []
-
-#     for i, box in enumerate(detections):
-#         left, top, right, bottom = map(int, box[:4])
-#         cls = int(classes[i])
-
-#         if cls == 0 and is_within_roi(left, top, right, bottom, roi_top_left, roi_bottom_right):  # ตรวจจับเฉพาะคน
-#             current_people.append((left, top, right, bottom))  # เก็บ bounding box ของคนในเฟรมนี้
-            
-#             # เบลอใบหน้าใน Bounding Box
-#             face_region = frame[top:bottom, left:right]
-#             blurred_face = cv2.GaussianBlur(face_region, (51, 51), 30)
-#             frame[top:bottom, left:right] = blurred_face
-            
-#             cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
-#             cv2.putText(frame, f"Person", (left, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
-#     # นับจำนวนคนใหม่ที่เพิ่มเข้ามาใน ROI
-#     for person in current_people:
-#         if person not in previous_people:
-#             human_count += 1
-
-#     previous_people = current_people  # อัปเดต bounding box ของเฟรมปัจจุบันไปยังตัวแปร previous_people
-
-#     # แสดงจำนวนคนที่ตรวจจับได้
-#     cv2.putText(frame, f"Human Count: {human_count}", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
-#     cv2.rectangle(frame, roi_top_left, roi_bottom_right, (0, 255, 0), 2)  # วาด ROI
-
-#     cv2.imshow('YOLOv8 Object Detection - Human Count with Privacy', frame)
-
-#     if cv2.waitKey(1) & 0xFF == ord('q'):
-#         break
-
-# # ปิดการเข้าถึงกล้อง
-# cap.release()
-# cv2.destroyAllWindows()
-# ----------------------------------------------------------------------------------------------
-
 # Face blur
 
 # import torch
@@ -235,21 +85,41 @@ model = YOLO('yoloModel/yolov8s.pt')  # ใช้โมเดล YOLOv8
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 # เปิดวิดีโอด้วย OpenCV
-def get_human_count(zone_id):
+def get_human_count(video_id, video_path):
     
-    # สร้าง path ไปยังไฟล์วิดีโอ
-    video_path = os.path.join(os.path.dirname(__file__), f"../public/video/zone/{zone_id}.mp4")
+    print(f"video_path: {video_path}")
     
-    # ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่
-    if not os.path.exists(video_path):
-        print(f"Video file for zone {zone_id} not found.")
-        return 0  # ถ้าไม่มีวิดีโอ ให้คืนค่า 0 ไปเลย
+    if video_path ==  "zone":
+        video_path = os.path.join(os.path.dirname(__file__), f"../public/video/zone/{video_id}.mp4")
+        # ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่
+        if not os.path.exists(video_path):
+            print(f"Video file for zone {video_id} not found.")
+            return 0  # ถ้าไม่มีวิดีโอ ให้คืนค่า 0 ไปเลย
+    else :
+        video_path = os.path.join(os.path.dirname(__file__), f"../public/video/restaurant/{video_id}.mp4")
+        if not os.path.exists(video_path):
+            print(f"Video file for zone {video_id} not found.")
+            return 0 
     
     cap = cv2.VideoCapture(video_path)
+    
+    roi_zones = {
+    1: {"top_left": (50, 50), "bottom_right": (1500, 1500)},
+    2: {"top_left": (50, 50), "bottom_right": (1500, 1500)},
+    3: {"top_left": (100, 100), "bottom_right": (1400, 1400)}
+}
 
-    # กำหนดพื้นที่ที่ต้องการนับ (ROI)
-    roi_top_left = (50, 50)  # จุดมุมบนซ้าย
-    roi_bottom_right = (1500, 1500)  # จุดมุมล่างขวา
+    # ตรวจสอบว่ามีการกำหนดโซนนี้หรือไม่
+    if id in roi_zones:
+        roi_top_left = roi_zones[id]["top_left"]
+        roi_bottom_right = roi_zones[id]["bottom_right"]
+    else:
+        roi_top_left = (50,50)
+        roi_bottom_right = (1500, 1500)  
+
+    # # กำหนดพื้นที่ที่ต้องการนับ (ROI)
+    # roi_top_left = (50, 50)  # จุดมุมบนซ้าย
+    # roi_bottom_right = (1500, 1500)  # จุดมุมล่างขวา
 
     # ตัวแปรเก็บจำนวนคนในแต่ละเฟรม
     all_human_counts = []
@@ -292,7 +162,7 @@ def get_human_count(zone_id):
 
         # แสดงผลแค่ทุกๆ 60 เฟรม
         if frame_number % 30 == 0:
-            print(f"Frame {frame_number}: zone {zone_id} : Human Count = {human_count}")
+            print(f"Frame {frame_number}: zone {video_id} : Human Count = {human_count}")
 
     cap.release()
     cv2.destroyAllWindows()
@@ -460,7 +330,7 @@ def get_human_count(zone_id):
 #         if frame_number % 5 != 0:
 #             continue
 
-#         # 🔻 ลดขนาดภาพให้ YOLO ทำงานเร็วขึ้น
+#         
 #         small_frame = cv2.resize(frame, (640, 360))
 #         print(f"after small frame")
 

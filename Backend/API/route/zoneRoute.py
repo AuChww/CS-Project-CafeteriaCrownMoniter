@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, send_from_directory
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
@@ -143,7 +143,6 @@ def update_zone_endpoint(zone_id):
 
 # กำหนดโซนเวลาประเทศไทย
 timezone = pytz.timezone("Asia/Bangkok")
-visitor_counts_cache = {}
 utc_tz = pytz.utc
 
 @zone_bp.route('/api/v1/updateCatchCount/<int:zone_id>', methods=['PATCH'])
@@ -156,15 +155,14 @@ def update_catch_count():
         return
 
     for zone in zones:
-        print(f"{zone.zone_id}")
-        # แก้ไขจาก unpacking เป็นการดึงค่าเพียงอย่างเดียว
-        human_count = get_human_count(zone.zone_id)
-        print(f"{zone} count = {human_count}")
-
+        video_path = "zone"
+        human_count = get_human_count(zone.zone_id, video_path)
+        
+        print(f"zone_id: {zone.zone_id}")
+        print(f"zone_id: {zone} | zone_count_amount: {human_count}")
         if not isinstance(human_count, int):
-            print(f"[{datetime.now}] Invalid human count for zone {zone.zone_id}")
+            print(f"Invalid human count for zone_id: {zone.zone_id}")
             continue
-
 
         # เก็บค่า zone_id, human_count ไว้ใน cache
         visitor_counts_cache[zone.zone_id] = human_count
@@ -174,7 +172,8 @@ def update_catch_count():
         # ยิง API ไปที่ update_zone_count ทุก 5 นาที
         update_zone_count_service(zone.zone_id, human_count, update_date_time_str)
 
-        print(f"[{datetime.now(timezone)}] Updated Zone {zone.zone_id} with count {human_count}")
+        print(f"[{datetime.now(timezone)}] Updated Zone_id  {zone.zone_id} with count {human_count}")
+        print(f"-------------------------------------------------------------------------------------------------")
 
 
 @zone_bp.route('/api/v1/addLogZone/<int:zone_id>', methods=['POST'])
@@ -232,12 +231,28 @@ def start_scheduler():
 # เรียกใช้งาน Scheduler
 start_scheduler()
 
-# # ป้องกันไม่ให้โปรแกรมปิดตัวลง
-# try:
-#     while True:
-#         time.sleep(1)
-# except (KeyboardInterrupt, SystemExit):
-#     scheduler.shutdown()
+@zone_bp.route('/api/v1/getZoneVideo/<string:file_name>', methods=['GET'])
+def get_video_url(file_name):
+    video_url = f"http://localhost:8000/videos/{file_name}"
+    return jsonify({"url": video_url})
+
+@zone_bp.route('/videos/<path:file_name>')
+def serve_video(file_name):
+    video_directory = os.path.join(os.getcwd(), "public", "video", "zone")
+    return send_from_directory(video_directory, file_name)
+
+@zone_bp.route('/api/v1/getZoneImage/<string:file_name>', methods=['GET'])
+def get_image_url(file_name):
+    # ✅ เปลี่ยนให้ส่ง URL ของรูปภาพแทนวิดีโอ
+    image_url = f"http://localhost:8000/images/{file_name}"
+    return jsonify({"url": image_url})
+
+@zone_bp.route('/images/<path:file_name>')
+def serve_image(file_name):
+    # ✅ เสิร์ฟรูปภาพจากโฟลเดอร์ `public/images/zone/`
+    image_directory = os.path.join(os.getcwd(), "public", "images", "zone")
+    return send_from_directory(image_directory, file_name)
+
 
 
 # @zone_bp.route('/api/v1/updateCountAllZones', methods=['PATCH'])
@@ -285,7 +300,6 @@ start_scheduler()
 
 
 
-
 @zone_bp.route('/api/v1/deleteZone/<int:zone_id>', methods=['DELETE'])
 def delete_zone_endpoint(zone_id):
     deleted = delete_zone_service(zone_id)  # Use the service function here
@@ -293,3 +307,6 @@ def delete_zone_endpoint(zone_id):
         return jsonify({'message': 'Zone not found'}), 404
 
     return jsonify({'message': 'Zone deleted successfully'})
+
+# if __name__ == '__main__':
+#     zone_bp.run(debug=True)
