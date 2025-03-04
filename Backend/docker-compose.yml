@@ -3,9 +3,34 @@ version: '3.8'
 services:
   web:
     build:
-      context: .  # ใช้ directory ปัจจุบันเป็น context
-      dockerfile: Dockerfile  # ใช้ Dockerfile ที่อยู่ใน /Backend
+      context: .  # Use the current directory as the build context
+      dockerfile: Dockerfile  # Dockerfile located in the root directory
+    environment:
+      - FLASK_APP=API/app.py  # Flask app entry point
+      - POSTGRES_HOST=db  # PostgreSQL host (Docker service name)
+      - POSTGRES_PORT=5432  # Internal PostgreSQL container port
+      - POSTGRES_DB=mydatabase  # Database name
+      - POSTGRES_USER=myuser  # PostgreSQL username
+      - POSTGRES_PASSWORD=mypassword  # PostgreSQL password
     ports:
-      - "8000:8000"
+      - "8000:8000"  # Map container port 8000 to host port 8000
     volumes:
-      - .:/app
+      - .:/app  # Mount current directory into the container for development
+    depends_on:
+      - db  # Ensure the web service starts after PostgreSQL
+
+  db:
+    image: postgres:16-alpine  # Lightweight PostgreSQL image
+    container_name: postgres
+    environment:
+      POSTGRES_HOST: localhost
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Persistent storage for PostgreSQL data
+    ports:
+      - "5443:5432"  # Map PostgreSQL container port 5432 to host port 5432
+
+volumes:
+  postgres_data:  # Define a volume for PostgreSQL persistent data
