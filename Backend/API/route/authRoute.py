@@ -30,6 +30,8 @@ def generate_token(user_id, username, role):
 
     # Combine header, payload, and signature
     token = f"{header_b64}.{payload_b64}.{signature}"
+
+    print(f"token {token}")
     
     return token
 

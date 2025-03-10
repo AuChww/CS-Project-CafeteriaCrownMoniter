@@ -6,10 +6,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
 import pytz
 import time
-from API.route.zoneVisitorHistoryRoute import (
-    add_zone_visitor_history_endpoint
-)
-
 
 from Application.Service.feature.zoneService import (
     get_all_zones_service,
@@ -21,6 +17,10 @@ from Application.Service.feature.zoneService import (
     update_zone_service,
     update_zone_count_service,
     delete_zone_service
+)
+
+from Application.Service.feature.zoneVisitorHistoryService import (
+    add_zone_visitor_history_service
 )
 
 from Application.objroi import get_human_count
@@ -174,29 +174,35 @@ def update_catch_count():
         # ยิง API ไปที่ update_zone_count ทุก 5 นาที
         update_zone_count_service(zone.zone_id, human_count, update_date_time_str)
 
+
+        if update_date_time.minute == 0:
+            # ถ้าใช่ ให้เรียก add_zone_visitor_history_service
+            add_zone_visitor_history_service(update_date_time_str, zone.zone_id, human_count)
+            print(f"This is Log : [{update_date_time_str}] Updated Zone {zone.zone_id} with count {human_count}")
+
+
         print(f"[{datetime.now(timezone)}] Updated Zone {zone.zone_id} with count {human_count}")
 
 
-@zone_bp.route('/api/v1/addLogZone/<int:zone_id>', methods=['POST'])
-def save_zone_visitor_history():
-    print(f"zone_visitor_history {datetime.now(timezone)}")
+# @zone_bp.route('/api/v1/addLogZone/<int:zone_id>', methods=['POST'])
+# def save_zone_visitor_history(zone_id, human_count, update_date_time_str):
+#     print(f"zone_visitor_history {datetime.now(timezone)}")
 
-    if not visitor_counts_cache:
-        print(f"[{datetime.now(timezone)}] No visitor data to save")
-        return
+#     if not visitor_counts_cache:
+#         print(f"[{datetime.now(timezone)}] No visitor data to save")
+#         return
+    
+#     # สร้างข้อมูลที่ต้องส่งไปยัง add_zone_visitor_history_endpoint()
+#     data = {
+#         "date_time": update_date_time_str,
+#         "zone_id": zone_id,
+#         "visitor_count": human_count,
+#     }
 
-    for zone_id, visitor_count in visitor_counts_cache.items():
-        # สร้างข้อมูลที่ต้องส่งไปยัง add_zone_visitor_history_endpoint()
-        data = {
-            "date_time": datetime.now(timezone).strftime('%Y-%m-%d %H:%M:%S'),
-            "zone_id": zone_id,
-            "visitor_count": visitor_count
-        }
+#     # เรียกใช้งานฟังก์ชันโดยตรง
+#     response = add_zone_visitor_history_endpoint(data)
 
-        # เรียกใช้งานฟังก์ชันโดยตรง
-        response = add_zone_visitor_history_endpoint(data)
-
-        print(f"[{datetime.now(timezone)}] History recorded for Zone {zone_id} with count {visitor_count}, Response: {response}")
+#     print(f"[{datetime.now(timezone)}] History recorded for Zone {zone_id} with count {human_count}, Response: {response}")
 
 def start_scheduler():
     # ตั้งค่าไทม์โซนเป็นไทย
@@ -224,7 +230,7 @@ def start_scheduler():
     scheduler.add_job(update_catch_count, "cron", minute="*/1", timezone=tz, start_date=now)
 
     # เพิ่ม Job ที่จะเริ่มทำงานทันทีที่โปรแกรมเริ่ม และทำซ้ำทุกๆ 1 ชั่วโมง
-    scheduler.add_job(save_zone_visitor_history, "cron", minute=0, timezone=tz, start_date=now)
+    # scheduler.add_job(save_zone_visitor_history, "cron", minute="*/1", timezone=tz, start_date=now)
 
     # เริ่ม Scheduler
     scheduler.start()

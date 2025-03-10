@@ -9,6 +9,8 @@ from API.route.zoneRoute import zone_bp
 from API.route.zoneVisitorHistoryRoute import zone_visitor_history_bp
 from API.route.restaurantVisitorHistoryRoute import restaurant_visitor_history_bp
 from API.route.authRoute import auth_bp
+from flask import Flask, send_from_directory
+import os
 
 app = Flask(__name__)
 app.register_blueprint(bar_bp)
@@ -26,6 +28,21 @@ CORS(app, resources={r"/api/*": {
     "methods": ["GET", "POST", "OPTIONS", "PUT", "DELETE", "PATCH"],  # เพิ่ม PUT และ DELETE
     "allow_headers": ["Authorization", "Content-Type"]
 }})
+
+print(os.path.exists("public/image/barImages/bar1.png"))  # ควรได้ True
+print(os.path.abspath("public/image/barImages/bar1.png"))  # เช็ค path เต็ม
+
+
+from flask import send_file
+
+@app.route('/public/image/<path:subdir>/<path:filename>')
+def serve_file(subdir, filename):
+    file_path = os.path.join(app.root_path, 'public/image', subdir, filename)
+    if os.path.exists(file_path):
+        return send_file(file_path)
+    else:
+        return "File Not Found", 404
+
 
 if __name__ == "__main__":
     app.run(port=8000, debug=True)  # Update port to match docker-compose.yml
