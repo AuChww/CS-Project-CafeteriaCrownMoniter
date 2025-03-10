@@ -1,76 +1,3 @@
-# Face blur
-
-# import torch
-# import cv2
-# import numpy as np
-# import os
-# from ultralytics import YOLO
-
-# # โหลด YOLOv8 pre-trained model
-# model = YOLO('yoloModel/yolov8s.pt')  # ใช้โมเดล YOLOv8
-
-# # โหลด Haar Cascade สำหรับตรวจจับใบหน้า
-# face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-
-# # เปิดวิดีโอด้วย OpenCV
-# def get_human_count(zone_id):
-    
-#     # สร้าง path ไปยังไฟล์วิดีโอ
-#     video_path = os.path.join(os.path.dirname(__file__), f"../public/video/zone/{zone_id}.mp4")
-#     # ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่
-#     if not os.path.exists(video_path):
-#         print(f"Video file for zone {zone_id} not found.")
-#         return 0  # ถ้าไม่มีวิดีโอ ให้คืนค่า 0 ไปเลย
-    
-#     cap = cv2.VideoCapture(video_path)
-
-#     # กำหนดพื้นที่ที่ต้องการนับ (ROI)
-#     roi_top_left = (50, 50)  # จุดมุมบนซ้าย
-#     roi_bottom_right = (1500, 1500)  # จุดมุมล่างขวา
-
-#     # ตัวแปรเก็บจำนวนคนในแต่ละเฟรม
-#     all_human_counts = []
-#     frame_number = 0
-
-#     while True:
-#         ret, frame = cap.read()
-#         if not ret:
-#             break
-        
-#         frame_number += 1
-
-#         # ข้ามทุก ๆ 10 เฟรม
-#         if frame_number % 10 != 0:
-#             continue
-
-#         results = model(frame)
-#         detections = results[0].boxes.xyxy.cpu().numpy()  # ดึงข้อมูล bounding boxes
-#         classes = results[0].boxes.cls.cpu().numpy()     # ดึงข้อมูล class
-        
-#         human_count = 0
-
-#         for i, box in enumerate(detections):
-#             left, top, right, bottom = map(int, box[:4])
-#             cls = int(classes[i])
-
-#             # ตรวจจับเฉพาะคน และอยู่ใน ROI
-#             if cls == 0 and (left > roi_top_left[0] and right < roi_bottom_right[0] and
-#                              top > roi_top_left[1] and bottom < roi_bottom_right[1]):  
-#                 human_count += 1
-
-#         all_human_counts.append(human_count)
-
-#         # แสดงผลแค่ทุกๆ 60 เฟรม
-#         if frame_number % 60 == 0:
-#             print(f"Frame {frame_number}: zone {zone_id} : Human Count = {human_count}")
-
-#     cap.release()
-#     cv2.destroyAllWindows()
-
-#     # คืนค่าตัวสุดท้ายของ all_human_counts
-#     return all_human_counts[-1] if all_human_counts else 0
-
-
 # คัดเอามาแค่ 5 วิแรก
 import torch
 import cv2
@@ -163,6 +90,8 @@ def get_human_count(video_id, video_path):
         # แสดงผลแค่ทุกๆ 60 เฟรม
         if frame_number % 30 == 0:
             print(f"Frame {frame_number}: zone {video_id} : Human Count = {human_count}")
+            
+        # cv2.imshow('YOLOv8 Human Detection', frame)
 
     cap.release()
     cv2.destroyAllWindows()

@@ -1,6 +1,7 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, send_from_directory
 from Application.Service.feature.barService import update_bar_visitors,get_all_bars_service, get_bar_by_id_service, get_all_restaurants_by_bar_id_service, get_all_reviews_by_bar_id_service, get_all_zones_by_bar_id_service, add_bar_service, update_bar_service, delete_bar_service
 
+import os
 bar_bp = Blueprint('bars', __name__)
 
 @bar_bp.route('/update_bar_visitors/<int:bar_id>', methods=['POST'])
@@ -133,3 +134,25 @@ def delete_bar(bar_id):
         return jsonify({'message': 'Bar not found'}), 404
 
     return jsonify({'message': 'Bar deleted successfully'})
+
+
+# @bar_bp.route('/api/v1/getBarVideo/<string:file_name>', methods=['GET'])
+# def get_video_url(file_name):
+#     video_url = f"http://localhost:8000/videos/{file_name}"
+#     return jsonify({"url": video_url})
+
+# @bar_bp.route('/videos/<path:file_name>')
+# def serve_video(file_name):
+#     video_directory = os.path.join(os.getcwd(), "public", "video", "zone")
+#     return send_from_directory(video_directory, file_name)
+
+@bar_bp.route('/api/v1/getBarImage/<string:file_name>', methods=['GET'])
+def get_image_url(file_name):
+    image_url = f"http://localhost:8000/public/image/barImages/{file_name}"
+    return jsonify({"url": image_url})
+
+@bar_bp.route('/public/image/barImages/<path:file_name>')
+def serve_actual_image(file_name):
+    image_directory = os.path.join(os.getcwd(), "public", "image", "barImages")
+    return send_from_directory(image_directory, file_name)
+

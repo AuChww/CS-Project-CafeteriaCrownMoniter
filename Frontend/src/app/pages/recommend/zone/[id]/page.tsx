@@ -78,7 +78,7 @@ const ZonePage = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:8000/api/v1/getZoneImage/${id}.jpg`
+          `http://localhost:8000/api/v1/getZoneImage/zone${id}.png`
         );
         if (!response.ok) throw new Error("Failed to fetch image URL");
 
@@ -173,11 +173,11 @@ const ZonePage = () => {
             </video> */}
 
             {imageUrl ? (
-              <img src={imageUrl} alt="Zone Image" width="500" />
+              <img src={imageUrl} alt={zone.zone_name} width="500" />
             ) : (
               <p>Loading image...</p>
             )}
-            <img
+            {/* <img
               className="w-full object-cover rounded-md mb-4"
               src={
                 zone.zone_image
@@ -185,7 +185,7 @@ const ZonePage = () => {
                   : `/image/zoneImages/placeholder.jpg`
               }
               alt={zone.zone_name}
-            />
+            /> */}
             <p className="text-lg text-gray-700">{zone.zone_detail}</p>
 
             <p className="text-lg text-gray-700">
@@ -245,7 +245,6 @@ const ZonePage = () => {
             </div>
           </div>
         </div>
-        <div></div>
       </div>
     </div>
   );

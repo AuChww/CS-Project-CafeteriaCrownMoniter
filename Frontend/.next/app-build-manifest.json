@@ -16,6 +16,11 @@
       "static/chunks/main-app.js",
       "static/chunks/app/pages/recommend/bar/[id]/page.js"
     ],
+    "/pages/admin/reportCheck/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/pages/admin/reportCheck/page.js"
+    ],
     "/pages/recommend/zone/[id]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -25,6 +30,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/pages/recommend/restaurant/[id]/page.js"
+    ],
+    "/pages/recommend/bar/topBar/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/pages/recommend/bar/topBar/page.js"
     ]
   }
 }

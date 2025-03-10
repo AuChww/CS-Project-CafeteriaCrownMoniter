@@ -145,19 +145,64 @@ def update_zone_endpoint(zone_id):
 timezone = pytz.timezone("Asia/Bangkok")
 utc_tz = pytz.utc
 
-@zone_bp.route('/api/v1/updateCatchCount/<int:zone_id>', methods=['PATCH'])
+
+
+zone_operating_hours = {
+    1: {"days": {0, 1, 2, 3, 4, 5, 6}, "start": "10:00", "end": "16:00"},  
+    2: {"days": {0, 1, 2, 3, 4, 5, 6}, "start": "11:00", "end": "16:00"},  
+    3: {"days": {0, 1, 2, 3, 4, 5}, "start": "12:00", "end": "16:00"},  
+    4: {"days": {0, 1, 2, 3, 4, 5, 6}, "start": "12:00", "end": "16:00"}, 
+    5: {"days": {0, 1, 2, 3, 4, 5}, "start": "13:00", "end": "16:00"}, 
+    6: {"days": {0, 1, 2, 3, 4, 5}, "start": "14:00", "end": "16:00"}, 
+    7: {"days": {0, 1, 2, 3, 4, 5}, "start": "10:00", "end": "16:00"}, 
+    8: {"days": {0, 1, 2, 3, 4, 5}, "start": "12:00", "end": "16:00"}, 
+    9: {"days": {0, 1, 2, 3, 4, 5}, "start": "10:00", "end": "16:00"}, 
+    10: {"days": {0, 1, 2, 3, 4, 5}, "start": "12:00", "end": "16:00"}, 
+    11: {"days": {0, 1, 2, 3, 4, 5}, "start": "12:00", "end": "16:00"}, 
+    12: {"days": {0, 1, 2, 3, 4, 5}, "start": "13:00", "end": "16:00"}, 
+    13: {"days": {0, 1, 2, 3, 4, 5}, "start": "13:00", "end": "16:00"}, 
+    14: {"days": {0, 1, 2, 3, 4, 5}, "start": "14:00", "end": "16:00"}, 
+}
+
+
+def is_zone_open(zone_id):
+    now = datetime.now(timezone)
+    current_day = now.weekday()  # 0 = จันทร์, 6 = อาทิตย์
+    current_time = now.strftime("%H:%M")
+
+    zone_info = zone_operating_hours.get(zone_id)
+    
+    print(f"zone_id: {zone_id} | zone_info: {zone_info}")
+    if not zone_info:
+        return False  # ถ้าไม่มีข้อมูลโซน ให้ปิด
+
+    # ตรวจสอบว่าวันปัจจุบันอยู่ในช่วงเวลาที่กำหนดหรือไม่
+    if current_day not in zone_info["days"]:
+        return False
+
+    # ตรวจสอบเวลา
+    return zone_info["start"] <= current_time <= zone_info["end"]
+
+
+
+@zone_bp.route('/api/v1/updateCatchCount', methods=['PATCH'])
 def update_catch_count():
     print(f"update_catch_count {datetime.now(timezone)}")
     zones = get_all_zones_service()
 
     if not zones:
         print(f"[{datetime.now(timezone)}] No zones found")
-        return
+        return {"message": "No zones found"} 
 
     for zone in zones:
+        if not is_zone_open(zone.zone_id):
+            print(f"[{datetime.now(timezone)}] Zone {zone.zone_id} is closed. Skipping...")
+            continue
+        
+        print(f"Zone is Open.")
         video_path = "zone"
         human_count = get_human_count(zone.zone_id, video_path)
-        
+
         print(f"zone_id: {zone.zone_id}")
         print(f"zone_id: {zone} | zone_count_amount: {human_count}")
         if not isinstance(human_count, int):
@@ -172,8 +217,11 @@ def update_catch_count():
         # ยิง API ไปที่ update_zone_count ทุก 5 นาที
         update_zone_count_service(zone.zone_id, human_count, update_date_time_str)
 
-        print(f"[{datetime.now(timezone)}] Updated Zone_id  {zone.zone_id} with count {human_count}")
+        print(f"[{datetime.now(timezone)}] Updated Zone_id {zone.zone_id} with count {human_count}")
         print(f"-------------------------------------------------------------------------------------------------")
+
+    return {"message": "Zone count updated"}
+
 
 
 @zone_bp.route('/api/v1/addLogZone/<int:zone_id>', methods=['POST'])
@@ -223,7 +271,7 @@ def start_scheduler():
     scheduler.add_job(update_catch_count, "cron", minute="*/1", timezone=tz, start_date=now)
 
     # เพิ่ม Job ที่จะเริ่มทำงานทันทีที่โปรแกรมเริ่ม และทำซ้ำทุกๆ 1 ชั่วโมง
-    scheduler.add_job(save_zone_visitor_history, "cron", minute=0, timezone=tz, start_date=now)
+    # scheduler.add_job(save_zone_visitor_history, "cron", minute="*/1", timezone=tz, start_date=now)
 
     # เริ่ม Scheduler
     scheduler.start()
@@ -243,14 +291,12 @@ def serve_video(file_name):
 
 @zone_bp.route('/api/v1/getZoneImage/<string:file_name>', methods=['GET'])
 def get_image_url(file_name):
-    # ✅ เปลี่ยนให้ส่ง URL ของรูปภาพแทนวิดีโอ
-    image_url = f"http://localhost:8000/images/{file_name}"
+    image_url = f"http://localhost:8000/public/image/zoneImages/{file_name}"
     return jsonify({"url": image_url})
 
-@zone_bp.route('/images/<path:file_name>')
-def serve_image(file_name):
-    # ✅ เสิร์ฟรูปภาพจากโฟลเดอร์ `public/images/zone/`
-    image_directory = os.path.join(os.getcwd(), "public", "images", "zone")
+@zone_bp.route('/public/image/zoneImages/<path:file_name>')
+def serve_actual_image(file_name):
+    image_directory = os.path.join(os.getcwd(), "public", "image", "zoneImages")
     return send_from_directory(image_directory, file_name)
 
 

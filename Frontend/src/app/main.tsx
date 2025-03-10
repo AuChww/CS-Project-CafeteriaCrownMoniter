@@ -21,6 +21,7 @@ interface Bar {
 
 export default function HomePage() {
   const [bars, setBars] = useState<Bar[]>([]);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const router = useRouter();
 
   // ดึงข้อมูลจาก API

@@ -31,6 +31,7 @@ const BarCard: React.FC<BarCardProps> = ({
   bar_image,
 }) => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -46,6 +47,18 @@ const BarCard: React.FC<BarCardProps> = ({
       } catch (error) {
         console.error("Error fetching restaurant:", error);
       }
+
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/v1/getBarImage/${bar_id}.png`
+        );
+        if (!response.ok) throw new Error("Failed to fetch image URL");
+
+        const data = await response.json();
+        setImageUrl(data.url);
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
     };
 
     fetchRestaurants();
@@ -53,9 +66,11 @@ const BarCard: React.FC<BarCardProps> = ({
 
   // คำนวณยอดรวมของ current_visitor_count
   const totalVisitors = restaurants?.length
-  ? restaurants.reduce((sum, restaurant) => sum + restaurant.current_visitor_count, 0)
-  : 0;
-
+    ? restaurants.reduce(
+        (sum, restaurant) => sum + restaurant.current_visitor_count,
+        0
+      )
+    : 0;
 
   return (
     <div
@@ -63,6 +78,11 @@ const BarCard: React.FC<BarCardProps> = ({
       className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
     >
       <a href="#">
+        {/* {imageUrl ? (
+          <img src={imageUrl} alt=" Image" width="500" />
+        ) : (
+          <p>Loading image...</p>
+        )} */}
         <img
           className="rounded-t-lg h-full w-full"
           src={`/image/barImages/${bar_image}`}

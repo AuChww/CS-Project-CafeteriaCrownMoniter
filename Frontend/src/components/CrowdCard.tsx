@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -81,6 +81,25 @@ const CrowdCard: React.FC<CrowdCardProps> = ({
   bar_detail,
 }) => {
   const router = useRouter();
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchBars = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/v1/getBarImage/bar${bar_id}.png`
+        );
+        if (!response.ok) throw new Error("Failed to fetch image URL");
+
+        const data = await response.json();
+        setImageUrl(data.url);
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    };
+
+    fetchBars();
+  }, []);
 
   return (
     <div
@@ -88,11 +107,21 @@ const CrowdCard: React.FC<CrowdCardProps> = ({
       className="bg-white hover:scale-110 duration-300  rounded-lg shadow-lg p-2 border border-gray-200 hover:bg-gray-100"
     >
       <div className="h-48">
-        <img
+        {/* <img
           className="rounded-t-lg h-full"
           src={`/image/barImages/${bar_image}`}
           alt="{bar_name}"
-        />
+        /> */}
+        {imageUrl ? (
+          <img
+            className="rounded-t-lg h-full"
+            src={imageUrl}
+            alt=" Image"
+            width="500"
+          />
+        ) : (
+          <p>Loading image...</p>
+        )}
       </div>
       <div className="px-2 h-60 space-y-3 mt-3">
         <a href="#">

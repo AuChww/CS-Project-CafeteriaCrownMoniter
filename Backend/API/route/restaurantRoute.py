@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, send_from_directory
 from Application.Service.feature.restaurantService import (
      get_restaurant_by_id_service,
      get_all_restaurants_service,
@@ -14,6 +14,7 @@ from datetime import datetime, timedelta
 import pytz 
 from apscheduler.triggers.cron import CronTrigger
 import atexit
+import os
 
 restaurant_bp = Blueprint('restaurants', __name__)
 
@@ -172,6 +173,20 @@ def start_scheduler():
 
 # เรียกใช้งาน Scheduler
 start_scheduler()
+
+
+@restaurant_bp.route('/api/v1/getRestaurantImage/<string:file_name>', methods=['GET'])
+def get_image_url(file_name):
+    image_url = f"http://localhost:8000/public/image/restaurantImages/{file_name}"
+    return jsonify({"url": image_url})
+
+
+@restaurant_bp.route('/public/image/restaurantImages/<path:file_name>')
+def serve_actual_image(file_name):
+    image_directory = os.path.join(os.getcwd(), "public", "image", "restaurantImages")
+    return send_from_directory(image_directory, file_name)
+
+
 
 @restaurant_bp.route('/api/v1/updateRestaurant/<int:restaurant_id>', methods=['PUT'])
 def update_restaurant(restaurant_id):

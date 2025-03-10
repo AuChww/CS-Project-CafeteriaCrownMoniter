@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 interface ZoneCardProps {
   zone_id: number;
@@ -84,16 +84,46 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
   zone_time,
   zone_image
 }) => {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  
+    useEffect(() => {
+      const fetchBars = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:8000/api/v1/getZoneImage/zone${zone_id}.png`
+          );
+          if (!response.ok) throw new Error("Failed to fetch image URL");
+  
+          const data = await response.json();
+          setImageUrl(data.url);
+        } catch (error) {
+          console.error("Error fetching image:", error);
+        }
+      };
+  
+      fetchBars();
+    }, []);
+
   return (
     <div
       key={zone_id}
       className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 "
     >
-      <img
+      {/* <img
           className="rounded-t-lg w-full max-h-60"
           src={zone_image ? `/image/zoneImages/${zone_image}` : `/image/zoneImages/placeholder.jpg`}
           alt={zone_name}
-        />
+        /> */}
+        {imageUrl ? (
+              <img
+                className="rounded-t-lg w-full max-h-60"
+                src={imageUrl}
+                alt={zone_name}
+                width="500"
+              />
+            ) : (
+              <p>Loading image...</p>
+            )}
       <div className="p-5 space-y-3 ">
 
 

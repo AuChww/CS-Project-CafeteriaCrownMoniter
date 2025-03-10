@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 interface restaurantCardProps {
   restaurant_id: number;
@@ -82,17 +82,46 @@ const RestaurantCard: React.FC<restaurantCardProps> = ({
   current_visitor_count,
   restaurant_image,
 }) => {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  
+    useEffect(() => {
+      const fetchBars = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:8000/api/v1/getRestaurantImage/restaurant${restaurant_id}.png`
+          );
+          if (!response.ok) throw new Error("Failed to fetch image URL");
+  
+          const data = await response.json();
+          setImageUrl(data.url);
+        } catch (error) {
+          console.error("Error fetching image:", error);
+        }
+      };
+  
+      fetchBars();
+    }, []);
   return (
     <div
       key={restaurant_id}
       className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
     >
       <a href="#">
-        <img
+        {/* <img
           className="rounded-t-lg w-full max-h-60"
           src={restaurant_image ? `/image/restaurantImages/${restaurant_image}` : `/image/restaurantImages/placeholder.jpg`}
           alt={restaurant_name}
-        />
+        /> */}
+        {imageUrl ? (
+          <img
+            className="rounded-t-lg w-full max-h-60"
+            src={imageUrl}
+            alt={restaurant_name}
+            width="500"
+          />
+        ) : (
+          <p>Loading image...</p>
+        )}
       </a>
       <div className="p-5">
         {/* Restaurant Name */}
