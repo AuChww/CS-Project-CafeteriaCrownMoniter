@@ -1,14 +1,42 @@
-import React, { useEffect, useState } from "react";
+
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
-interface CrowdCardProps {
+interface Bar {
   bar_id: number;
   bar_name: string;
-  bar_location: string;
   max_people_in_bar: number;
-  bar_image: string;
   bar_detail: string;
+  bar_image: string;
+  bar_location: string;
+  total_rating: number;
+  total_reviews: number;
+}
+
+interface Zone {
+  bar_id: number;
+  zone_id: number;
+  zone_name: string;
+  zone_detail: string;
+  max_people_in_zone: number;
+  current_visitor_count: number;
+  update_date_time: string;
+  zone_time: number;
+  zone_image: string;
+}
+
+interface Restaurant {
+  restaurant_id: number;
+  zone_id: number;
+  restaurant_name: string;
+  restaurant_location: string;
+  restaurant_detail: string;
+  restaurant_image: string;
+  total_rating: number;
+  total_reviews: number;
+  current_visitor_count: number;
+  update_date_time: string;
 }
 
 function renderStars(totalRating: number) {
@@ -72,19 +100,63 @@ function renderStars(totalRating: number) {
   return stars;
 }
 
-const CrowdCard: React.FC<CrowdCardProps> = ({
+const CrowdCard: React.FC<Bar> = ({
   bar_id,
   bar_name,
   bar_location,
-  max_people_in_bar,
-  bar_image,
   bar_detail,
+  max_people_in_bar,
+  total_rating,
+  total_reviews,
+  bar_image,
 }) => {
   const router = useRouter();
+  const [currentVisitors, setCurrentVisitors] = useState(0);
+
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchBars = async () => {
+    const fetchVisitorData = async () => {
+      try {
+        // 1. ดึงข้อมูลโซนทั้งหมดที่เกี่ยวข้องกับ bar_id
+        const zonesRes = await fetch(
+          `http://127.0.0.1:8000/api/v1/getAllZonesByBarId/${bar_id}`
+        );
+        const zonesData = await zonesRes.json();
+
+        let totalZoneVisitors = (zonesData.zones || []).reduce(
+          (sum: number, zone: { current_visitor_count: number }) =>
+            sum + zone.current_visitor_count,
+          0
+        );
+
+        // 2. ดึงข้อมูลร้านอาหารทั้งหมดที่เกี่ยวข้องกับแต่ละ zone_id
+        let totalRestaurantVisitors = 0;
+
+        await Promise.all(
+          zonesData.zones.map(async (zone: { zone_id: number }) => {
+            const restaurantRes = await fetch(
+              `http://127.0.0.1:8000/api/v1/getRestaurantByZoneId/${zone.zone_id}`
+            );
+            const restaurantData = await restaurantRes.json();
+
+            // รวม current_visitor_count ของทุกร้านอาหารในโซนนั้น
+            totalRestaurantVisitors += (
+              restaurantData.restaurants || []
+            ).reduce(
+              (sum: number, restaurant: { current_visitor_count?: number }) =>
+                sum + (restaurant.current_visitor_count || 0),
+              0
+            );
+          })
+        );
+
+        // 3. รวมค่า current_visitor ทั้งหมดจากโซนและร้านอาหาร
+        setCurrentVisitors(totalZoneVisitors + totalRestaurantVisitors);
+      } catch (error) {
+        console.error("Error fetching visitor data:", error);
+      }
+
       try {
         const response = await fetch(
           `http://localhost:8000/api/v1/getBarImage/bar${bar_id}.png`
@@ -98,8 +170,8 @@ const CrowdCard: React.FC<CrowdCardProps> = ({
       }
     };
 
-    fetchBars();
-  }, []);
+    fetchVisitorData();
+  }, [bar_id]);
 
   return (
     <div
@@ -112,6 +184,7 @@ const CrowdCard: React.FC<CrowdCardProps> = ({
           src={`/image/barImages/${bar_image}`}
           alt="{bar_name}"
         /> */}
+
         {imageUrl ? (
           <img
             className="rounded-t-lg h-full"
@@ -140,7 +213,9 @@ const CrowdCard: React.FC<CrowdCardProps> = ({
           >
             <path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z" />
           </svg>
-          <div className=" text-xl">0 / {max_people_in_bar}</div>
+          <div className=" text-xl">
+            {currentVisitors} / {max_people_in_bar}
+          </div>
         </div>
         <p className=" text-sm font-normal text-gray-500 dark:text-gray-400">
           {bar_detail}

@@ -34,8 +34,14 @@ export function Login() {
                 // Redirect based on role
                 if (data.role === 'admin') {
                     router.push('/pages/admin'); // Admin route
+                    setTimeout(() => {
+                        window.location.reload(); // รีโหลดหน้า
+                    }, 1000);
                 } else {
                     router.push('/'); // User route
+                    setTimeout(() => {
+                        window.location.reload(); // รีโหลดหน้า
+                    }, 1000);
                 }
             } else {
                 setError('Invalid username or password');

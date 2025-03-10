@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 
 // Define types for the visitor history, chart data, and zone data
-interface VisitorHistory {
+interface ZoneVisitorHistory {
   date_time: string;
   visitor_count: number;
-  visitor_history_id: number;
+  zone_visitor_history_id: number;
   zone_id: number;
 }
 
@@ -32,15 +32,15 @@ const WeekBarVisitorBarChart: React.FC = () => {
     setIsClient(true);
 
     // Fetch visitor history data
-    fetch("http://127.0.0.1:8000/api/v1/getAllVisitorHistories")
+    fetch("http://127.0.0.1:8000/api/v1/getAllZoneVisitorHistory")
       .then((response) => response.json())
       .then((data) => {
-        const visitorHistories: VisitorHistory[] = data.visitor_histories;
+        const visitorHistories: ZoneVisitorHistory[] = data.visitor_histories;
 
         // Get today's date and calculate the date 7 days ago
         const today = new Date();
         const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(today.getDate() - 7);
+        sevenDaysAgo.setDate(today.getDate() - 7 );
 
         // Filter data for the last 7 days and process for the bar chart
         const filteredData: ChartData[] = visitorHistories.reduce<ChartData[]>((acc, curr) => {
@@ -100,7 +100,7 @@ const WeekBarVisitorBarChart: React.FC = () => {
 
   return (
     <div className="text-center relative">
-      <h3>Visitor Count by Bar (Last 7 Days)</h3>
+      <h3>Visitor Count by Bar (7 Days Before)</h3>
       <BarChart
         width={600}
         height={200}

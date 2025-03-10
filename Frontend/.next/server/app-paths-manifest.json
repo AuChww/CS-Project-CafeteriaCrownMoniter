@@ -1,7 +1,0 @@
-{
-  "/page": "app/page.js",
-  "/pages/recommend/bar/topBar/page": "app/pages/recommend/bar/topBar/page.js",
-  "/pages/recommend/bar/[id]/page": "app/pages/recommend/bar/[id]/page.js",
-  "/pages/recommend/zone/[id]/page": "app/pages/recommend/zone/[id]/page.js",
-  "/pages/recommend/restaurant/[id]/page": "app/pages/recommend/restaurant/[id]/page.js"
-}

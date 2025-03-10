@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 
 // Define types for the visitor history and chart data
-interface VisitorHistory {
+interface ZoneVisitorHistory {
   date_time: string;
   visitor_count: number;
-  visitor_history_id: number;
+  zone_visitor_history_id: number;
   zone_id: number;
 }
 
@@ -24,10 +24,10 @@ const MonthZoneVisitorBarChart: React.FC = () => {
     setIsClient(true);
 
     // Fetch the data
-    fetch("http://127.0.0.1:8000/api/v1/getAllVisitorHistories")
+    fetch("http://127.0.0.1:8000/api/v1/getAllZoneVisitorHistory")
       .then((response) => response.json())
       .then((data) => {
-        const visitorHistories: VisitorHistory[] = data.visitor_histories;
+        const visitorHistories: ZoneVisitorHistory[] = data.visitor_histories;
 
         // Get today's date and calculate the date 30 days ago
         const today = new Date();
@@ -62,7 +62,7 @@ const MonthZoneVisitorBarChart: React.FC = () => {
 
   return (
     <div className="text-center relative">
-      <h3>Visitor Count by Zone (Last 30 Days)</h3> {/* Change the text here to "Last 30 Days" */}
+      <h3>Visitor Count by Zone (30 Days Before)</h3> {/* Change the text here to "Last 30 Days" */}
       <BarChart
         width={600}
         height={200}

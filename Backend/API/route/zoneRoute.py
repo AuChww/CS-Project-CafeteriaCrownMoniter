@@ -23,6 +23,10 @@ from Application.Service.feature.zoneService import (
     delete_zone_service
 )
 
+from Application.Service.feature.zoneVisitorHistoryService import (
+    add_zone_visitor_history_service
+)
+
 from Application.objroi import get_human_count
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta
@@ -184,15 +188,14 @@ def is_zone_open(zone_id):
     return zone_info["start"] <= current_time <= zone_info["end"]
 
 
-
-@zone_bp.route('/api/v1/updateCatchCount', methods=['PATCH'])
+@zone_bp.route('/api/v1/updateCatchCount/<int:zone_id>', methods=['PATCH'])
 def update_catch_count():
     print(f"update_catch_count {datetime.now(timezone)}")
     zones = get_all_zones_service()
 
     if not zones:
         print(f"[{datetime.now(timezone)}] No zones found")
-        return {"message": "No zones found"} 
+        return
 
     for zone in zones:
         if not is_zone_open(zone.zone_id):
@@ -202,12 +205,12 @@ def update_catch_count():
         print(f"Zone is Open.")
         video_path = "zone"
         human_count = get_human_count(zone.zone_id, video_path)
+        print(f"{zone} count = {human_count}")
 
-        print(f"zone_id: {zone.zone_id}")
-        print(f"zone_id: {zone} | zone_count_amount: {human_count}")
         if not isinstance(human_count, int):
-            print(f"Invalid human count for zone_id: {zone.zone_id}")
+            print(f"[{datetime.now}] Invalid human count for zone {zone.zone_id}")
             continue
+
 
         # เก็บค่า zone_id, human_count ไว้ใน cache
         visitor_counts_cache[zone.zone_id] = human_count
@@ -217,33 +220,16 @@ def update_catch_count():
         # ยิง API ไปที่ update_zone_count ทุก 5 นาที
         update_zone_count_service(zone.zone_id, human_count, update_date_time_str)
 
-        print(f"[{datetime.now(timezone)}] Updated Zone_id {zone.zone_id} with count {human_count}")
+
+        if update_date_time.minute == 0:
+            # ถ้าใช่ ให้เรียก add_zone_visitor_history_service
+            add_zone_visitor_history_service(update_date_time_str, zone.zone_id, human_count)
+            print(f"This is Log : [{update_date_time_str}] Updated Zone {zone.zone_id} with count {human_count}")
+
+
+        print(f"[{datetime.now(timezone)}] Updated Zone {zone.zone_id} with count {human_count}")
         print(f"-------------------------------------------------------------------------------------------------")
-
     return {"message": "Zone count updated"}
-
-
-
-@zone_bp.route('/api/v1/addLogZone/<int:zone_id>', methods=['POST'])
-def save_zone_visitor_history():
-    print(f"zone_visitor_history {datetime.now(timezone)}")
-
-    if not visitor_counts_cache:
-        print(f"[{datetime.now(timezone)}] No visitor data to save")
-        return
-
-    for zone_id, visitor_count in visitor_counts_cache.items():
-        # สร้างข้อมูลที่ต้องส่งไปยัง add_zone_visitor_history_endpoint()
-        data = {
-            "date_time": datetime.now(timezone).strftime('%Y-%m-%d %H:%M:%S'),
-            "zone_id": zone_id,
-            "visitor_count": visitor_count
-        }
-
-        # เรียกใช้งานฟังก์ชันโดยตรง
-        response = add_zone_visitor_history_endpoint(data)
-
-        print(f"[{datetime.now(timezone)}] History recorded for Zone {zone_id} with count {visitor_count}, Response: {response}")
 
 def start_scheduler():
     # ตั้งค่าไทม์โซนเป็นไทย
