@@ -7,6 +7,7 @@ import { FaChevronCircleDown } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import "/assets/css/main.css";
 import { FaFireAlt } from "react-icons/fa";
+import { useAuth } from "@/context/AuthContext";
 
 const Navbar = () => {
     const router = useRouter();
@@ -14,6 +15,7 @@ const Navbar = () => {
     const [role, setRole] = useState('');
     const [userImage, setUserImage] = useState('');
     const [userId, setUserId] = useState("");
+    const { userStatus } = useAuth();
 
     // Fetch user info based on token or user_id
     useEffect(() => {
@@ -62,6 +64,7 @@ const Navbar = () => {
     const logout = () => {
         localStorage.removeItem('token');
         console.log('Logged out');
+        router.refresh();
         window.location.href = "/pages/authenticate/login";
     };
 
@@ -78,13 +81,15 @@ const Navbar = () => {
                 <div className="space-x-4 flex mr-4 mt-0.5">
                     {/* If Admin role, show the Admin link */}
                     {role === "admin" && (
-                        <Link href="/pages/admin/">
-                            <div className="text-white mt-0.5 mx-4">Dashboard</div>
-                        </Link>
+                        <div className="flex">
+                            <Link href="/pages/admin/reportCheck">
+                                <div className="text-white mt-0.5 mx-4">Report</div>
+                            </Link>
+                            <Link href="/pages/admin/">
+                                <div className="text-white mt-0.5 mx-4">Dashboard</div>
+                            </Link>
+                        </div>
                     )}
-                    <Link href="/pages/admin/reportCheck">
-                        <div className="text-white mt-0.5 mx-4">Report</div>
-                    </Link>
 
                     {/* Show the username and dropdown */}
                     {username ? (

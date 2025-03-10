@@ -21,11 +21,12 @@ import { useRouter } from "next/navigation";
 interface Bar {
   bar_id: number;
   bar_name: string;
-  bar_location: string;
+  max_people_in_bar: number;
   bar_detail: string;
+  bar_image: string;
+  bar_location: string;
   total_rating: number;
   total_reviews: number;
-  bar_image: string;
 }
 
 interface Zone {
@@ -103,14 +104,14 @@ const BarPage = () => {
   return (
     <div className="container mt-12 mx-auto p-4 w-full h-screen overflow-y-auto space-y-12">
       <div className="flex w-full gap-6 xl:pt-10">
-        <div className="grid grid-cols-2">
+        <div className="grid md:grid-cols-2 grid-cols-1">
           <div className="pl-8">
             <h1 className="text-3xl font-bold mb-4 text-green-500">
               {bar.bar_name}
             </h1>
             {bar.bar_image && (
               <img
-                src={`/image/barImages/${bar.bar_image}`}
+                src={`http://127.0.0.1:8000/public/image/barImages/${bar.bar_image}`}
                 alt={bar.bar_name}
                 className="w-full object-cover rounded-md mb-4"
               />

@@ -10,7 +10,7 @@ export function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(""); // State to store error message
-    const { login } = useAuth();
+    const { login, setUserStatus } = useAuth();
     const router = useRouter();
 
     const handleLogin = async (username: string, password: string) => {
@@ -34,8 +34,14 @@ export function Login() {
                 // Redirect based on role
                 if (data.role === 'admin') {
                     router.push('/pages/admin'); // Admin route
+                    setTimeout(() => {
+                        window.location.reload(); // รีโหลดหน้า
+                    }, 1000);
                 } else {
                     router.push('/'); // User route
+                    setTimeout(() => {
+                        window.location.reload(); // รีโหลดหน้า
+                    }, 1000);
                 }
             } else {
                 setError('Invalid username or password');

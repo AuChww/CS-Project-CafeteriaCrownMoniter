@@ -1,6 +1,6 @@
-import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 interface CrowdCardProps {
     bar_id: number;
@@ -20,6 +20,46 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
     bar_detail,
 }) => {
     const router = useRouter();
+    const [currentVisitors, setCurrentVisitors] = useState(0);
+    
+      useEffect(() => {
+        const fetchVisitorData = async () => {
+          try {
+            // 1. ดึงข้อมูลโซนทั้งหมดที่เกี่ยวข้องกับ bar_id
+            const zonesRes = await fetch(`http://127.0.0.1:8000/api/v1/getAllZonesByBarId/${bar_id}`);
+            const zonesData = await zonesRes.json();
+    
+            let totalZoneVisitors = (zonesData.zones || []).reduce(
+              (sum: number, zone: { current_visitor_count: number }) => sum + zone.current_visitor_count, 
+              0
+            );
+            
+            // 2. ดึงข้อมูลร้านอาหารทั้งหมดที่เกี่ยวข้องกับแต่ละ zone_id
+            let totalRestaurantVisitors = 0;
+    
+            await Promise.all(
+              zonesData.zones.map(async (zone:{ zone_id: number }) => {
+                const restaurantRes = await fetch(`http://127.0.0.1:8000/api/v1/getRestaurantByZoneId/${zone.zone_id}`);
+                const restaurantData = await restaurantRes.json();
+    
+                // รวม current_visitor_count ของทุกร้านอาหารในโซนนั้น
+                totalRestaurantVisitors += (restaurantData.restaurants || []).reduce(
+                  (sum: number, restaurant: { current_visitor_count?: number }) => 
+                    sum + (restaurant.current_visitor_count || 0),
+                  0
+                );            
+              })
+            );
+    
+            // 3. รวมค่า current_visitor ทั้งหมดจากโซนและร้านอาหาร
+            setCurrentVisitors(totalZoneVisitors + totalRestaurantVisitors);
+          } catch (error) {
+            console.error("Error fetching visitor data:", error);
+          }
+        };
+    
+        fetchVisitorData();
+      }, [bar_id]);
 
     return (
         <div
@@ -45,7 +85,7 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
                         visitor :
                     </div>
                     <div className=" text-md">
-                        0 / {max_people_in_bar}
+                        {currentVisitors} / {max_people_in_bar}
                     </div>
                 </div>
 

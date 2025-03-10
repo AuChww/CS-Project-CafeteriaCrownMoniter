@@ -14,6 +14,8 @@ interface Restaurant {
     restaurant_image: string;
     total_rating: number;
     total_reviews: number;
+    current_visitor_count: number;
+    update_date_time: string;
 }
 
 interface Review {

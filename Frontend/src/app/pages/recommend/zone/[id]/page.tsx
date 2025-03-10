@@ -81,26 +81,28 @@ const ZonePage = () => {
     return (
         <div className="container mt-12 mx-auto p-4 w-full h-screen overflow-y-auto space-y-12">
             <div className="flex w-full gap-6 xl:pt-10">
-                <div className="grid grid-cols-2">
+                <div className="grid md:grid-cols-2 grid-cols-1">
                     <div className="pl-8">
                         <h1 className="text-3xl font-bold mb-4 text-green-500">
                             {zone.zone_name}
                         </h1>
-                        <img
-                            className="w-full object-cover rounded-md mb-4"
-                            src={zone.zone_image ? `/image/zoneImages/${zone.zone_image}` : `/image/zoneImages/placeholder.jpg`}
-                            alt={zone.zone_name}
-                        />
+                        {zone.zone_image && (
+                            <img
+                                src={zone.zone_image ? `http://127.0.0.1:8000/public/image/zoneImages/${zone.zone_image}` : `/image/zoneImages/placeholder.jpg`}
+                                alt={zone.zone_name}
+                                className="w-full object-cover rounded-md mb-4"
+                            />
+                        )}
                         <p className="text-lg text-gray-700">{zone.zone_detail}</p>
 
                         <p className="text-lg text-gray-700">
-                            <strong>Current Visitors:</strong> {zone.current_visitor_count} / {zone.max_people_in_zone}
+                            <strong>Current Visitors :</strong> {zone.current_visitor_count} / {zone.max_people_in_zone}
                         </p>
                         <p className="text-lg text-gray-700">
-                            <strong>Operating Hours:</strong> {zone.zone_time}
+                            <strong>Operating Hours :</strong> {zone.zone_time}
                         </p>
                         <p className="text-lg text-gray-700">
-                            <strong>Lastest Update:</strong> {zone.update_date_time}
+                            <strong>Lastest Updated :</strong> {zone.update_date_time}
                         </p>
 
                         <div className="relative flex flex-col rounded-xl bg-white">
@@ -113,8 +115,8 @@ const ZonePage = () => {
                     <div>
                         <div className="flex justify-end">
                             <button onClick={navigateToReports} className="flex bg-red-600 duration-200 rounded-lg px-3 py-2 text-md text-white font-bold hover:bg-yellow-200 hover:text-red-600">
-                            <IoIosWarning className="mt-0.5 mr-2 w-5 h-5" />
-                            Report
+                                <IoIosWarning className="mt-0.5 mr-2 w-5 h-5" />
+                                Report
                             </button>
                         </div>
                         {/* Restaurant List */}

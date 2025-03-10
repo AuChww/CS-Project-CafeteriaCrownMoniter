@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend, Label } from "recharts";
 
 // Define types for the visitor history, chart data, and zone data
-interface VisitorHistory {
+interface ZoneVisitorHistory {
   date_time: string;
   visitor_count: number;
-  visitor_history_id: number;
+  zone_visitor_history_id: number;
   zone_id: number;
 }
 
@@ -24,10 +24,15 @@ const TodayBarVisitorPieChart: React.FC = () => {
     setIsClient(true);
 
     // Fetch visitor history data
-    fetch("http://127.0.0.1:8000/api/v1/getAllVisitorHistories")
-      .then((response) => response.json())
+    fetch("http://127.0.0.1:8000/api/v1/getAllZoneVisitorHistory")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json(); // Use json() to parse response as JSON
+      })
       .then((data) => {
-        const visitorHistories: VisitorHistory[] = data.visitor_histories;
+        const visitorHistories: ZoneVisitorHistory[] = data.visitor_histories; // Use correct field name
 
         // Get the date 30 days ago
         const today = new Date();
