@@ -6,13 +6,15 @@ import { FaFireAlt } from "react-icons/fa";
 
 interface Restaurant {
   restaurant_id: number;
+  zone_id: number;
   restaurant_name: string;
   restaurant_location: string;
   restaurant_detail: string;
+  restaurant_image: string;
   total_rating: number;
   total_reviews: number;
   current_visitor_count: number;
-  restaurant_image: string;
+  update_date_time: string;
 }
 
 const TopRestaurant: React.FC = () => {
@@ -49,11 +51,11 @@ const TopRestaurant: React.FC = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">Top Restaurants</h1>
+      <h1 className="text-3xl font-bold mb-4 text-green-500">Top Restaurants</h1>
       {loading ? (
-        <p>Loading...</p>
+        <div>Loading...</div>
       ) : error ? (
-        <p className="text-red-500">{error}</p>
+        <div className="text-red-500">{error}</div>
       ) : (
         <div className="overflow-x-auto mb-8">
           <div className="flex gap-6">
@@ -80,13 +82,15 @@ const TopRestaurant: React.FC = () => {
                 <RestaurantCard
                   key={restaurant.restaurant_id}
                   restaurant_id={restaurant.restaurant_id}
+                  zone_id={restaurant.zone_id}
                   restaurant_name={restaurant.restaurant_name}
                   restaurant_location={restaurant.restaurant_location}
                   restaurant_detail={restaurant.restaurant_detail}
+                  restaurant_image={restaurant.restaurant_image}
                   total_rating={restaurant.total_rating}
                   total_reviews={restaurant.total_reviews}
                   current_visitor_count={restaurant.current_visitor_count}
-                  restaurant_image={restaurant.restaurant_image}
+                  update_date_time={restaurant.update_date_time}
                 />
               </div>
             ))}

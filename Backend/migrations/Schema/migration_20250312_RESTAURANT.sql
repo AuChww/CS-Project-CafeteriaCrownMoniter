@@ -8,5 +8,6 @@ CREATE TABLE RESTAURANT (
     total_rating INT DEFAULT 0 CHECK (total_rating >= 0),
     total_reviews INT DEFAULT 0 CHECK (total_reviews >= 0),
     restaurant_image VARCHAR(255),
-    current_visitor_count INT DEFAULT 0 CHECK (current_visitor_count >= 0)
+    current_visitor_count INT DEFAULT 0 CHECK (current_visitor_count >= 0),
+    update_date_time TIMESTAMP DEFAULT NOW()
 );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
@@ -51,6 +51,12 @@ export function Login() {
             setError('An error occurred while logging in');
         }
     };
+
+    useEffect(() => {
+        if (username && password) {
+            handleLogin(username, password); // Call the handleLogin function after component mounts
+        }
+    }, [username, password]);
     
 
     return (
@@ -115,13 +121,13 @@ export function Login() {
                                 </div>
                             </form>
 
-                            <p
+                            <div
                                 onClick={() => router.push("/pages/authenticate/register/")}
                                 className="mt-6 text-sm text-center text-gray-400 cursor-pointer"
                             >
                                 Don&#x27;t have an account yet?
                                 <span className="text-blue-500"> Sign up</span>.
-                            </p>
+                            </div>
                         </div>
                     </div>
                 </div>

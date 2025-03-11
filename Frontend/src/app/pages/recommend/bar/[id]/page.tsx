@@ -106,11 +106,11 @@ const BarPage = () => {
     fetchBarAndZones();
   }, [id]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p className="text-red-500">Error: {error}</p>;
-  if (!bar) return <p>Error fetching bar details.</p>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div className="text-red-500">Error: {error}</div>;
+  if (!bar) return <div>Error fetching bar details.</div>;
   if (!zones || zones.length === 0)
-    return <p>No zones available for this bar.</p>;
+    return <div>No zones available for this bar.</div>;
 
   return (
     <div className="container mt-12 mx-auto p-4 w-full h-screen overflow-y-auto space-y-12">
@@ -135,9 +135,9 @@ const BarPage = () => {
                 width="500"
               />
             ) : (
-              <p>Loading image...</p>
+              <div>Loading image...</div>
             )}
-            <p className="text-lg text-gray-700">{bar.bar_detail}</p>
+            <div className="text-lg text-gray-700">{bar.bar_detail}</div>
 
             <div className="text-base text-gray-500 flex space-x-1">
               <img src="/image/icons/location.svg" alt="location pin" />
@@ -146,15 +146,15 @@ const BarPage = () => {
 
             <div className="flex space-x-1">
               <img src="/image/icons/star.svg" alt="location pin" />
-              <p className="text-base text-gray-500">
+              <div className="text-base text-gray-500">
                 {bar.total_rating} ({bar.total_reviews} reviews)
-              </p>
+              </div>
             </div>
 
-            <p className="text-lg text-gray-700">
+            <div className="text-lg text-gray-700">
               <strong>เวลาให้บริการ:</strong> {bar.total_rating} (
               {bar.total_reviews} reviews)
-            </p>
+            </div>
 
             <div className="relative flex flex-col rounded-xl bg-white">
               <div className="flex items-center gap-4">

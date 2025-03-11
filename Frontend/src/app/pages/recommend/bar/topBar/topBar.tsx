@@ -7,11 +7,12 @@ import { FaFireAlt } from "react-icons/fa";
 interface Bar {
   bar_id: number;
   bar_name: string;
-  bar_location: string;
+  max_people_in_bar: number;
   bar_detail: string;
+  bar_image: string;
+  bar_location: string;
   total_rating: number;
   total_reviews: number;
-  bar_image: string;
 }
 
 const TopBar: React.FC = () => {
@@ -49,12 +50,12 @@ const TopBar: React.FC = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">Top Bars</h1>
+      <h1 className="text-3xl font-bold mb-4 text-green-500">Top Bars</h1>
       <div className="overflow-x-auto mb-8">
         <div className="flex gap-6">
           {bars.map((bar, index) => (
-            <div key={bar.bar_id} onClick={() => router.push(`/pages/recommend/bar/${bar.bar_id}`)} 
-            className="relative">
+            <div key={bar.bar_id} onClick={() => router.push(`/pages/recommend/bar/${bar.bar_id}`)}
+              className="relative">
 
               {index < 3 && (
                 <div className="absolute flex top-2 right-2 bg-gradient-to-r
@@ -74,11 +75,12 @@ const TopBar: React.FC = () => {
                 key={bar.bar_id}
                 bar_id={bar.bar_id}
                 bar_name={bar.bar_name}
-                bar_location={bar.bar_location}
+                max_people_in_bar={bar.max_people_in_bar}
                 bar_detail={bar.bar_detail}
+                bar_image={bar.bar_image}
+                bar_location={bar.bar_location}
                 total_rating={bar.total_rating}
                 total_reviews={bar.total_reviews}
-                bar_image={bar.bar_image}
               />
             </div>
           ))}

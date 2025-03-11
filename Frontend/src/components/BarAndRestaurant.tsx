@@ -36,9 +36,9 @@ const RestaurantCard: React.FC<BarAndRestaurantCardProps> = ({
           <h5 className="mb-3 text-base font-semibold text-gray-900 md:text-xl dark:text-white">
             {bar.bar_name}
           </h5>
-          <p className="text-sm font-normal text-gray-500 dark:text-gray-400">
+          <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
             {bar.bar_detail}
-          </p>
+          </div>
           <ul className="my-4 space-y-3">
             {restaurants.map((restaurant) => (
               <li key={restaurant.restaurant_id}>

@@ -40,8 +40,8 @@ const AllBar: React.FC<BarDetailProps> = ({ bars, restaurants }) => {
     //             className="w-full h-32 object-cover rounded-md mb-4"
     //           />
     //         )}
-    //         <p className="text-sm text-gray-600 mb-2">Location: {bar.bar_location}</p>
-    //         <p className="text-sm text-gray-600 mb-4">Details: {bar.bar_detail}</p>
+    //         <div className="text-sm text-gray-600 mb-2">Location: {bar.bar_location}</div>
+    //         <div className="text-sm text-gray-600 mb-4">Details: {bar.bar_detail}</div>
     //         <h3 className="text-lg font-semibold">Nearby Restaurants</h3>
     //         <ul className="space-y-2">
     //           {restaurants.slice(0, 3).map((restaurant) => (
@@ -50,7 +50,7 @@ const AllBar: React.FC<BarDetailProps> = ({ bars, restaurants }) => {
     //               className="bg-white p-2 rounded-md shadow-sm border border-gray-200"
     //             >
     //               <h4 className="text-sm font-medium">{restaurant.restaurant_name}</h4>
-    //               <p className="text-xs text-gray-500">Rating: {restaurant.total_rating}</p>
+    //               <div className="text-xs text-gray-500">Rating: {restaurant.total_rating}</div>
     //             </li>
     //           ))}
     //         </ul>
@@ -79,9 +79,9 @@ const AllBar: React.FC<BarDetailProps> = ({ bars, restaurants }) => {
               <h5 className="mb-3 text-base font-semibold text-gray-900 md:text-xl dark:text-white">
                 {bar.bar_name}
               </h5>
-              <p className="text-sm font-normal text-gray-500 dark:text-gray-400">
+              <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
                 {bar.bar_detail}
-              </p>
+              </div>
               <ul className="my-4 space-y-3">
                 {restaurants.length > 0 ? (
                   restaurants.slice(0, 3).map((restaurant) => (
@@ -108,9 +108,9 @@ const AllBar: React.FC<BarDetailProps> = ({ bars, restaurants }) => {
                     </li>
                   ))
                 ) : (
-                  <p className="text-gray-500 dark:text-gray-400">
+                  <div className="text-gray-500 dark:text-gray-400">
                     No restaurants available.
-                  </p>
+                  </div>
                 )}
               </ul>
             </div>

@@ -193,7 +193,7 @@ const CrowdCard: React.FC<Bar> = ({
             width="500"
           />
         ) : (
-          <p>Loading image...</p>
+          <div>Loading image...</div>
         )}
       </div>
       <div className="px-2 h-60 space-y-3 mt-3">
@@ -217,14 +217,14 @@ const CrowdCard: React.FC<Bar> = ({
             {currentVisitors} / {max_people_in_bar}
           </div>
         </div>
-        <p className=" text-sm font-normal text-gray-500 dark:text-gray-400">
+        <div className=" text-sm font-normal text-gray-500 dark:text-gray-400">
           {bar_detail}
-        </p>
+        </div>
 
         {/* Bar Location */}
         <div className="flex space-x-1 text-sm text-gray-500 dark:text-gray-400 ">
           <img src="/image/icons/location.svg" alt="location pin" />
-          <p>{bar_location}</p>
+          <div>{bar_location}</div>
         </div>
 
         {/* Bar Score */}

@@ -96,8 +96,8 @@ const ProfilePage = () => {
     return (
         <div className="container mx-auto p-6">
             <h1 className="text-3xl font-bold mb-6 text-center">User Profile</h1>
-            {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
-            {loading && <p className="text-blue-500 mb-4 text-center">Loading...</p>}
+            {error && <div className="text-red-500 mb-4 text-center">{error}</div>}
+            {loading && <div className="text-blue-500 mb-4 text-center">Loading...</div>}
 
             <form onSubmit={handleSubmit} className="max-w-2xl mx-auto bg-white shadow-lg p-6 rounded-lg">
                 <div className="mb-4 text-center">

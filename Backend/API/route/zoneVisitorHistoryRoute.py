@@ -19,7 +19,7 @@ import pytz  # สำหรับจัดการไทม์โซน
 
 zone_visitor_history_bp = Blueprint('zone_visitor_history', __name__)
 
-@zone_visitor_history_bp.route('/api/v1/getAllZoneVisitorHistoriy', methods=['GET'])
+@zone_visitor_history_bp.route('/api/v1/getAllZoneVisitorHistory', methods=['GET'])
 def get_all_zone_visitor_histories_endpoint():
     visitor_histories = get_all_zone_visitor_histories_service()
     visitor_histories_dicts = [

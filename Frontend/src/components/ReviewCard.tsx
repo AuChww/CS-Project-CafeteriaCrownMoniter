@@ -16,6 +16,13 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   rating,
   created_time,
 }) => {
+  const formattedDate = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Bangkok", // ปรับให้เป็นโซนเวลาที่ต้องการ
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(new Date(created_time));
+  
   return (
     <div className="border rounded-md p-4 shadow-md">
       {review_image && (
@@ -25,9 +32,9 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
           className="w-full h-48 object-cover rounded-md mb-4"
         />
       )}
-      <p className="text-lg font-medium">{review_comment}</p>
-      <p className="text-gray-500 text-sm">Rating: {rating}/5</p>
-      <p className="text-gray-400 text-xs">Posted on: {new Date(created_time).toLocaleDateString()}</p>
+      <div className="text-lg font-medium">{review_comment}</div>
+      <div className="text-gray-500 text-sm">Rating: {rating}/5</div>
+      <div className="text-gray-400 text-xs">Posted on: {formattedDate}</div>
     </div>
   );
 };

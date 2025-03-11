@@ -1,103 +1,131 @@
 import React, { useEffect, useState } from "react";
 
-interface BarCardProps {
+interface Bar {
   bar_id: number;
   bar_name: string;
-  bar_location: string;
+  max_people_in_bar: number;
   bar_detail: string;
+  bar_image: string;
+  bar_location: string;
   total_rating: number;
   total_reviews: number;
-  bar_image: string;
 }
 
 interface Restaurant {
   restaurant_id: number;
+  zone_id: number;
   restaurant_name: string;
   restaurant_location: string;
   restaurant_detail: string;
+  restaurant_image: string;
   total_rating: number;
   total_reviews: number;
   current_visitor_count: number;
-  restaurant_image: string;
+  update_date_time: string;
 }
 
-const BarCard: React.FC<BarCardProps> = ({
+const BarCard: React.FC<Bar> = ({
   bar_id,
   bar_name,
   bar_location,
   bar_detail,
+  max_people_in_bar,
   total_rating,
   total_reviews,
   bar_image,
 }) => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [currentVisitors, setCurrentVisitors] = useState(0);
 
   useEffect(() => {
-    const fetchRestaurants = async () => {
-      try {
-        const response = await fetch(
-          `http://127.0.0.1:8000/api/v1/getRestaurantId/${bar_id}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch restaurant data");
+      const fetchVisitorData = async () => {
+        try {
+          // 1. ดึงข้อมูลโซนทั้งหมดที่เกี่ยวข้องกับ bar_id
+          const zonesRes = await fetch(
+            `http://127.0.0.1:8000/api/v1/getAllZonesByBarId/${bar_id}`
+          );
+          const zonesData = await zonesRes.json();
+  
+          let totalZoneVisitors = (zonesData.zones || []).reduce(
+            (sum: number, zone: { current_visitor_count: number }) =>
+              sum + zone.current_visitor_count,
+            0
+          );
+  
+          // 2. ดึงข้อมูลร้านอาหารทั้งหมดที่เกี่ยวข้องกับแต่ละ zone_id
+          let totalRestaurantVisitors = 0;
+  
+          await Promise.all(
+            zonesData.zones.map(async (zone: { zone_id: number }) => {
+              const restaurantRes = await fetch(
+                `http://127.0.0.1:8000/api/v1/getRestaurantByZoneId/${zone.zone_id}`
+              );
+              const restaurantData = await restaurantRes.json();
+  
+              // รวม current_visitor_count ของทุกร้านอาหารในโซนนั้น
+              totalRestaurantVisitors += (
+                restaurantData.restaurants || []
+              ).reduce(
+                (sum: number, restaurant: { current_visitor_count?: number }) =>
+                  sum + (restaurant.current_visitor_count || 0),
+                0
+              );
+            })
+          );
+  
+          // 3. รวมค่า current_visitor ทั้งหมดจากโซนและร้านอาหาร
+          setCurrentVisitors(totalZoneVisitors + totalRestaurantVisitors);
+        } catch (error) {
+          console.error("Error fetching visitor data:", error);
         }
-        const data: Restaurant[] = await response.json(); // รับค่ามาเป็นอาร์เรย์
-        setRestaurants(data);
-      } catch (error) {
-        console.error("Error fetching restaurant:", error);
-      }
-
-      try {
-        const response = await fetch(
-          `http://localhost:8000/api/v1/getBarImage/${bar_id}.png`
-        );
-        if (!response.ok) throw new Error("Failed to fetch image URL");
-
-        const data = await response.json();
-        setImageUrl(data.url);
-      } catch (error) {
-        console.error("Error fetching image:", error);
-      }
-    };
-
-    fetchRestaurants();
-  }, [bar_id]);
+  
+        try {
+          const response = await fetch(
+            `http://localhost:8000/api/v1/getBarImage/bar${bar_id}.png`
+          );
+          if (!response.ok) throw new Error("Failed to fetch image URL");
+  
+          const data = await response.json();
+          setImageUrl(data.url);
+        } catch (error) {
+          console.error("Error fetching image:", error);
+        }
+      };
+  
+      fetchVisitorData();
+    }, [bar_id]);
 
   // คำนวณยอดรวมของ current_visitor_count
   const totalVisitors = restaurants?.length
     ? restaurants.reduce(
-        (sum, restaurant) => sum + restaurant.current_visitor_count,
-        0
-      )
+      (sum, restaurant) => sum + restaurant.current_visitor_count,
+      0
+    )
     : 0;
 
   return (
     <div
       key={bar_id}
-      className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+      className="bg-white hover:scale-105 duration-300 w-60 rounded-lg shadow-lg p-2 border border-gray-200 hover:bg-gray-100"
     >
-      <a href="#">
-        {/* {imageUrl ? (
-          <img src={imageUrl} alt=" Image" width="500" />
-        ) : (
-          <p>Loading image...</p>
-        )} */}
+      <div className="h-48">
         <img
-          className="rounded-t-lg h-full w-full"
+          className="rounded-t-lg h-full"
           src={`/image/barImages/${bar_image}`}
           alt={bar_name}
+          width="500"
         />
-      </a>
+      </div>
 
-      <div className="p-5">
+      <div className="px-2 h-60 space-y-3 mt-3">
         <a href="#">
-          <div className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             {bar_name}
-          </div>
+          </h5>
         </a>
 
-        <div className="mt-2 flex space-x-2 ">
+        <div className="mt-2 flex space-x-2">
           <svg
             fill="#000000"
             width="25px"
@@ -108,20 +136,20 @@ const BarCard: React.FC<BarCardProps> = ({
           >
             <path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z" />
           </svg>
-          <div className=" text-xl">{totalVisitors}</div>
+          <div className="text-xl">{currentVisitors} / {max_people_in_bar}</div>
         </div>
 
-        <div className="mb-3 text-sm font-normal text-gray-500 dark:text-gray-400">
+        <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
           {bar_detail}
         </div>
 
-        <div className="flex space-x-1 text-sm text-gray-500 dark:text-gray-400 ">
+        <div className="flex space-x-1 text-sm text-gray-500 dark:text-gray-400">
           <img src="/image/icons/location.svg" alt="location pin" />
-          <p>{bar_location}</p>
+          <div>{bar_location}</div>
         </div>
 
         <div className="flex items-center mt-2.5 mb-5 space-x-2">
-          <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-800 ms-3">
+          <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-800">
             {total_rating}
           </span>
           <span className="text-gray-500 dark:text-gray-400 text-sm">
@@ -130,6 +158,7 @@ const BarCard: React.FC<BarCardProps> = ({
         </div>
       </div>
     </div>
+
   );
 };
 

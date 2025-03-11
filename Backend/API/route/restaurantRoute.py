@@ -28,10 +28,11 @@ def get_all_restaurants():
             'restaurant_name': r.restaurant_name,
             'restaurant_location': r.restaurant_location,
             'restaurant_detail': r.restaurant_detail,
+            'restaurant_image': r.restaurant_image,
             'total_rating': r.total_rating,
-            'total_reviews': r.total_reviews,
+            'total_reviews': r.total_reviews,  # เพิ่ม restaurant_image ในการตอบกลับ
             'current_visitor_count': r.current_visitor_count,
-            'restaurant_image': r.restaurant_image  # เพิ่ม restaurant_image ในการตอบกลับ
+            'update_date_time' : r.update_date_time,
         }
         for r in restaurants
     ]
@@ -49,10 +50,11 @@ def get_restaurant_by_id(restaurant_id):
         'restaurant_name': restaurant.restaurant_name,
         'restaurant_location': restaurant.restaurant_location,
         'restaurant_detail': restaurant.restaurant_detail,
+        'restaurant_image': restaurant.restaurant_image,
         'total_rating': restaurant.total_rating,
-        'total_reviews': restaurant.total_reviews,
+        'total_reviews': restaurant.total_reviews,  # เพิ่ม restaurant_image ในการตอบกลับ
         'current_visitor_count': restaurant.current_visitor_count,
-        'restaurant_image': restaurant.restaurant_image  # เพิ่ม restaurant_image ในการตอบกลับ
+        'update_date_time' : restaurant.update_date_time,
     })
 
 @restaurant_bp.route('/api/v1/getReviewByRestaurantId/<int:restaurant_id>', methods=['GET'])

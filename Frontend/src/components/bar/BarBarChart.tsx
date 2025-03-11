@@ -77,8 +77,8 @@ const VisitorBarChart: React.FC<VisitorBarChartProps> = ({ barId }) => {
         fetchData();
     }, [barId]);
 
-    if (loading) return <p>Loading chart...</p>;
-    if (error) return <p className="text-red-500">Error: {error}</p>;
+    if (loading) return <div>Loading chart...</div>;
+    if (error) return <div className="text-red-500">Error: {error}</div>;
 
     return (
         <ResponsiveContainer width="100%" height={200}>

@@ -122,7 +122,7 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
                 width="500"
               />
             ) : (
-              <p>Loading image...</p>
+              <div>Loading image...</div>
             )}
       <div className="p-5 space-y-3 ">
 
@@ -135,26 +135,26 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
         </a>
 
         {/* zone Details */}
-        <p className="mb-3 text-sm font-normal text-gray-500 dark:text-gray-400">
+        <div className="mb-3 text-sm font-normal text-gray-500 dark:text-gray-400">
           {zone_detail}
-        </p>
+        </div>
 
-        <p className="text-md text-gray-500">Time : {zone_time}</p>
+        <div className="text-md text-gray-500">Time : {zone_time}</div>
 
         {/* zone Location */}
         <div className="flex space-x-1 text-sm text-gray-500 dark:text-gray-400 ">
           <svg fill="#000000" width="25px" height="25px" viewBox="-3 0 19 19" xmlns="http://www.w3.org/2000/svg" className="cf-icon-svg"><path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z" /></svg>
 
           <div className="flex space-x-1 text-base">
-            <p>{current_visitor_count} / </p>
-            <p>{max_people_in_zone}</p>
+            <div>{current_visitor_count} / </div>
+            <div>{max_people_in_zone}</div>
           </div>
 
         </div>
 
         {/* <div className="flex items-center text-sm mt-2.5 mb-5 space-x-2 text-gray-700">
-          <p>เวลาที่เปิดให้ปริการ: </p>
-          <p>{zone_time}</p>
+          <div>เวลาที่เปิดให้ปริการ: </div>
+          <div>{zone_time}</div>
         </div> */}
       </div>
     </div>

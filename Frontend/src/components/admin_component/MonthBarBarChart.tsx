@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 
-// Define types for the visitor history, chart data, and zone data
 interface ZoneVisitorHistory {
   date_time: string;
   visitor_count: number;
@@ -28,32 +27,35 @@ const MonthBarVisitorBarChart: React.FC = () => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // Ensure this code runs only on the client
     setIsClient(true);
 
-    // Fetch visitor history data
-    fetch("http://127.0.0.1:8000/api/v1/getAllZoneVisitorHistory")
-      .then((response) => response.json())
-      .then((data) => {
-        const visitorHistories: ZoneVisitorHistory[] = data.visitor_histories;
+    const today = new Date();
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(today.getDate() - 30);
 
-        // Get today's date and calculate the date 30 days ago
-        const today = new Date();
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(today.getDate() - 30);
+    Promise.all([
+      fetch("http://127.0.0.1:8000/api/v1/getAllZoneVisitorHistory").then((res) => res.json()),
+      fetch("http://127.0.0.1:8000/api/v1/getAllZones").then((res) => res.json()),
+    ])
+      .then(([visitorData, zoneData]) => {
+        if (!visitorData.zone_visitor_history_id || !Array.isArray(visitorData.visitor_histories)) return;
+        if (!zoneData.zones || !Array.isArray(zoneData.zones)) return;
 
-        // Filter data for the last 30 days and process for the bar chart
-        const filteredData: ChartData[] = visitorHistories.reduce<ChartData[]>((acc, curr) => {
+        setZones(zoneData.zones);
+
+        const visitorHistories: ZoneVisitorHistory[] = visitorData.visitor_histories
+
+        const filteredData = visitorHistories.reduce<ChartData[]>((acc, curr) => {
           const recordDate = new Date(curr.date_time);
           if (recordDate >= thirtyDaysAgo && recordDate <= today) {
-            const zoneIndex = acc.findIndex((item) => item.bar_id === curr.zone_id); // Use bar_id instead of zone_id
+            const zoneIndex = acc.findIndex((item) => item.bar_id === curr.zone_id);
             if (zoneIndex > -1) {
               acc[zoneIndex].value += curr.visitor_count;
             } else {
               acc.push({
-                name: `Bar ${curr.zone_id}`, // Display bar name here
+                name: `Bar ${curr.zone_id}`,
                 value: curr.visitor_count,
-                bar_id: curr.zone_id, // Assuming zone_id represents bar_id
+                bar_id: curr.zone_id,
               });
             }
           }
@@ -62,31 +64,18 @@ const MonthBarVisitorBarChart: React.FC = () => {
 
         setChartData(filteredData);
       })
-      .catch((err) => console.error(err));
-
-    // Fetch zones data
-    fetch("http://127.0.0.1:8000/api/v1/getAllZones")
-      .then((response) => response.json())
-      .then((data) => {
-        setZones(data.zones);
-      })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error("Error fetching data:", err));
   }, []);
 
-  // Combine the visitor history with zone data (aggregating visitor counts by bar_id)
+  // ฟังก์ชันรวมข้อมูลจาก Zone และ ChartData
   const aggregateVisitorsByBar = () => {
-    const aggregatedData: { [key: number]: number } = {};
-
-    // Sum the visitor count for each zone in the bar
-    chartData.forEach((data) => {
-      const zone = zones.find((zone) => zone.zone_id === data.bar_id);
+    const aggregatedData = chartData.reduce<{ [key: number]: number }>((acc, curr) => {
+      const zone = zones.find((zone) => zone.zone_id === curr.bar_id);
       if (zone) {
-        if (!aggregatedData[zone.bar_id]) {
-          aggregatedData[zone.bar_id] = 0;
-        }
-        aggregatedData[zone.bar_id] += zone.current_visitor_count;
+        acc[zone.bar_id] = (acc[zone.bar_id] || 0) + curr.value;
       }
-    });
+      return acc;
+    }, {});
 
     return Object.keys(aggregatedData).map((bar_id) => ({
       name: `Bar ${bar_id}`,
@@ -95,7 +84,6 @@ const MonthBarVisitorBarChart: React.FC = () => {
     }));
   };
 
-  // Ensure the chart is rendered only after the component has mounted on the client
   if (!isClient) return null;
 
   return (
@@ -104,23 +92,14 @@ const MonthBarVisitorBarChart: React.FC = () => {
       <BarChart
         width={600}
         height={200}
-        data={aggregateVisitorsByBar()} // Use the aggregated data here
+        data={aggregateVisitorsByBar()}
         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis 
-          dataKey="name" 
-          tick={{ fontSize: 14 }}  // Set font size for X-axis labels
-        />
-        <YAxis 
-          tick={{ fontSize: 14 }}  // Set font size for Y-axis labels
-        />
-        <Tooltip 
-          itemStyle={{ fontSize: 14 }} // Set font size for tooltip items
-        />
-        <Legend 
-          wrapperStyle={{ fontSize: 14 }}  // Set font size for the legend
-        />
+        <XAxis dataKey="name" tick={{ fontSize: 14 }} />
+        <YAxis tick={{ fontSize: 14 }} />
+        <Tooltip itemStyle={{ fontSize: 14 }} />
+        <Legend wrapperStyle={{ fontSize: 14 }} />
         <Bar dataKey="value" fill="#3366FF" />
       </BarChart>
     </div>
