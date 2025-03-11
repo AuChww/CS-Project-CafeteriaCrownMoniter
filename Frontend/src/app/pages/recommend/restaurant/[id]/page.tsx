@@ -8,13 +8,16 @@ import ReviewCard from "@/components/ReviewCard";
 
 interface Restaurant {
     restaurant_id: number;
+    zone_id: number;
     restaurant_name: string;
     restaurant_location: string;
     restaurant_detail: string;
     restaurant_image: string;
     total_rating: number;
     total_reviews: number;
-}
+    current_visitor_count: number;
+    update_date_time: string;
+  }
 
 interface Review {
     review_id: number;

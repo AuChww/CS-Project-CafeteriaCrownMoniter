@@ -20,14 +20,26 @@ interface Zone {
 
 interface Restaurant {
   restaurant_id: number;
+  zone_id: number;
   restaurant_name: string;
+  restaurant_location: string;
   restaurant_detail: string;
   restaurant_image: string;
-  restaurant_location: string;
   total_rating: number;
   total_reviews: number;
   current_visitor_count: number;
-  zone_id: number;
+  update_date_time: string;
+}
+
+interface Review {
+  review_id: number;
+  user_id: number;  // user_id ที่จะใช้ดึงข้อมูลชื่อผู้ใช้
+  restaurant_id: number;
+  review_comment: string;
+  review_image: string;
+  rating: number;
+  created_time: string;
+  user_name?: string; // เพิ่ม property สำหรับ username
 }
 
 const ZonePage = () => {
@@ -231,14 +243,17 @@ const ZonePage = () => {
                     className="cursor-pointer"
                   >
                     <RestaurantCard
+                      key={restaurant.restaurant_id}
                       restaurant_id={restaurant.restaurant_id}
+                      zone_id={restaurant.zone_id}
                       restaurant_name={restaurant.restaurant_name}
+                      restaurant_location={restaurant.restaurant_location}
                       restaurant_detail={restaurant.restaurant_detail}
                       restaurant_image={restaurant.restaurant_image}
-                      restaurant_location={restaurant.restaurant_location}
                       total_rating={restaurant.total_rating}
-                      current_visitor_count={restaurant.current_visitor_count}
                       total_reviews={restaurant.total_reviews}
+                      current_visitor_count={restaurant.current_visitor_count}
+                      update_date_time={restaurant.update_date_time}
                     />
                   </div>
                 ))}
