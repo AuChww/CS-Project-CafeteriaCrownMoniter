@@ -146,13 +146,28 @@ def delete_bar(bar_id):
 #     video_directory = os.path.join(os.getcwd(), "public", "video", "zone")
 #     return send_from_directory(video_directory, file_name)
 
+IMAGE_FOLDER = 'public/image/barImages'
+
 @bar_bp.route('/api/v1/getBarImage/<string:file_name>', methods=['GET'])
 def get_image_url(file_name):
+    # สร้างเส้นทางเต็มของไฟล์
+    file_path = os.path.join(IMAGE_FOLDER, file_name)
+
+    # ตรวจสอบว่าไฟล์มีอยู่หรือไม่
+    if not os.path.isfile(file_path):
+        # ถ้าไม่พบไฟล์ให้ใช้ชื่อ default
+        file_name = 'default.png'
+    
+    # สร้าง URL ที่จะส่งกลับ
     image_url = f"http://localhost:8000/public/image/barImages/{file_name}"
+
     return jsonify({"url": image_url})
 
 @bar_bp.route('/public/image/barImages/<path:file_name>')
 def serve_actual_image(file_name):
     image_directory = os.path.join(os.getcwd(), "public", "image", "barImages")
     return send_from_directory(image_directory, file_name)
+
+
+
 

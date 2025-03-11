@@ -175,9 +175,21 @@ def start_scheduler():
 start_scheduler()
 
 
+IMAGE_FOLDER = 'public/image/restaurantImages'
+
 @restaurant_bp.route('/api/v1/getRestaurantImage/<string:file_name>', methods=['GET'])
 def get_image_url(file_name):
+    # สร้างเส้นทางเต็มของไฟล์
+    file_path = os.path.join(IMAGE_FOLDER, file_name)
+
+    # ตรวจสอบว่าไฟล์มีอยู่หรือไม่
+    if not os.path.isfile(file_path):
+        # ถ้าไม่พบไฟล์ให้ใช้ชื่อ default
+        file_name = 'default.png'
+    
+    # สร้าง URL ที่จะส่งกลับ
     image_url = f"http://localhost:8000/public/image/restaurantImages/{file_name}"
+
     return jsonify({"url": image_url})
 
 

@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import DeleteBar from "@/components/admin_component/bar_button/deleteBar";
+import EditBar from "@/components/admin_component/bar_button/editBar";
 
 interface CrowdCardProps {
     bar_id: number;
