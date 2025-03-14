@@ -1,4 +1,4 @@
-from Infrastructure.Repository.barRepository import update_bar_visitor_count, get_all_bars, get_bar_by_id, get_all_restaurants_by_bar_id, get_all_reviews_by_bar_id, get_all_zones_by_bar_id, add_bar, update_bar, delete_bar
+from Infrastructure.Repository.barRepository import update_bar_visitor_count, get_all_bars, get_bar_by_id, get_all_restaurants_by_bar_id, get_all_reviews_by_bar_id, get_all_zones_by_bar_id, add_bar, update_bar_image_path, update_bar, delete_bar
 from Infrastructure.Repository.zoneRepository import get_total_visitors_by_bar
 
 def update_bar_visitors(bar_id):
@@ -21,8 +21,12 @@ def get_all_reviews_by_bar_id_service(bar_id):
 def get_all_zones_by_bar_id_service(bar_id):
     return get_all_zones_by_bar_id(bar_id)
 
-def add_bar_service(bar_name, bar_location, bar_detail, bar_image):
-    return add_bar(bar_name, bar_location, bar_detail, bar_image)
+def add_bar_service(bar_name, bar_location, bar_detail, max_people_in_bar):
+    return add_bar(bar_name, bar_location, bar_detail, max_people_in_bar)
+
+def update_bar_image (bar_id, file_name):
+    return update_bar_image_path(bar_id, file_name)
+
 
 def update_bar_service(bar_id, data):
     return update_bar(bar_id, data)

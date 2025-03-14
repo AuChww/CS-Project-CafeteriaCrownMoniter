@@ -62,7 +62,7 @@ const BarPage = () => {
   const [zones, setZones] = useState<Zone[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchBarAndZones = async () => {
@@ -110,8 +110,7 @@ const BarPage = () => {
         }
       } catch (error) {
         console.error("Error fetching image:", error);
-      
-    }
+      }
     };
 
     fetchBarAndZones();
@@ -169,11 +168,9 @@ const BarPage = () => {
 
             <div className="relative flex flex-col rounded-xl bg-white">
               <div className="flex items-center gap-4">
-                <div>
-                </div>
+                <div></div>
               </div>
             </div>
-
           </div>
           {/* ZoneCard */}
           <div className="grid grid-cols-2 gap-4 p-10 mt-3">
@@ -202,8 +199,7 @@ const BarPage = () => {
               ))}
           </div>
         </div>
-        <div>
-        </div>
+        <div></div>
       </div>
 
       {/* Comments Section */}

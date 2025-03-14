@@ -4,55 +4,103 @@ function AddBar() {
   const [barName, setBarName] = useState("");
   const [barDetail, setBarDetail] = useState("");
   const [barLocation, setBarLocation] = useState("");
+  const [maxPeopleInBar, setMaxPeopleInBar] = useState("");
   const [barImage, setBarImage] = useState<File | null>(null);
 
-  // ฟังก์ชันแปลงไฟล์เป็น Base64 string
-  const convertFileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
-    });
-  };
-
-  // handleAddBar ส่งข้อมูลเป็น JSON ไปยัง API
   const handleAddBar = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    let base64Image: string | null = null;
+  
+    const formData = new FormData();
+  
+    // เพิ่มข้อมูลที่ไม่ใช่ไฟล์
+    formData.append('bar_name', barName);
+    formData.append('bar_detail', barDetail);
+    formData.append('bar_location', barLocation);
+    formData.append('max_people_in_bar', maxPeopleInBar);
+  
+    // เพิ่มไฟล์ภาพ
     if (barImage) {
-      try {
-        base64Image = await convertFileToBase64(barImage);
-      } catch (error) {
-        console.error("Error converting file:", error);
-      }
+      formData.append('bar_image', barImage); // barImage เป็น File ที่เลือก
     }
-
-    const data = {
-      bar_name: barName,
-      bar_detail: barDetail,
-      bar_location: barLocation,
-      bar_image: base64Image,
-    };
-
+  
     try {
       const response = await fetch("http://127.0.0.1:8000/api/v1/addBar", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json", // ส่งเป็น JSON
-        },
-        body: JSON.stringify(data),
+        body: formData, // ส่ง FormData ที่รวมไฟล์และข้อมูลอื่น
       });
+  
       if (!response.ok) {
         throw new Error("Error submitting form");
       }
+  
       console.log("Bar added successfully");
-      // รีเซ็ตฟอร์มหรือแจ้งเตือนผู้ใช้เพิ่มเติมได้ที่นี่
+  
+      // รีเซ็ตค่า Form
+      setBarName("");
+      setBarDetail("");
+      setBarLocation("");
+      setMaxPeopleInBar("");
+      setBarImage(null);
     } catch (error) {
       console.error("Submission error:", error);
     }
   };
+
+  // const convertFileToBase64 = (file: File): Promise<string> => {
+  //   return new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
+  //     reader.readAsDataURL(file);
+  //     reader.onload = () => resolve(reader.result as string);
+  //     reader.onerror = (error) => reject(error);
+  //   });
+  // };
+  
+  // const handleAddBar = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  
+  //   let base64Image: string | null = null;
+  //   if (barImage) {
+  //     try {
+  //       base64Image = await convertFileToBase64(barImage);
+  //     } catch (error) {
+  //       console.error("Error converting file:", error);
+  //     }
+  //   }
+  
+  //   const data = {
+  //     bar_name: barName,
+  //     bar_detail: barDetail,
+  //     bar_location: barLocation,
+  //     max_people_in_bar: maxPeopleInBar,
+  //     bar_image: base64Image, // ส่ง Base64 ไปให้ Flask API
+  //   };
+  
+  //   try {
+  //     const response = await fetch("http://127.0.0.1:8000/api/v1/addBar", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(data),
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error("Error submitting form");
+  //     }
+  
+  //     console.log("Bar added successfully");
+  
+  //     // รีเซ็ตค่า Form
+  //     setBarName("");
+  //     setBarDetail("");
+  //     setBarLocation("");
+  //     setMaxPeopleInBar("");
+  //     setBarImage(null);
+  //   } catch (error) {
+  //     console.error("Submission error:", error);
+  //   }
+  // };
+  
 
   return (
     <div>
@@ -118,8 +166,9 @@ function AddBar() {
               </label>
             </div>
           </div>
+
           {/* ฟิลด์ Bar location */}
-          <div className="col-span-2">
+          <div className="col-span-1">
             <div className="relative z-0 mb-6 w-full group">
               <input
                 type="text"
@@ -145,6 +194,35 @@ function AddBar() {
                            peer-focus:-translate-y-6"
               >
                 Bar location
+              </label>
+            </div>
+          </div>
+          <div className="col-span-1">
+            <div className="relative z-0 mb-6 w-full group">
+              <input
+                type="number"
+                name="max_people_in_bar"
+                id="max_people_in_bar"
+                value={maxPeopleInBar}
+                onChange={(e) => setMaxPeopleInBar(e.target.value)}
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 
+                           bg-transparent border-0 border-b-2 border-gray-300 
+                           appearance-none dark:text-white dark:border-gray-600 
+                           dark:focus:border-blue-500 focus:outline-none 
+                           focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                required
+              />
+              <label
+                htmlFor="max_people_in_bar"
+                className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 
+                           transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] 
+                           peer-focus:left-0 peer-focus:text-blue-600 
+                           peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 
+                           peer-placeholder-shown:translate-y-0 peer-focus:scale-75 
+                           peer-focus:-translate-y-6"
+              >
+                Max people
               </label>
             </div>
           </div>
