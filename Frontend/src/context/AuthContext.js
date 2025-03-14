@@ -6,6 +6,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [role, setRole] = useState(null);
 
     useEffect(() => {
         // รับ token จาก localStorage เมื่อเริ่มต้น
@@ -16,6 +17,7 @@ export const AuthProvider = ({ children }) => {
             const decodedUser = decodeJWT(token);
             if (decodedUser) {
                 setUser(decodedUser);
+                setRole(decodedUser.role);
             }
         }
     }, []);
@@ -67,7 +69,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, role, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

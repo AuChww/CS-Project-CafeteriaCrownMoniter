@@ -19,9 +19,9 @@ def get_all_restaurants():
             restaurant_name=row[2],
             restaurant_location=row[3],
             restaurant_detail=row[4],
-            restaurant_image=row[5],
-            total_rating=row[6],
-            total_reviews=row[7],
+            total_rating=row[5],
+            total_reviews=row[6],
+            restaurant_image=row[7],
             current_visitor_count=row[8],
             update_date_time=row[9]  # เพิ่มฟิลด์ restaurant_image
         )
@@ -44,9 +44,9 @@ def get_restaurant_by_id(restaurant_id):
             restaurant_name=row[2],
             restaurant_location=row[3],
             restaurant_detail=row[4],
-            restaurant_image=row[5],
-            total_rating=row[6],
-            total_reviews=row[7],
+            total_rating=row[5],
+            total_reviews=row[6],
+            restaurant_image=row[7],
             current_visitor_count=row[8],
             update_date_time=row[9]  # เพิ่มฟิลด์ restaurant_image
         )
@@ -104,17 +104,27 @@ def get_all_reviews_by_restaurant_id(restaurant_id):
     ]
     return reviews
 
+
 def add_restaurant(zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image=None):
     conn = db_conn()
     cur = conn.cursor()
+    restaurant_rating = 0
+    total_rating = 0
+    total_review = 0
+
+    # Insert into the RESTAURANT table and return restaurant_id
     cur.execute(
-        'INSERT INTO restaurant (zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image) VALUES (%s, %s, %s, %s, %s) RETURNING restaurant_id',
-        (zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image)
+        'INSERT INTO restaurant (zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_rating, total_rating, total_review, restaurant_image) '
+        'VALUES (%s, %s, %s, %s, %s) RETURNING restaurant_id',
+        (zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_rating, total_rating, total_review, restaurant_image)
     )
     restaurant_id = cur.fetchone()[0]
+
+    # Commit the transaction and close cursor and connection
     conn.commit()
     cur.close()
     conn.close()
+
     return restaurant_id
 
 def update_restaurant(restaurant_id, data):

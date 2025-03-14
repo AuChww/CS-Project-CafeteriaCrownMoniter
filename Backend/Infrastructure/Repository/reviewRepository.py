@@ -46,19 +46,54 @@ def get_review_by_id(review_id):
         )
     return None
 
-def add_review(user_id, restaurant_id, rating, review_comment, review_image=None):
+def add_review(user_id, restaurant_id, rating, review_comment, review_image):
     conn = db_conn()
     cur = conn.cursor()
+
+    # เพิ่มข้อมูลรีวิวใน REVIEW table
     query = '''
         INSERT INTO review (user_id, restaurant_id, rating, review_comment, review_image)
         VALUES (%s, %s, %s, %s, %s) RETURNING review_id
     '''
     cur.execute(query, (user_id, restaurant_id, rating, review_comment, review_image))
     review_id = cur.fetchone()[0]
+
+    # อัพเดต total_rating และ total_reviews ใน RESTAURANT
+    cur.execute(
+        '''
+        UPDATE restaurant
+        SET 
+            total_rating = restaurant.total_rating + 1, 
+            total_reviews = restaurant.total_reviews + 1,
+            restaurant_rating = (( restaurant.restaurant_rating * restaurant.total_rating ) + %s) / (restaurant.total_rating + 1)
+        WHERE restaurant_id = %s
+        ''',
+        (rating, restaurant_id)
+    )
+
+    # อัพเดต total_rating และ total_reviews ใน BAR ที่เกี่ยวข้อง
+    cur.execute(
+        '''
+        UPDATE bar
+        SET 
+            total_rating = bar.total_rating + 1, 
+            total_reviews = bar.total_reviews + 1,
+            bar_rating = (( bar.bar_rating * bar.total_rating )  + %s) / (bar.total_rating + 1)
+        FROM zone
+        WHERE bar.bar_id = zone.bar_id AND zone.zone_id = (
+            SELECT zone_id FROM restaurant WHERE restaurant_id = %s
+        )
+        ''',
+        ( rating, restaurant_id)
+    )
+
+    # Commit และปิดการเชื่อมต่อ
     conn.commit()
     cur.close()
     conn.close()
+
     return review_id
+
 
 def update_review(review_id, user_id, restaurant_id, rating, review_comment, review_image=None):
     conn = db_conn()

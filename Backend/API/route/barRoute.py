@@ -44,6 +44,7 @@ def get_bar_by_id(bar_id):
         'bar_detail': bar.bar_detail,
         'current_visitor_count' : bar.current_visitor_count,
         'max_people_in_bar': bar.max_people_in_bar,
+        'bar_rating' : bar.bar_rating,
         'total_rating': bar.total_rating,
         'total_reviews': bar.total_reviews,
         'bar_image': bar.bar_image  # เพิ่ม bar_image ในการตอบกลับ
@@ -59,6 +60,7 @@ def get_all_restaurants_by_bar_id(bar_id):
             'restaurant_name': r.restaurant_name,
             'restaurant_location': r.restaurant_location,
             'restaurant_detail': r.restaurant_detail,
+            'restaurant_rating' : r.restaurant_rating,
             'total_rating': r.total_rating,
             'total_reviews': r.total_reviews,
             'restaurant_image': r.restaurant_image
@@ -106,16 +108,23 @@ def get_all_zones_by_bar_id(bar_id):
 
 @bar_bp.route('/api/v1/addBar', methods=['POST'])
 def add_bar():
+    print(f"in add_bar")
     data = request.json
     bar_name = data.get('bar_name')
     bar_location = data.get('bar_location')
     bar_detail = data.get('bar_detail')
+    max_people_in_bar = data.get("max_people_in_bar")
     bar_image = data.get('bar_image')  # รับ bar_image จาก request
+    
+    print(f"bar_name: {bar_name} in Bar route")
+    print(f"bar_location: {bar_location}")
+    print(f"bar_detail: {bar_detail}")
+    print(f"bar_image: {bar_image}")
+    
 
     if not all([bar_name, bar_location]):
         return jsonify({'message': 'Missing required fields'}), 400
-
-    bar_id = add_bar_service(bar_name, bar_location, bar_detail, bar_image)  # ส่ง bar_image ไปยัง service
+    bar_id = add_bar_service(bar_name, bar_location, bar_detail, max_people_in_bar, bar_image)  # ส่ง bar_image ไปยัง service
     return jsonify({'message': 'Bar added successfully', 'bar_id': bar_id}), 201
 
 @bar_bp.route('/api/v1/updateBar/<int:bar_id>', methods=['PUT'])

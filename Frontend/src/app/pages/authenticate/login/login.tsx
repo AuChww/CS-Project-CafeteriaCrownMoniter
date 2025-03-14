@@ -36,12 +36,12 @@ export function Login() {
                     router.push('/pages/admin'); // Admin route
                     setTimeout(() => {
                         window.location.reload(); // รีโหลดหน้า
-                    }, 2000);
+                    }, 2500);
                 } else {
                     router.push('/'); // User route
                     setTimeout(() => {
                         window.location.reload(); // รีโหลดหน้า
-                    }, 2000);
+                    }, 2500);
                 }
             } else {
                 setError('Invalid username or password');

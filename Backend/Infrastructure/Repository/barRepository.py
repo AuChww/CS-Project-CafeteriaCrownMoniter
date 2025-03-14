@@ -30,9 +30,10 @@ def get_all_bars():
             bar_detail=row[3],
             current_visitor_count=row[4],
             max_people_in_bar=row[5],  # Mapping to max_people_in_bar from DB
-            total_rating=row[6],        # Mapping to total_rating from DB
-            total_reviews=row[7],       # Mapping to total_reviews from DB
-            bar_image=row[8]            # Mapping to bar_image from DB
+            bar_rating=row[6],
+            total_rating=row[7],        # Mapping to total_rating from DB
+            total_reviews=row[8],       # Mapping to total_reviews from DB
+            bar_image=row[9]           # Mapping to bar_image from DB
         )
         for row in data
     ]
@@ -55,9 +56,10 @@ def get_bar_by_id(bar_id):
             bar_detail=row[3],
             current_visitor_count=row[4],
             max_people_in_bar=row[5],  # Mapping to max_people_in_bar from DB
-            total_rating=row[6],        # Mapping to total_rating from DB
-            total_reviews=row[7],       # Mapping to total_reviews from DB
-            bar_image=row[8]           # Mapping to bar_image from DB
+            bar_rating=row[6],
+            total_rating=row[7],        # Mapping to total_rating from DB
+            total_reviews=row[8],       # Mapping to total_reviews from DB
+            bar_image=row[9]           # Mapping to bar_image from DB
         )
     return None
 
@@ -76,9 +78,10 @@ def get_all_restaurants_by_bar_id(bar_id):
             restaurant_name=row[2],
             restaurant_location=row[3],
             restaurant_detail=row[4],
-            total_rating=row[5],      # Mapping to total_rating from DB
-            total_reviews=row[6],     # Mapping to total_reviews from DB
-            restaurant_image=row[7]   # Mapping to restaurant_image from DB
+            restaurant_rating=row[5],
+            total_rating=row[6],      # Mapping to total_rating from DB
+            total_reviews=row[7],     # Mapping to total_reviews from DB
+            restaurant_image=row[8]   # Mapping to restaurant_image from DB
         )
         for row in data
     ]
@@ -135,18 +138,28 @@ def get_all_zones_by_bar_id(bar_id):
     ]
     return zones
 
-def add_bar(bar_name, bar_location, bar_detail, max_people_in_bar=0, total_rating=0, total_reviews=0, bar_image=None):
+def add_bar(bar_name, bar_location, bar_detail, max_people_in_bar, bar_image=''):
     conn = db_conn()
     cur = conn.cursor()
+
+    # Set initial values for total_rating and total_reviews
+    bar_rating = 0
+    total_rating = 0
+    total_reviews = 0
+
+    # Insert into the BAR table and return bar_id
     cur.execute(
-        'INSERT INTO bar (bar_name, bar_location, bar_detail, max_people_in_bar, total_rating, total_reviews, bar_image) '
+        'INSERT INTO bar (bar_name, bar_location, bar_detail, max_people_in_bar, bar_rating, total_rating, total_reviews, bar_image) '
         'VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING bar_id',
-        (bar_name, bar_location, bar_detail, max_people_in_bar, total_rating, total_reviews, bar_image)
+        (bar_name, bar_location, bar_detail, max_people_in_bar, bar_rating, total_rating, total_reviews, bar_image)
     )
     bar_id = cur.fetchone()[0]
+
+    # Commit the transaction and close cursor and connection
     conn.commit()
     cur.close()
     conn.close()
+
     return bar_id
 
 def update_bar(bar_id, data):

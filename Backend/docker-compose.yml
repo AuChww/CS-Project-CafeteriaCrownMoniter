@@ -18,7 +18,7 @@ services:
       - .:/app  # Mount current directory into the container for development
     depends_on:
       - db  # Ensure the web service starts after PostgreSQL
-    entrypoint: ["/app/entrypoint.sh"]
+    # entrypoint: ["/app/entrypoint.sh"]
 
   db:
     image: postgres:16-alpine  # Lightweight PostgreSQL image
