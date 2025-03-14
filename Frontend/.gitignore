@@ -42,4 +42,10 @@ next-env.d.ts
 
 # .gitignore
 .env.local
+<<<<<<< HEAD
 node_modules/
+=======
+node_modules/
+
+
+>>>>>>> 3e919e6d9e2119f8c157eb3647f6667d5ce8f060

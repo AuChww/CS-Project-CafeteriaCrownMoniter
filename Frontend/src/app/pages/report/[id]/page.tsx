@@ -104,9 +104,9 @@ const ReportDetailPage = () => {
           {/* รายละเอียด Report */}
           <div className="border p-4 rounded-lg shadow-md mb-6">
             <h2 className="text-2xl font-semibold mb-2">รายละเอียดรายงาน</h2>
-            <p className="text-gray-500 mt-2">แจ้งเมื่อ : {new Date(report.created_time).toLocaleString()}</p>
+            <div className="text-gray-500 mt-2">แจ้งเมื่อ : {new Date(report.created_time).toLocaleString()}</div>
             <div className="text-zinc-600 pl-4 mt-4">
-              <p className="mt-1 text-lg"><strong>สถานะ :</strong>
+              <div className="mt-1 text-lg"><strong>สถานะ :</strong>
                 <span
                   className={`ml-2 px-2 py-1 rounded font-bold ${report.report_status === "pending"
                     ? "text-yellow-400"
@@ -119,9 +119,9 @@ const ReportDetailPage = () => {
                 >
                   {report.report_status}
                 </span>
-              </p>
-              <p className="mt-1 text-lg"><strong className="mr-2">ประเภทปัญหา :</strong> {report.report_type}</p>
-              {report.report_message && <p className="mt-1 text-lg"><strong className="mr-2">ข้อความ :</strong> {report.report_message}</p>}
+              </div>
+              <div className="mt-1 text-lg"><strong className="mr-2">ประเภทปัญหา :</strong> {report.report_type}</div>
+              {report.report_message && <div className="mt-1 text-lg"><strong className="mr-2">ข้อความ :</strong> {report.report_message}</div>}
               {report.report_image && (
                 <div className="mt-4">
                   <img src={report.report_image} alt="Report" className="w-64 h-64 rounded-lg" />
@@ -137,9 +137,9 @@ const ReportDetailPage = () => {
               <div className="flex items-center space-x-4 mt-2 text-zinc-600  mt-4" >
                 <img src={user.user_image || "/default-avatar.png"} alt="User" className="w-16 h-16 rounded-full" />
                 <div className="pl-16">
-                  <p><strong>ชื่อผู้ใช้:</strong> {user.username}</p>
-                  <p><strong>อีเมล:</strong> {user.email}</p>
-                  <p><strong>บทบาท:</strong> {user.role}</p>
+                  <div><strong>ชื่อผู้ใช้:</strong> {user.username}</div>
+                  <div><strong>อีเมล:</strong> {user.email}</div>
+                  <div><strong>บทบาท:</strong> {user.role}</div>
                 </div>
               </div>
             </div>
@@ -150,11 +150,11 @@ const ReportDetailPage = () => {
               <div className="flex items-center space-x-4 mt-2 text-zinc-600 mt-4">
                 <img src={zone.zone_image || "/default-zone.jpg"} alt="Zone" className="w-32 h-32 rounded-lg" />
                 <div>
-                  <p><strong>ชื่อโซน:</strong> {zone.zone_name}</p>
-                  <p><strong>รายละเอียด:</strong> {zone.zone_detail}</p>
-                  <p><strong>จำนวนคนปัจจุบัน:</strong> {zone.current_visitor_count} / {zone.max_people_in_zone}</p>
-                  <p><strong>เวลาโซน:</strong> {zone.zone_time}</p>
-                  <p><strong>อัปเดตล่าสุด:</strong> {zone.update_date_time}</p>
+                  <div><strong>ชื่อโซน:</strong> {zone.zone_name}</div>
+                  <div><strong>รายละเอียด:</strong> {zone.zone_detail}</div>
+                  <div><strong>จำนวนคนปัจจุบัน:</strong> {zone.current_visitor_count} / {zone.max_people_in_zone}</div>
+                  <div><strong>เวลาโซน:</strong> {zone.zone_time}</div>
+                  <div><strong>อัปเดตล่าสุด:</strong> {zone.update_date_time}</div>
                 </div>
               </div>
             </div>

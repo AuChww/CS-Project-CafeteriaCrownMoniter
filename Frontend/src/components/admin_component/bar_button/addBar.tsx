@@ -1,113 +1,185 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function AddBar() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [barName, setBarName] = useState("");
+  const [barDetail, setBarDetail] = useState("");
+  const [barLocation, setBarLocation] = useState("");
+  const [barImage, setBarImage] = useState<File | null>(null);
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
+  // ฟังก์ชันแปลงไฟล์เป็น Base64 string
+  const convertFileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
+
+  // handleAddBar ส่งข้อมูลเป็น JSON ไปยัง API
+  const handleAddBar = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    let base64Image: string | null = null;
+    if (barImage) {
+      try {
+        base64Image = await convertFileToBase64(barImage);
+      } catch (error) {
+        console.error("Error converting file:", error);
+      }
+    }
+
+    const data = {
+      bar_name: barName,
+      bar_detail: barDetail,
+      bar_location: barLocation,
+      bar_image: base64Image,
+    };
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/v1/addBar", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // ส่งเป็น JSON
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        throw new Error("Error submitting form");
+      }
+      console.log("Bar added successfully");
+      // รีเซ็ตฟอร์มหรือแจ้งเตือนผู้ใช้เพิ่มเติมได้ที่นี่
+    } catch (error) {
+      console.error("Submission error:", error);
+    }
   };
 
   return (
     <div>
-      <button
-        onClick={toggleModal}
-        className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        type="button"
-      >
-        Add Bar
-      </button>
-
-      {isModalOpen && (
-        <div
-          className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50"
-          onClick={toggleModal}
-        >
-          <div
-            className="relative p-4 w-full max-w-md bg-white rounded-lg shadow-sm dark:bg-gray-700"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600 border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Create New Product
-              </h3>
-              <button
-                onClick={toggleModal}
-                className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+      <form onSubmit={handleAddBar} className="py-2 px-4 md:p-5">
+        <div className="grid gap-3 mb-8 grid-cols-2">
+          {/* ฟิลด์ Bar name */}
+          <div className="col-span-2">
+            <div className="relative z-0 mb-6 w-full group">
+              <input
+                type="text"
+                name="bar_name"
+                id="bar_name"
+                value={barName}
+                onChange={(e) => setBarName(e.target.value)}
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 
+                           bg-transparent border-0 border-b-2 border-gray-300 
+                           appearance-none dark:text-white dark:border-gray-600 
+                           dark:focus:border-blue-500 focus:outline-none 
+                           focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                required
+              />
+              <label
+                htmlFor="bar_name"
+                className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 
+                           transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] 
+                           peer-focus:left-0 peer-focus:text-blue-600 
+                           peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 
+                           peer-placeholder-shown:translate-y-0 peer-focus:scale-75 
+                           peer-focus:-translate-y-6"
               >
-                <svg
-                  className="w-3 h-3"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 14 14"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                  />
-                </svg>
-                <span className="sr-only">Close modal</span>
-              </button>
+                Bar name
+              </label>
             </div>
-            <form className="p-4 md:p-5">
-              <div className="grid gap-4 mb-6 grid-cols-2">
-                <div className="col-span-2">
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Bar Name
-                  </label>
-                  <input
-                    type="text"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                    placeholder="Type bar name"
-                    required
-                  />
-                </div>
-                <div className="col-span-2 ">
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Bar Location
-                  </label>
-                  <input
-                    type="text"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                    placeholder="Type bar location"
-                    required
-                  />
-                </div>
-                <div className="col-span-2 ">
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Bar Detail
-                  </label>
-                  <input
-                    type="text"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                    placeholder="Type bar detail"
-                    required
-                  />
-                </div>
-                <div className="col-span-2">
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Upload file
-                  </label>
-                  <input
-                    className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                    id="file_input"
-                    type="file"
-                  />
-                </div>
-              </div>
-              <button
-                type="submit"
-                className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          </div>
+          {/* ฟิลด์ Bar detail */}
+          <div className="col-span-2">
+            <div className="relative z-0 mb-6 w-full group">
+              <input
+                type="text"
+                name="bar_detail"
+                id="bar_detail"
+                value={barDetail}
+                onChange={(e) => setBarDetail(e.target.value)}
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 
+                           bg-transparent border-0 border-b-2 border-gray-300 
+                           appearance-none dark:text-white dark:border-gray-600 
+                           dark:focus:border-blue-500 focus:outline-none 
+                           focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                required
+              />
+              <label
+                htmlFor="bar_detail"
+                className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 
+                           transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] 
+                           peer-focus:left-0 peer-focus:text-blue-600 
+                           peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 
+                           peer-placeholder-shown:translate-y-0 peer-focus:scale-75 
+                           peer-focus:-translate-y-6"
               >
-                Add new bar
-              </button>
-            </form>
+                Bar detail
+              </label>
+            </div>
+          </div>
+          {/* ฟิลด์ Bar location */}
+          <div className="col-span-2">
+            <div className="relative z-0 mb-6 w-full group">
+              <input
+                type="text"
+                name="bar_location"
+                id="bar_location"
+                value={barLocation}
+                onChange={(e) => setBarLocation(e.target.value)}
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 
+                           bg-transparent border-0 border-b-2 border-gray-300 
+                           appearance-none dark:text-white dark:border-gray-600 
+                           dark:focus:border-blue-500 focus:outline-none 
+                           focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                required
+              />
+              <label
+                htmlFor="bar_location"
+                className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 
+                           transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] 
+                           peer-focus:left-0 peer-focus:text-blue-600 
+                           peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 
+                           peer-placeholder-shown:translate-y-0 peer-focus:scale-75 
+                           peer-focus:-translate-y-6"
+              >
+                Bar location
+              </label>
+            </div>
+          </div>
+          {/* ฟิลด์อัพโหลดไฟล์ (Bar image) */}
+          <div className="col-span-2">
+            <label
+              htmlFor="bar_image"
+              className="block mb-1 text-sm font-medium text-gray-500 dark:text-white"
+            >
+              Upload file
+            </label>
+            <input
+              className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer 
+                         bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 
+                         dark:border-gray-600 dark:placeholder-gray-400"
+              id="bar_image"
+              type="file"
+              onChange={(e) => {
+                if (e.target.files) {
+                  setBarImage(e.target.files[0]);
+                }
+              }}
+            />
           </div>
         </div>
-      )}
+        <button
+          type="submit"
+          className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 
+                     focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg 
+                     text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 
+                     dark:focus:ring-blue-800"
+        >
+          Add new bar
+        </button>
+      </form>
     </div>
   );
 }

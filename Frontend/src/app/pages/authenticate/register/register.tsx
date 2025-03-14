@@ -93,7 +93,7 @@ export function Register() {
                     <div className="flex items-center h-full bg-gray-900 bg-opacity-40">
                         <div className="flex w-full h-full flex-col justify-center px-10 py-16 lg:px- z-10 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 background-animate">
                             <h2 className="text-white text-4xl font-bold">KU CROWD</h2>
-                            <p className="max-w-xl mt-3 text-gray-300">Crowd Monitor Web App</p>
+                            <div className="max-w-xl mt-3 text-gray-300">Crowd Monitor Web App</div>
                         </div>
                     </div>
                 </div>
@@ -104,7 +104,7 @@ export function Register() {
                         <h2 className="text-gray-800 text-4xl font-bold text-center mb-6">Create a KU Account</h2>
 
                         {/* Error message */}
-                        {error && <p className="text-red-500 mb-4 text-sm">{error}</p>}
+                        {error && <div className="text-red-500 mb-4 text-sm">{error}</div>}
 
                         {/* Username */}
                         <div className="mb-4">

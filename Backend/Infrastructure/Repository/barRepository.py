@@ -138,6 +138,7 @@ def get_all_zones_by_bar_id(bar_id):
 def add_bar(bar_name, bar_location, bar_detail, max_people_in_bar=0, total_rating=0, total_reviews=0, bar_image=None):
     conn = db_conn()
     cur = conn.cursor()
+
     cur.execute(
         'INSERT INTO bar (bar_name, bar_location, bar_detail, max_people_in_bar, total_rating, total_reviews, bar_image) '
         'VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING bar_id',

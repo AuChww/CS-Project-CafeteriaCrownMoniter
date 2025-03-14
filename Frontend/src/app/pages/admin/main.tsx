@@ -8,6 +8,7 @@ import AdminCrowdCard from "@/components/admin_component/AdminCrowdCard";
 import AddBar from "@/components/admin_component/bar_button/addBar";
 import DeleteBar from "@/components/admin_component/bar_button/deleteBar";
 import EditBar from "@/components/admin_component/bar_button/editBar";
+import AddTab from "@/components/admin_component/bar_button/addTab";
 
 interface Bar {
   bar_id: number;
@@ -48,7 +49,7 @@ export default function Admin() {
         <AdminSwipe />
       </div>
       <div className=" flex justify-start mt-10">
-      <AddBar></AddBar>
+      <AddTab></AddTab>
       </div>
       
       <div className="grid grid-cols-1 mt-6 sm:grid-cols-4 lg:grid-cols-6 gap-6">

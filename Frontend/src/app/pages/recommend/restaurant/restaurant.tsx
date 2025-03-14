@@ -51,9 +51,9 @@ const AllRestaurant: React.FC = () => {
     <div className="p-6 mt-12">
       <h1 className="text-3xl font-bold mb-4">All Restaurants</h1>
       {loading ? (
-        <p>Loading...</p>
+        <div>Loading...</div>
       ) : error ? (
-        <p className="text-red-500">{error}</p>
+        <div className="text-red-500">{error}</div>
       ) : (
         <div className="grid grid-cols-5 gap-2">
           {restaurants.map((restaurant, index) => (

@@ -14,6 +14,7 @@ const Navbar = () => {
     const [role, setRole] = useState('');
     const [userImage, setUserImage] = useState('');
     const [userId, setUserId] = useState("");
+    const [isClient, setIsClient] = useState(false);
 
     // Fetch user info based on token or user_id
     useEffect(() => {
@@ -40,6 +41,7 @@ const Navbar = () => {
                 console.error("Error decoding token:", error);
             }
         }
+        setIsClient(true);
     }, []);
 
     // Decode JWT function
@@ -60,6 +62,7 @@ const Navbar = () => {
     };
 
     const logout = () => {
+        if (!isClient) return;
         localStorage.removeItem('token');
         console.log('Logged out');
         router.refresh();
@@ -105,10 +108,10 @@ const Navbar = () => {
                         </div>
                     ) : (
                         <Link href="/pages/authenticate/login">
-                            <div className=" flex bg-gradient-to-r
+                            <div className=" flex bg-gradient-to-r hover:scale-110 duration-500
                                                       from-orange-400
                                                       via-yellow-300
-                                                      to-orange-300  text-white text-xs py-1 px-2 rounded-full">
+                                                      to-orange-300  text-white text-xs py-1 px-2 rounded-full ">
                                 <div>
                                     Please sign in your account to get permission
                                 </div>

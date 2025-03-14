@@ -20,14 +20,26 @@ interface Zone {
 
 interface Restaurant {
   restaurant_id: number;
+  zone_id: number;
   restaurant_name: string;
+  restaurant_location: string;
   restaurant_detail: string;
   restaurant_image: string;
-  restaurant_location: string;
   total_rating: number;
   total_reviews: number;
   current_visitor_count: number;
-  zone_id: number;
+  update_date_time: string;
+}
+
+interface Review {
+  review_id: number;
+  user_id: number;  // user_id ที่จะใช้ดึงข้อมูลชื่อผู้ใช้
+  restaurant_id: number;
+  review_comment: string;
+  review_image: string;
+  rating: number;
+  created_time: string;
+  user_name?: string; // เพิ่ม property สำหรับ username
 }
 
 const ZonePage = () => {
@@ -155,9 +167,9 @@ const ZonePage = () => {
   //     fetchZoneAndRestaurants();
   // }, [id]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p className="text-red-500">Error: {error}</p>;
-  if (!zone) return <p>Error fetching zone details.</p>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div className="text-red-500">Error: {error}</div>;
+  if (!zone) return <div>Error fetching zone details.</div>;
 
   return (
     <div className="container mt-12 mx-auto p-4 w-full h-screen overflow-y-auto space-y-12">
@@ -175,7 +187,7 @@ const ZonePage = () => {
             {imageUrl ? (
               <img src={imageUrl} alt={zone.zone_name} width="500" />
             ) : (
-              <p>Loading image...</p>
+              <div>Loading image...</div>
             )}
             {/* <img
               className="w-full object-cover rounded-md mb-4"
@@ -186,18 +198,18 @@ const ZonePage = () => {
               }
               alt={zone.zone_name}
             /> */}
-            <p className="text-lg text-gray-700">{zone.zone_detail}</p>
+            <div className="text-lg text-gray-700">{zone.zone_detail}</div>
 
-            <p className="text-lg text-gray-700">
+            <div className="text-lg text-gray-700">
               <strong>Current Visitors:</strong> {zone.current_visitor_count} /{" "}
               {zone.max_people_in_zone}
-            </p>
-            <p className="text-lg text-gray-700">
+            </div>
+            <div className="text-lg text-gray-700">
               <strong>Operating Hours:</strong> {zone.zone_time}
-            </p>
-            <p className="text-lg text-gray-700">
+            </div>
+            <div className="text-lg text-gray-700">
               <strong>Lastest Update:</strong> {zone.update_date_time}
-            </p>
+            </div>
 
             <div className="relative flex flex-col rounded-xl bg-white">
               <div className="flex items-center gap-4">
@@ -231,14 +243,17 @@ const ZonePage = () => {
                     className="cursor-pointer"
                   >
                     <RestaurantCard
+                      key={restaurant.restaurant_id}
                       restaurant_id={restaurant.restaurant_id}
+                      zone_id={restaurant.zone_id}
                       restaurant_name={restaurant.restaurant_name}
+                      restaurant_location={restaurant.restaurant_location}
                       restaurant_detail={restaurant.restaurant_detail}
                       restaurant_image={restaurant.restaurant_image}
-                      restaurant_location={restaurant.restaurant_location}
                       total_rating={restaurant.total_rating}
-                      current_visitor_count={restaurant.current_visitor_count}
                       total_reviews={restaurant.total_reviews}
+                      current_visitor_count={restaurant.current_visitor_count}
+                      update_date_time={restaurant.update_date_time}
                     />
                   </div>
                 ))}

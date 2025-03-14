@@ -8,12 +8,15 @@ import ReviewCard from "@/components/ReviewCard";
 
 interface Restaurant {
   restaurant_id: number;
+  zone_id: number;
   restaurant_name: string;
   restaurant_location: string;
   restaurant_detail: string;
   restaurant_image: string;
   total_rating: number;
   total_reviews: number;
+  current_visitor_count: number;
+  update_date_time: string;
 }
 
 interface Review {
@@ -77,33 +80,30 @@ const RestaurantPage = () => {
     }
 
     try {
-        let response = await fetch(
-          `http://localhost:8000/api/v1/getRestaurantImage/restaurant${id}.png`
-        );
+      let response = await fetch(
+        `http://localhost:8000/api/v1/getRestaurantImage/restaurant${id}.png`
+      );
 
-        // ถ้าไม่สามารถเข้าถึงได้ (response.ok = false) ให้ใช้ URL สำรอง
-        if (!response.ok) {
-          console.log("First image not found, trying fallback...");
-        }
-        // ตรวจสอบว่า URL ที่ได้ดึงมามีภาพหรือไม่
-        if (!response.ok) {
-          throw new Error("Failed to fetch both restaurant image and fallback image");
-        }
-        // ถ้าทุกอย่างสำเร็จ, ดึงข้อมูล JSON หรือ URL ของภาพ
-        const data = await response.json();
-        if (data.url) {
-          setImageUrl(data.url); // ใช้ URL ที่ดึงมา
-        } else {
-          throw new Error("No image URL returned");
-        }
-      } catch (error) {
-        console.error("Error fetching image:", error);
-      
+      // ถ้าไม่สามารถเข้าถึงได้ (response.ok = false) ให้ใช้ URL สำรอง
+      if (!response.ok) {
+        console.log("First image not found, trying fallback...");
       }
-      
-      
-      
-      
+      // ตรวจสอบว่า URL ที่ได้ดึงมามีภาพหรือไม่
+      if (!response.ok) {
+        throw new Error(
+          "Failed to fetch both restaurant image and fallback image"
+        );
+      }
+      // ถ้าทุกอย่างสำเร็จ, ดึงข้อมูล JSON หรือ URL ของภาพ
+      const data = await response.json();
+      if (data.url) {
+        setImageUrl(data.url); // ใช้ URL ที่ดึงมา
+      } else {
+        throw new Error("No image URL returned");
+      }
+    } catch (error) {
+      console.error("Error fetching image:", error);
+    }
   };
 
   useEffect(() => {

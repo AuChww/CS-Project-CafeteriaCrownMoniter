@@ -42,8 +42,8 @@ const UpdateZoneCountButton = () => {
                 {loading ? 'Updating...' : 'Update Zone Count'}
             </button>
             
-            {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-            {success && <p style={{ color: 'green' }}>Zone counts updated successfully!</p>}
+            {error && <div style={{ color: 'red' }}>Error: {error}</div>}
+            {success && <div style={{ color: 'green' }}>Zone counts updated successfully!</div>}
         </div>
     );
 };

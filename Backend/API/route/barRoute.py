@@ -106,15 +106,19 @@ def get_all_zones_by_bar_id(bar_id):
 
 @bar_bp.route('/api/v1/addBar', methods=['POST'])
 def add_bar():
+    print(f"in add_bar")
     data = request.json
     bar_name = data.get('bar_name')
     bar_location = data.get('bar_location')
     bar_detail = data.get('bar_detail')
-    bar_image = data.get('bar_image')  # รับ bar_image จาก request
+    # bar_image = data.get('bar_image')  # รับ bar_image จาก request
+    
+    print(f"bar_name: {bar_name} in Bar route")
+    print(f"bar_location: {bar_location}")
+    print(f"bar_detail: {bar_detail}")
 
     if not all([bar_name, bar_location]):
         return jsonify({'message': 'Missing required fields'}), 400
-
     bar_id = add_bar_service(bar_name, bar_location, bar_detail, bar_image)  # ส่ง bar_image ไปยัง service
     return jsonify({'message': 'Bar added successfully', 'bar_id': bar_id}), 201
 

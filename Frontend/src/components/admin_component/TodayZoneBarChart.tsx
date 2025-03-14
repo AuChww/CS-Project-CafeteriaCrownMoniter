@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 
 // Define types for the visitor history and chart data
-interface VisitorHistory {
+interface ZoneVisitorHistory {
   date_time: string;
   visitor_count: number;
-  visitor_history_id: number;
+  zone_visitor_history_id: number;
   zone_id: number;
 }
 
@@ -24,10 +24,10 @@ const TodayZoneVisitorBarChart: React.FC = () => {
     setIsClient(true);
 
     // Fetch the data
-    fetch("http://127.0.0.1:8000/api/v1/getAllVisitorHistories")
+    fetch("http://127.0.0.1:8000/api/v1/getAllZoneVisitorHistory")
       .then((response) => response.json())
       .then((data) => {
-        const visitorHistories: VisitorHistory[] = data.visitor_histories;
+        const visitorHistories: ZoneVisitorHistory[] = data.visitor_histories;
 
         // Get today's date in the YYYY-MM-DD format
         const today = new Date();
