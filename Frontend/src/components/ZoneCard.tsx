@@ -1,4 +1,6 @@
 import React, {useEffect, useState} from "react";
+import { MdEdit } from "react-icons/md";
+import { MdDeleteForever } from "react-icons/md";
 
 interface ZoneCardProps {
   zone_id: number;
@@ -134,13 +136,6 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
           </h5>
         </a>
 
-        {/* zone Details */}
-        <div className="mb-3 text-sm font-normal text-gray-500 dark:text-gray-400">
-          {zone_detail}
-        </div>
-
-        <div className="text-md text-gray-500">Time : {zone_time}</div>
-
         {/* zone Location */}
         <div className="flex space-x-1 text-sm text-gray-500 dark:text-gray-400 ">
           <svg fill="#000000" width="25px" height="25px" viewBox="-3 0 19 19" xmlns="http://www.w3.org/2000/svg" className="cf-icon-svg"><path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z" /></svg>
@@ -152,10 +147,22 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
 
         </div>
 
+        {/* zone Details */}
+        <div className="mb-3 text-sm font-normal text-gray-500 dark:text-gray-400">
+          {zone_detail}
+        </div>
+
+        <div className="text-md text-gray-500">Time : {zone_time}</div>
+
         {/* <div className="flex items-center text-sm mt-2.5 mb-5 space-x-2 text-gray-700">
           <div>เวลาที่เปิดให้ปริการ: </div>
           <div>{zone_time}</div>
         </div> */}
+
+        <div className="flex justify-end">
+          <MdEdit  className='text-gray-600 w-6 h-6'/>
+          <MdDeleteForever className='text-red-600 w-6 h-6' />
+        </div>
       </div>
     </div>
   );

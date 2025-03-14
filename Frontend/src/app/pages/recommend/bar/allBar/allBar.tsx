@@ -4,11 +4,13 @@ import { useParams } from "next/navigation";
 interface Bar {
   bar_id: number;
   bar_name: string;
-  bar_location: string;
+  max_people_in_bar: number;
   bar_detail: string;
+  bar_image: string;
+  bar_location: string;
+  bar_rating: number;
   total_rating: number;
   total_reviews: number;
-  bar_image: string;
 }
 
 interface Restaurant {

@@ -10,6 +10,7 @@ interface Bar {
   bar_detail: string;
   bar_image: string;
   bar_location: string;
+  bar_rating: number;
   total_rating: number;
   total_reviews: number;
 }
@@ -33,6 +34,7 @@ interface Restaurant {
   restaurant_location: string;
   restaurant_detail: string;
   restaurant_image: string;
+  restaurant_rating: string;
   total_rating: number;
   total_reviews: number;
   current_visitor_count: number;
