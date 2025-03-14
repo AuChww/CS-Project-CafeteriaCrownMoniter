@@ -5,6 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AdminSwipe from "@/components/admin_component/AdminSwipe";
 import AdminCrowdCard from "@/components/admin_component/AdminCrowdCard";
+import AddBar from "@/components/admin_component/bar_button/addBar";
+import DeleteBar from "@/components/admin_component/bar_button/deleteBar";
+import EditBar from "@/components/admin_component/bar_button/editBar";
+import AddTab from "@/components/admin_component/bar_button/addTab";
 
 interface Bar {
   bar_id: number;
@@ -44,7 +48,12 @@ export default function Admin() {
       <div className="mt-14">
         <AdminSwipe />
       </div>
-      <div className="grid grid-cols-1 mt-10 sm:grid-cols-4 lg:grid-cols-6 gap-6">
+      <div className=" flex justify-start mt-10">
+      <AddTab></AddTab>
+      </div>
+      
+      <div className="grid grid-cols-1 mt-6 sm:grid-cols-4 lg:grid-cols-6 gap-6">
+        
         {bars.map((bar) => (
           <div key={bar.bar_id} onClick={() => router.push(`/pages/recommend/bar/${bar.bar_id}`)}>
             <AdminCrowdCard

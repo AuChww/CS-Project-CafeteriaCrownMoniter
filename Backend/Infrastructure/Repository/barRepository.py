@@ -138,7 +138,11 @@ def get_all_zones_by_bar_id(bar_id):
     ]
     return zones
 
-def add_bar(bar_name, bar_location, bar_detail, max_people_in_bar, bar_image=''):
+def add_bar(bar_name, bar_location, bar_detail, max_people_in_bar):
+    
+    bar_image = ''  
+    print(f"bar_image: {bar_image}")
+    
     conn = db_conn()
     cur = conn.cursor()
 
@@ -161,6 +165,19 @@ def add_bar(bar_name, bar_location, bar_detail, max_people_in_bar, bar_image='')
     conn.close()
 
     return bar_id
+
+def update_bar_image_path(bar_id, file_name):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute(
+        'UPDATE bar SET bar_image = %s WHERE bar_id = %s',
+        (file_name, bar_id)
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
 
 def update_bar(bar_id, data):
     conn = db_conn()

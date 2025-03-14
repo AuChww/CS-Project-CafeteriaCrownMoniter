@@ -1,5 +1,5 @@
-import React from "react";
-import BarAndRestaurant from "@/components/BarAndRestaurant";
+import React, { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 
 interface Bar {
   bar_id: number;
@@ -23,42 +23,38 @@ interface BarDetailProps {
 }
 
 const AllBar: React.FC<BarDetailProps> = ({ bars, restaurants }) => {
-  return (
-    // <div>
-    //   <h1 className="text-3xl font-bold mb-4">Bars and Nearby Restaurants</h1>
-    //   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    //     {bars.map((bar) => (
-    //       <div
-    //         key={bar.bar_id}
-    //         className="bg-gray-50 rounded-lg shadow-lg p-4 border border-gray-300"
-    //       >
-    //         <h2 className="text-xl font-semibold mb-2">{bar.bar_name}</h2>
-    //         {bar.bar_image && (
-    //           <img
-    //             src={bar.bar_image}
-    //             alt={bar.bar_name}
-    //             className="w-full h-32 object-cover rounded-md mb-4"
-    //           />
-    //         )}
-    //         <div className="text-sm text-gray-600 mb-2">Location: {bar.bar_location}</div>
-    //         <div className="text-sm text-gray-600 mb-4">Details: {bar.bar_detail}</div>
-    //         <h3 className="text-lg font-semibold">Nearby Restaurants</h3>
-    //         <ul className="space-y-2">
-    //           {restaurants.slice(0, 3).map((restaurant) => (
-    //             <li
-    //               key={restaurant.restaurant_id}
-    //               className="bg-white p-2 rounded-md shadow-sm border border-gray-200"
-    //             >
-    //               <h4 className="text-sm font-medium">{restaurant.restaurant_name}</h4>
-    //               <div className="text-xs text-gray-500">Rating: {restaurant.total_rating}</div>
-    //             </li>
-    //           ))}
-    //         </ul>
-    //       </div>
-    //     ))}
-    //   </div>
-    // </div>
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const { id } = useParams(); // ดึง id จาก URL
+  const [bar, setBar] = useState<Bar | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    const fetchBar = async () => {
+      try {
+        let response = await fetch(
+          `http://localhost:8000/api/v1/getBarImage/bar${id}.png`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch image");
+        }
+
+        const data = await response.json();
+        if (data.url) {
+          setImageUrl(data.url); // ใช้ URL ที่ดึงมา
+        } else {
+          throw new Error("No image URL returned");
+        }
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    };
+
+    fetchBar();
+  }, [id]);
+
+  return (
     <div>
       <h1 className="text-3xl mt-12 font-bold mb-4">Bars and Nearby Restaurants</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -71,8 +67,8 @@ const AllBar: React.FC<BarDetailProps> = ({ bars, restaurants }) => {
             <a href="#">
               <img
                 className="rounded-t-lg"
-                src={`/image/barImages/${bar.bar_image}`}
-                alt="{bar_name}"
+                src={imageUrl ? imageUrl : `/image/barImages/${bar.bar_image}`} // หากดึง URL ได้จาก API ให้ใช้ URL นั้น, ถ้าไม่ได้ให้ใช้ path เดิม
+                alt={bar.bar_name}
               />
             </a>
             <div className="p-5">

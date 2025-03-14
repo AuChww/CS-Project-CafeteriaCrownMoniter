@@ -1,5 +1,17 @@
 from flask import Blueprint, jsonify, request, send_from_directory
-from Application.Service.feature.barService import update_bar_visitors,get_all_bars_service, get_bar_by_id_service, get_all_restaurants_by_bar_id_service, get_all_reviews_by_bar_id_service, get_all_zones_by_bar_id_service, add_bar_service, update_bar_service, delete_bar_service
+import base64
+from Application.Service.feature.barService import  (
+    update_bar_visitors,
+    get_all_bars_service,
+    get_bar_by_id_service,
+    get_all_restaurants_by_bar_id_service,
+    get_all_reviews_by_bar_id_service,
+    get_all_zones_by_bar_id_service,
+    add_bar_service,
+    update_bar_image,
+    update_bar_service,
+    delete_bar_service
+    )
 
 import os
 bar_bp = Blueprint('bars', __name__)
@@ -106,29 +118,83 @@ def get_all_zones_by_bar_id(bar_id):
     return jsonify({'zones': zone_list})
 
 
-@bar_bp.route('/api/v1/addBar', methods=['POST'])
-def add_bar():
-    print(f"in add_bar")
-    data = request.json
-    bar_name = data.get('bar_name')
-    bar_location = data.get('bar_location')
-    bar_detail = data.get('bar_detail')
-    max_people_in_bar = data.get("max_people_in_bar")
-    bar_image = data.get('bar_image')  # รับ bar_image จาก request
+# @bar_bp.route('/api/v1/addBar', methods=['POST'])
+# def add_bar():
+#     print(f"in add_bar")
+#     data = request.json
+#     bar_name = data.get('bar_name')
+#     bar_location = data.get('bar_location')
+#     bar_detail = data.get('bar_detail')
+#     max_people_in_bar = data.get("max_people_in_bar")
+#     bar_image = data.get('bar_image')  # รับ bar_image จาก request
     
-    print(f"bar_name: {bar_name} in Bar route")
-    print(f"bar_location: {bar_location}")
-    print(f"bar_detail: {bar_detail}")
-    print(f"bar_image: {bar_image}")
+#     print(f"bar_name: {bar_name} in Bar route")
+#     print(f"bar_location: {bar_location}")
+#     print(f"bar_detail: {bar_detail}")
+#     print(f"bar_image: {bar_image}")
     
 
-    if not all([bar_name, bar_location]):
-        return jsonify({'message': 'Missing required fields'}), 400
-    bar_id = add_bar_service(bar_name, bar_location, bar_detail, max_people_in_bar, bar_image)  # ส่ง bar_image ไปยัง service
-    return jsonify({'message': 'Bar added successfully', 'bar_id': bar_id}), 201
+#     if not all([bar_name, bar_location]):
+#         return jsonify({'message': 'Missing required fields'}), 400
+#     bar_id = add_bar_service(bar_name, bar_location, bar_detail, max_people_in_bar, bar_image)  # ส่ง bar_image ไปยัง service
+#     return jsonify({'message': 'Bar added successfully', 'bar_id': bar_id}), 201
+
+# @bar_bp.route('/api/v1/addBar', methods=['POST'])
+# def add_bar():
+#     bar_name = request.form.get('bar_name')
+#     bar_location = request.form.get('bar_location')
+#     bar_detail = request.form.get('bar_detail')
+#     max_people_in_bar = request.form.get('max_people_in_bar')
+    
+#     # รับไฟล์ภาพจาก request
+#     bar_image = request.files.get('bar_image')
+    
+#     # ตรวจสอบว่า bar_image ถูกส่งมา
+#     if bar_image:
+#         # เพิ่มข้อมูลบาร์ในฐานข้อมูล (หรือทำการประมวลผลก่อน)
+#         bar_id, file_path = add_bar_service(bar_name, bar_location, bar_detail, max_people_in_bar, bar_image)
+        
+#         # บันทึกไฟล์ภาพ (ถ้าฟังก์ชันไม่ทำแล้ว)
+#         bar_image.save(file_path)
+#         print(f"Image saved to {file_path}")
+        
+#     return jsonify({'message': 'Bar added successfully', 'bar_id': bar_id}), 201
+
+@bar_bp.route('/api/v1/addBar', methods=['POST'])
+def add_bar():
+    bar_name = request.form.get('bar_name')
+    bar_location = request.form.get('bar_location')
+    bar_detail = request.form.get('bar_detail')
+    max_people_in_bar = request.form.get('max_people_in_bar')
+    
+    # รับไฟล์ภาพจาก request
+    bar_image = request.files.get('bar_image')
+    
+    if not bar_image:
+        return jsonify({'message': 'Bar image is required'}), 400
+    
+    # เพิ่มข้อมูลบาร์ในฐานข้อมูล (หรือทำการประมวลผลก่อน)
+    bar_id = add_bar_service(bar_name, bar_location, bar_detail, max_people_in_bar)
+    
+    # สร้างเส้นทางที่บันทึกไฟล์
+    file_path = f'public/image/barImages/bar{bar_id}.png'
+    file_name = f'bar{bar_id}.png'
+    
+    
+    # บันทึกไฟล์ภาพ
+    bar_image.save(file_path)
+    print(f"Image saved to {file_path}")
+    
+    # อัปเดตข้อมูล bar_id ในฐานข้อมูล (ถ้าจำเป็น)
+    update_bar_image(bar_id, file_name)  # เพิ่มการอัปเดตไฟล์เส้นทาง
+    
+    return jsonify({'message': 'Bar added successfully', 'bar_id': bar_id, 'image_path': file_path, 'file_name': file_name}), 201
+
+
 
 @bar_bp.route('/api/v1/updateBar/<int:bar_id>', methods=['PUT'])
 def update_bar(bar_id):
+    
     data = request.json
     updated = update_bar_service(bar_id, data)  # ส่งข้อมูลทั้งหมดยัง service
     if not updated:
@@ -155,13 +221,28 @@ def delete_bar(bar_id):
 #     video_directory = os.path.join(os.getcwd(), "public", "video", "zone")
 #     return send_from_directory(video_directory, file_name)
 
+IMAGE_FOLDER = 'public/image/barImages'
+
 @bar_bp.route('/api/v1/getBarImage/<string:file_name>', methods=['GET'])
 def get_image_url(file_name):
+    # สร้างเส้นทางเต็มของไฟล์
+    file_path = os.path.join(IMAGE_FOLDER, file_name)
+
+    # ตรวจสอบว่าไฟล์มีอยู่หรือไม่
+    if not os.path.isfile(file_path):
+        # ถ้าไม่พบไฟล์ให้ใช้ชื่อ default
+        file_name = 'default.png'
+    
+    # สร้าง URL ที่จะส่งกลับ
     image_url = f"http://localhost:8000/public/image/barImages/{file_name}"
+
     return jsonify({"url": image_url})
 
 @bar_bp.route('/public/image/barImages/<path:file_name>')
 def serve_actual_image(file_name):
     image_directory = os.path.join(os.getcwd(), "public", "image", "barImages")
     return send_from_directory(image_directory, file_name)
+
+
+
 

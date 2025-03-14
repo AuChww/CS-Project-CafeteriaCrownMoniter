@@ -90,14 +90,24 @@ const BarPage = () => {
       } finally {
         setLoading(false); // Always stop loading
       }
+
       try {
-        const response = await fetch(
+        let response = await fetch(
           `http://localhost:8000/api/v1/getBarImage/bar${id}.png`
         );
-        if (!response.ok) throw new Error("Failed to fetch image URL");
+
+        if (!response.ok) {
+          throw new Error(
+            "Failed to fetch both restaurant image and fallback image"
+          );
+        }
 
         const data = await response.json();
-        setImageUrl(data.url);
+        if (data.url) {
+          setImageUrl(data.url); // ใช้ URL ที่ดึงมา
+        } else {
+          throw new Error("No image URL returned");
+        }
       } catch (error) {
         console.error("Error fetching image:", error);
       }
@@ -126,7 +136,7 @@ const BarPage = () => {
                 alt={bar.bar_name}
                 className="w-full object-cover rounded-md mb-4"
               />
-            )} */}
+            )}  */}
             {imageUrl ? (
               <img
                 className="w-full object-cover rounded-md mb-4"
