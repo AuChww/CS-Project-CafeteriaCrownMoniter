@@ -99,8 +99,10 @@ def get_restaurant_by_zone_id(zone_id):
             'restaurant_name': row[2],
             'restaurant_location': row[3],
             'restaurant_detail': row[4],
-            'total_rating': row[5],
-            'total_reviews': row[6]
+            'restaurant_rating': row[5],
+            'total_rating': row[6],
+            'total_reviews': row[7],
+            'restaurant_image': row[8],
         }
         for row in data
     ]

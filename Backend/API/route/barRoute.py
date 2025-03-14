@@ -33,8 +33,9 @@ def get_all_bars():
             'bar_name': bar.bar_name,
             'bar_location': bar.bar_location,
             'bar_detail': bar.bar_detail,
-            'current_visitor_count': bar.current_visitor_count,
+            'current_visitor_count' : bar.current_visitor_count,
             'max_people_in_bar': bar.max_people_in_bar,
+            'bar_rating' : bar.bar_rating,
             'total_rating': bar.total_rating,
             'total_reviews': bar.total_reviews,
             'bar_image': bar.bar_image  # เพิ่ม bar_image ในการตอบกลับ

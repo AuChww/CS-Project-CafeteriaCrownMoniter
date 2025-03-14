@@ -15,6 +15,7 @@ interface Bar {
   bar_detail: string;
   bar_image: string;
   bar_location: string;
+  bar_rating: number;
   total_rating: number;
   total_reviews: number;
 }
@@ -88,11 +89,11 @@ export default function HomePage() {
               bar_name={bar.bar_name}
               bar_location={bar.bar_location}
               max_people_in_bar={bar.max_people_in_bar}
+              bar_rating={bar.bar_rating}
               total_rating={bar.total_rating}
               total_reviews={bar.total_reviews}
               bar_image={bar.bar_image}
               bar_detail={bar.bar_detail}
-
             />
           </div>
         ))}

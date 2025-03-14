@@ -28,9 +28,10 @@ def get_all_restaurants():
             'restaurant_name': r.restaurant_name,
             'restaurant_location': r.restaurant_location,
             'restaurant_detail': r.restaurant_detail,
-            'restaurant_image': r.restaurant_image,
+            'restaurant_rating': r.restaurant_rating,
             'total_rating': r.total_rating,
             'total_reviews': r.total_reviews,  # เพิ่ม restaurant_image ในการตอบกลับ
+            'restaurant_image': r.restaurant_image,
             'current_visitor_count': r.current_visitor_count,
             'update_date_time' : r.update_date_time,
         }
@@ -50,9 +51,10 @@ def get_restaurant_by_id(restaurant_id):
         'restaurant_name': restaurant.restaurant_name,
         'restaurant_location': restaurant.restaurant_location,
         'restaurant_detail': restaurant.restaurant_detail,
-        'restaurant_image': restaurant.restaurant_image,
+        'restaurant_rating': restaurant.restaurant_rating,
         'total_rating': restaurant.total_rating,
         'total_reviews': restaurant.total_reviews,  # เพิ่ม restaurant_image ในการตอบกลับ
+        'restaurant_image': restaurant.restaurant_image,
         'current_visitor_count': restaurant.current_visitor_count,
         'update_date_time' : restaurant.update_date_time,
     })
