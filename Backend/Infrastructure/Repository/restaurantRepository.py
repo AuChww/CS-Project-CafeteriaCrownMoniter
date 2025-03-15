@@ -19,11 +19,12 @@ def get_all_restaurants():
             restaurant_name=row[2],
             restaurant_location=row[3],
             restaurant_detail=row[4],
-            total_rating=row[5],
-            total_reviews=row[6],
-            restaurant_image=row[7],
-            current_visitor_count=row[8],
-            update_date_time=row[9]  # เพิ่มฟิลด์ restaurant_image
+            restaurant_rating=row[5],
+            total_rating=row[6],
+            total_reviews=row[7],
+            restaurant_image=row[8],
+            current_visitor_count=row[9],
+            update_date_time=row[10]  # เพิ่มฟิลด์ restaurant_image
         )
         for row in data
     ]
@@ -44,11 +45,12 @@ def get_restaurant_by_id(restaurant_id):
             restaurant_name=row[2],
             restaurant_location=row[3],
             restaurant_detail=row[4],
-            total_rating=row[5],
-            total_reviews=row[6],
-            restaurant_image=row[7],
-            current_visitor_count=row[8],
-            update_date_time=row[9]  # เพิ่มฟิลด์ restaurant_image
+            restaurant_rating=row[5],
+            total_rating=row[6],
+            total_reviews=row[7],
+            restaurant_image=row[8],
+            current_visitor_count=row[9],
+            update_date_time=row[10]  # เพิ่มฟิลด์ restaurant_image
         )
     return None
 

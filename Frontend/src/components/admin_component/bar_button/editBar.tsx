@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { MdEdit } from "react-icons/md";
 
-function AddBar() {
+
+function EditBar() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const toggleEditModal = () => {
@@ -11,10 +13,8 @@ function AddBar() {
     <div>
       <button
         onClick={toggleEditModal}
-        className="block text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-yellow-400 dark:hover:bg-yellow-500 dark:focus:ring-yellow-600 mt-4"
-        type="button"
       >
-        Edit Product
+        <MdEdit  className='text-gray-600 w-6 h-6'/>
       </button>
 
       {isEditModalOpen && (
@@ -112,4 +112,4 @@ function AddBar() {
   );
 }
 
-export default AddBar;
+export default EditBar;

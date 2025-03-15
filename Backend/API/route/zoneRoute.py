@@ -161,28 +161,43 @@ utc_tz = pytz.utc
 
 
 
-zone_operating_hours = {
-    1: {"days": {0, 1, 2, 3, 4, 5, 6}, "start": "10:00", "end": "16:00"},  
-    2: {"days": {0, 1, 2, 3, 4, 5, 6}, "start": "11:00", "end": "16:00"},  
-    3: {"days": {0, 1, 2, 3, 4, 5}, "start": "12:00", "end": "16:00"},  
-    4: {"days": {0, 1, 2, 3, 4, 5, 6}, "start": "12:00", "end": "16:00"}, 
-    5: {"days": {0, 1, 2, 3, 4, 5}, "start": "13:00", "end": "16:00"}, 
-    6: {"days": {0, 1, 2, 3, 4, 5}, "start": "14:00", "end": "16:00"}, 
-    7: {"days": {0, 1, 2, 3, 4, 5}, "start": "10:00", "end": "16:00"}, 
-    8: {"days": {0, 1, 2, 3, 4, 5}, "start": "12:00", "end": "16:00"}, 
-    9: {"days": {0, 1, 2, 3, 4, 5}, "start": "10:00", "end": "16:00"}, 
-    10: {"days": {0, 1, 2, 3, 4, 5}, "start": "12:00", "end": "16:00"}, 
-    11: {"days": {0, 1, 2, 3, 4, 5}, "start": "12:00", "end": "16:00"}, 
-    12: {"days": {0, 1, 2, 3, 4, 5}, "start": "13:00", "end": "16:00"}, 
-    13: {"days": {0, 1, 2, 3, 4, 5}, "start": "13:00", "end": "16:00"}, 
-    14: {"days": {0, 1, 2, 3, 4, 5}, "start": "14:00", "end": "16:00"}, 
-}
+# zone_operating_hours = {
+#     1: {"days": {0, 1, 2, 3, 4, 5, 6}, "start": "10:00", "end": "16:00"},  
+#     2: {"days": {0, 1, 2, 3, 4, 5, 6}, "start": "11:00", "end": "16:00"},  
+#     3: {"days": {0, 1, 2, 3, 4, 5}, "start": "12:00", "end": "16:00"},  
+#     4: {"days": {0, 1, 2, 3, 4, 5, 6}, "start": "12:00", "end": "16:00"}, 
+#     5: {"days": {0, 1, 2, 3, 4, 5}, "start": "13:00", "end": "16:00"}, 
+#     6: {"days": {0, 1, 2, 3, 4, 5}, "start": "14:00", "end": "16:00"}, 
+#     7: {"days": {0, 1, 2, 3, 4, 5}, "start": "10:00", "end": "16:00"}, 
+#     8: {"days": {0, 1, 2, 3, 4, 5}, "start": "12:00", "end": "16:00"}, 
+#     9: {"days": {0, 1, 2, 3, 4, 5}, "start": "10:00", "end": "16:00"}, 
+#     10: {"days": {0, 1, 2, 3, 4, 5}, "start": "12:00", "end": "16:00"}, 
+#     11: {"days": {0, 1, 2, 3, 4, 5}, "start": "12:00", "end": "16:00"}, 
+#     12: {"days": {0, 1, 2, 3, 4, 5}, "start": "13:00", "end": "16:00"}, 
+#     13: {"days": {0, 1, 2, 3, 4, 5}, "start": "13:00", "end": "16:00"}, 
+#     14: {"days": {0, 1, 2, 3, 4, 5}, "start": "14:00", "end": "16:00"}, 
+# }
+
+def get_zone_operating_hours_func():
+    zones = get_all_zones_service()
+
+    zone_operating_hours = {
+        z.zone_id: {
+            "days": {0, 1, 2, 3, 4, 5, 6},  # กำหนดให้เปิดทุกวัน
+            "start": z.zone_time.split(' - ')[0],  # แยกเวลาเริ่มต้นจาก zone_time
+            "end": z.zone_time.split(' - ')[1]  # แยกเวลาปิดจาก zone_time
+        }
+        for z in zones
+    }
+    return zone_operating_hours
+
 
 
 def is_zone_open(zone_id):
     now = datetime.now(timezone)
     current_day = now.weekday()  # 0 = จันทร์, 6 = อาทิตย์
     current_time = now.strftime("%H:%M")
+    zone_operating_hours = get_zone_operating_hours_func()
 
     zone_info = zone_operating_hours.get(zone_id)
     

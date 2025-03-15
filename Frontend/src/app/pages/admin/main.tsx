@@ -55,7 +55,9 @@ export default function Admin() {
       <div className="grid grid-cols-1 mt-6 sm:grid-cols-4 lg:grid-cols-6 gap-6">
         
         {bars.map((bar) => (
-          <div key={bar.bar_id} onClick={() => router.push(`/pages/recommend/bar/${bar.bar_id}`)}>
+          <div key={bar.bar_id}
+          //  onClick={() => router.push(`/pages/recommend/bar/${bar.bar_id}`)}
+           >
             <AdminCrowdCard
               key={bar.bar_id}
               bar_id={bar.bar_id}

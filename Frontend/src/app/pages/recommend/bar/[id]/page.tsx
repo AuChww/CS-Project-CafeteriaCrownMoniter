@@ -21,11 +21,13 @@ import { useRouter } from "next/navigation";
 interface Bar {
   bar_id: number;
   bar_name: string;
-  bar_location: string;
+  max_people_in_bar: number;
   bar_detail: string;
+  bar_image: string;
+  bar_location: string;
+  bar_rating: number;
   total_rating: number;
   total_reviews: number;
-  bar_image: string;
 }
 
 interface Zone {
@@ -38,6 +40,20 @@ interface Zone {
   update_date_time: string;
   zone_time: number;
   zone_image: string;
+}
+
+interface Restaurant {
+  restaurant_id: number;
+  zone_id: number;
+  restaurant_name: string;
+  restaurant_location: string;
+  restaurant_detail: string;
+  restaurant_image: string;
+  restaurant_rating: string;
+  total_rating: number;
+  total_reviews: number;
+  current_visitor_count: number;
+  update_date_time: string;
 }
 
 const BarPage = () => {
@@ -63,6 +79,7 @@ const BarPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [currentVisitors, setCurrentVisitors] = useState(0);
 
   useEffect(() => {
     const fetchBarAndZones = async () => {
@@ -116,6 +133,64 @@ const BarPage = () => {
     fetchBarAndZones();
   }, [id]);
 
+  useEffect(() => {
+    const fetchVisitorData = async () => {
+      try {
+        // 1. ดึงข้อมูลโซนทั้งหมดที่เกี่ยวข้องกับ bar_id
+        const zonesRes = await fetch(
+          `http://127.0.0.1:8000/api/v1/getAllZonesByBarId/${id}`
+        );
+        const zonesData = await zonesRes.json();
+
+        let totalZoneVisitors = (zonesData.zones || []).reduce(
+          (sum: number, zone: { current_visitor_count: number }) =>
+            sum + zone.current_visitor_count,
+          0
+        );
+
+        // 2. ดึงข้อมูลร้านอาหารทั้งหมดที่เกี่ยวข้องกับแต่ละ zone_id
+        let totalRestaurantVisitors = 0;
+
+        await Promise.all(
+          zonesData.zones.map(async (zone: { zone_id: number }) => {
+            const restaurantRes = await fetch(
+              `http://127.0.0.1:8000/api/v1/getRestaurantByZoneId/${zone.zone_id}`
+            );
+            const restaurantData = await restaurantRes.json();
+
+            // รวม current_visitor_count ของทุกร้านอาหารในโซนนั้น
+            totalRestaurantVisitors += (
+              restaurantData.restaurants || []
+            ).reduce(
+              (sum: number, restaurant: { current_visitor_count?: number }) =>
+                sum + (restaurant.current_visitor_count || 0),
+              0
+            );
+          })
+        );
+
+        // 3. รวมค่า current_visitor ทั้งหมดจากโซนและร้านอาหาร
+        setCurrentVisitors(totalZoneVisitors + totalRestaurantVisitors);
+      } catch (error) {
+        console.error("Error fetching visitor data:", error);
+      }
+
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/v1/getBarImage/bar${id}.png`
+        );
+        if (!response.ok) throw new Error("Failed to fetch image URL");
+
+        const data = await response.json();
+        setImageUrl(data.url);
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    };
+
+    fetchVisitorData();
+  }, [id]);
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div className="text-red-500">Error: {error}</div>;
   if (!bar) return <div>Error fetching bar details.</div>;
@@ -149,7 +224,11 @@ const BarPage = () => {
             )}
             <div className="text-lg text-gray-700">{bar.bar_detail}</div>
 
-            <div className="text-base text-gray-500 flex space-x-1">
+            <div className=" text-xl">
+              {currentVisitors} / {bar.max_people_in_bar}
+            </div>
+
+            <div className="text-base mt-2 text-gray-500 flex space-x-1">
               <img src="/image/icons/location.svg" alt="location pin" />
               <span>{bar.bar_location}</span>
             </div>
@@ -157,7 +236,7 @@ const BarPage = () => {
             <div className="flex space-x-1">
               <img src="/image/icons/star.svg" alt="location pin" />
               <div className="text-base text-gray-500">
-                {bar.total_rating} ({bar.total_reviews} reviews)
+                {bar.bar_rating} ({bar.total_rating} reviews)
               </div>
             </div>
 
