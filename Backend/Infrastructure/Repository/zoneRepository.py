@@ -154,6 +154,17 @@ def add_zone(bar_id, zone_name, zone_detail, max_people_in_zone, current_visitor
     conn.close()
     return zone_id
 
+def update_zone_image_path(zone_id, file_name):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute(
+        'UPDATE zone SET zone_image = %s WHERE zone_id = %s',
+        (file_name, zone_id)
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
+
 def update_zone(zone_id, data):
     conn = db_conn()
     cur = conn.cursor()

@@ -171,25 +171,30 @@ def add_bar():
     # รับไฟล์ภาพจาก request
     bar_image = request.files.get('bar_image')
     
-    if not bar_image:
-        return jsonify({'message': 'Bar image is required'}), 400
     
     # เพิ่มข้อมูลบาร์ในฐานข้อมูล (หรือทำการประมวลผลก่อน)
     bar_id = add_bar_service(bar_name, bar_location, bar_detail, max_people_in_bar)
     
-    # สร้างเส้นทางที่บันทึกไฟล์
-    file_path = f'public/image/barImages/bar{bar_id}.png'
-    file_name = f'bar{bar_id}.png'
+    if not bar_image:
+        # ถ้าไม่มีไฟล์ภาพ
+        file_name = 'default.png'
+        # file_path = f'public/image/barImages/{file_name}'  # ใช้ default.png เป็นไฟล์
+    else:
+        # ถ้ามีไฟล์ภาพ
+        file_path = f'public/image/barImages/bar{bar_id}.png'
+        file_name = f'bar{bar_id}.png'
+        bar_image.save(file_path)  # บันทึกไฟล์ภาพ
+        print(f"Image saved to {file_path}")
     
-    
-    # บันทึกไฟล์ภาพ
-    bar_image.save(file_path)
-    print(f"Image saved to {file_path}")
+    # file_path = f'public/image/barImages/bar{bar_id}.png'
+    # file_name = f'bar{bar_id}.png'
+    # bar_image.save(file_path)
+    # print(f"Image saved to {file_path}")
     
     # อัปเดตข้อมูล bar_id ในฐานข้อมูล (ถ้าจำเป็น)
     update_bar_image(bar_id, file_name)  # เพิ่มการอัปเดตไฟล์เส้นทาง
     
-    return jsonify({'message': 'Bar added successfully', 'bar_id': bar_id, 'image_path': file_path, 'file_name': file_name}), 201
+    return jsonify({'message': 'Bar added successfully', 'bar_id': bar_id, 'image_path': file_name}), 201
 
 
 

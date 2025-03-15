@@ -4,13 +4,14 @@ from Application.Service.feature.restaurantService import (
      get_all_restaurants_service,
      get_all_reviews_by_restaurant_id_service,
      add_restaurant_service,
+     update_restaurant_image_service,
      update_restaurant_service,
      update_restaurant_count_service,
      delete_restaurant_service
+     
 )
 from API.route.zoneRoute import (
-    is_zone_open,
-    get_zone_operating_hours_func
+    is_zone_open
 )
 from Application.objroi import get_restaurant_human_count
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -83,17 +84,35 @@ def get_all_reviews_by_restaurant_id(restaurant_id):
 
 @restaurant_bp.route('/api/v1/addRestaurant', methods=['POST'])
 def add_restaurant():
-    data = request.json
+    # data = request.json
+    # bar_id = data.get('bar_id')
+    # restaurant_name = data.get('restaurant_name')
+    # restaurant_location = data.get('restaurant_location')
+    # restaurant_detail = data.get('restaurant_detail')
+    # restaurant_image = data.get('restaurant_image')  # รับ restaurant_image จาก request
+    data = request.form
     zone_id = data.get('zone_id')
     restaurant_name = data.get('restaurant_name')
     restaurant_location = data.get('restaurant_location')
     restaurant_detail = data.get('restaurant_detail')
-    restaurant_image = data.get('restaurant_image')  # รับ restaurant_image จาก request
+    restaurant_image = request.files.get('restaurant_image')
 
-    if not all([zone_id, restaurant_name, restaurant_location]):
+    if not all([zone_id, restaurant_name, restaurant_location, restaurant_detail]):
         return jsonify({'message': 'Missing required fields'}), 400
 
-    restaurant_id = add_restaurant_service(zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image)  # ส่ง restaurant_image ไปยัง service
+    restaurant_id = add_restaurant_service(zone_id, restaurant_name, restaurant_location, restaurant_detail)  # ส่ง restaurant_image ไปยัง service
+    
+    if not restaurant_image:
+        file_name = f'default.png'
+    else :
+        file_path = f'public/image/restaurantImages/restaurant{restaurant_id}.png'
+        file_name = f'restaurant{restaurant_id}.png'
+        restaurant_image.save(file_path)
+        print(f"Image saved to {file_path}")
+        
+    
+    update_restaurant_image_service(restaurant_id, file_name) 
+    
     return jsonify({'message': 'Restaurant added successfully', 'restaurant_id': restaurant_id}), 201
 
 
