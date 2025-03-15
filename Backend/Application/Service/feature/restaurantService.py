@@ -17,14 +17,14 @@ def get_restaurant_by_id_service(restaurant_id):
 def get_all_reviews_by_restaurant_id_service(restaurant_id):
     return get_all_reviews_by_restaurant_id(restaurant_id)
 
-def add_restaurant_service(bar_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image):
-    return add_restaurant(bar_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image)
+def add_restaurant_service(zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image):
+    return add_restaurant(zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image)
 
 def update_restaurant_service(restaurant_id, data):
     return update_restaurant(restaurant_id, data)
 
-def update_restaurant_count_service(restaurant_id, count):
-    return update_restaurant_count (restaurant_id, count)
+def update_restaurant_count_service(human_count_data):
+    return update_restaurant_count (human_count_data)
 
 def delete_restaurant_service(restaurant_id):
     return delete_restaurant(restaurant_id)

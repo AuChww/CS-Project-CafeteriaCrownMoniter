@@ -5,6 +5,10 @@ import numpy as np
 import os
 from ultralytics import YOLO
 
+# import os
+# os.environ['QT_QPA_PLATFORM'] = 'xcb'
+# os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = '/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms'
+
 # โหลด YOLOv8 pre-trained model
 model = YOLO('yoloModel/yolov8s.pt')  # ใช้โมเดล YOLOv8
 
@@ -12,7 +16,7 @@ model = YOLO('yoloModel/yolov8s.pt')  # ใช้โมเดล YOLOv8
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 # เปิดวิดีโอด้วย OpenCV
-def get_human_count(video_id, video_path):
+def get_zone_human_count(video_id, video_path):
     
     print(f"video_path: {video_path}")
     
@@ -100,6 +104,96 @@ def get_human_count(video_id, video_path):
     return all_human_counts[-1] if all_human_counts else 0
 
 
+def get_restaurant_human_count(restaurant_id_first,restaurant_id_second):
+    # สร้าง path ไปยังไฟล์วิดีโอ
+    # zone_id = "{zone_id}.mp4"
+    video_path = os.path.join(os.path.dirname(__file__), f"../public/video/restaurant/{restaurant_id_first,restaurant_id_second}.mp4")
+    
+    if not os.path.exists(video_path):
+        print(f"Video file {restaurant_id_first,restaurant_id_second} not found.")
+        return 0  
+    
+    cap = cv2.VideoCapture(video_path)
+
+    # กำหนด ROI (Region of Interest)
+    roi_areas = {
+        restaurant_id_first: [(0, 0), (200, 400)],  
+        restaurant_id_second : [(200, 0), (400, 400)],
+    }
+
+    frame_number = 0
+    human_counts = {zone: [] for zone in roi_areas}
+
+    def is_within_roi(left, top, right, bottom, roi_top_left, roi_bottom_right):
+        return (left > roi_top_left[0] and right < roi_bottom_right[0] and
+                top > roi_top_left[1] and bottom < roi_bottom_right[1])
+    
+    # หาความยาวของวิดีโอ (ในหน่วยเฟรม)
+    fps = cap.get(cv2.CAP_PROP_FPS)  # Frames per second
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    frames_to_process = int(fps * 1)  # 5 วินาทีแรก
+
+    while True:
+        ret, frame = cap.read()
+        if not ret or frame_number >= frames_to_process:
+            break  # ออกจาก loop ถ้าหมดวิดีโอหรือประมวลผลครบ 5 วินาที
+
+        frame_number += 1
+
+        # ข้ามการตรวจจับบางเฟรม เพื่อลดภาระ (เช่น ประมวลผลทุก 5 เฟรม)
+        if frame_number % 10 != 0:
+            continue
+
+        
+        small_frame = cv2.resize(frame, (640, 360))
+        print(f"after small frame {restaurant_id_first,restaurant_id_second}")
+
+        results = model(small_frame)
+        detections = results[0].boxes.xyxy.cpu().numpy()
+        classes = results[0].boxes.cls.cpu().numpy()
+
+        current_counts = {zone: 0 for zone in roi_areas}
+        
+        
+
+        for i, box in enumerate(detections):
+            left, top, right, bottom = map(int, box[:4])
+            cls = int(classes[i])
+
+            if cls == 0:  # ตรวจจับเฉพาะคน
+                for zone, (roi_top_left, roi_bottom_right) in roi_areas.items():
+                    if is_within_roi(left, top, right, bottom, roi_top_left, roi_bottom_right):
+                        current_counts[zone] += 1
+
+        # บันทึกจำนวนคนในแต่ละ ROI
+        for zone in roi_areas:
+            human_counts[zone].append(current_counts[zone])
+
+        # แสดงผลแค่ทุกๆ 10 เฟรม
+        if frame_number % 60 == 0:
+            for zone, (roi_top_left, roi_bottom_right) in roi_areas.items():
+                cv2.rectangle(frame, roi_top_left, roi_bottom_right, (0, 0, 255), 2)
+                cv2.putText(frame, f"{zone}: {current_counts[zone]}", (roi_top_left[0], roi_top_left[1] - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
+            # cv2.imshow('YOLOv8 Human Detection', frame)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+    
+    for zone in roi_areas:
+        print(f"{zone}: {human_counts[zone][-1] if human_counts[zone] else 0}")
+
+    print(f"success human count")
+
+    return [ (zone, human_counts[zone][-1] if human_counts[zone] else 0) for zone in roi_areas ]
+
+# get_restaurant_human_count(1,2)
+
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------
 # Roi with 2 zone 
 
@@ -116,7 +210,7 @@ def get_human_count(video_id, video_path):
 # face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 # # เปิดวิดีโอด้วย OpenCV
-# def get_human_count(zone_id):
+# def get_zone_human_count(zone_id):
 #     # สร้าง path ไปยังไฟล์วิดีโอ
 #     zone_id = "vidva.mp4"
 #     # zone_id = f"vid_zone_{zone_id}.mp4"
@@ -208,7 +302,7 @@ def get_human_count(video_id, video_path):
     
 #     return {zone: human_counts[zone][-1] if human_counts[zone] else 0 for zone in roi_areas}
 
-# get_human_count(1)
+# get_zone_human_count(1)
 
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -224,7 +318,7 @@ def get_human_count(video_id, video_path):
 # model = YOLO('yoloModel/yolov8s.pt') 
 
 # # เปิดวิดีโอด้วย OpenCV
-# def get_human_count(zone_id):
+# def get_zone_human_count(zone_id):
 #     # สร้าง path ไปยังไฟล์วิดีโอ
 #     # zone_id = "{zone_id}.mp4"
 #     video_path = os.path.join(os.path.dirname(__file__), f"../public/video/{zone_id}.mp4")
@@ -259,7 +353,7 @@ def get_human_count(video_id, video_path):
 #         if frame_number % 5 != 0:
 #             continue
 
-#         
+        
 #         small_frame = cv2.resize(frame, (640, 360))
 #         print(f"after small frame")
 

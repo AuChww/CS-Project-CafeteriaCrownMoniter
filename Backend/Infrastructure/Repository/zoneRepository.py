@@ -94,15 +94,17 @@ def get_restaurant_by_zone_id(zone_id):
 
     restaurants = [
         {
-            'restaurant_id': row[0],
-            'zone_id': row[1],
-            'restaurant_name': row[2],
-            'restaurant_location': row[3],
-            'restaurant_detail': row[4],
-            'restaurant_rating': row[5],
-            'total_rating': row[6],
-            'total_reviews': row[7],
-            'restaurant_image': row[8],
+            'restaurant_id' : row[0],
+            'zone_id' : row[1],  # แก้ไขเป็น zone_id จาก row[1]
+            'restaurant_name' : row[2],
+            'restaurant_location' : row[3],
+            'restaurant_detail' : row[4],
+            'restaurant_rating' : row[5],
+            'total_rating' : row[6],
+            'total_reviews' : row[7],
+            'restaurant_image' : row[8],
+            'current_visitor_count' : row[9],
+            'update_date_time' : row[10] 
         }
         for row in data
     ]
@@ -133,13 +135,18 @@ def get_all_report_by_zone_id(zone_id):
     ]
     return reports
 
-def add_zone(bar_id, zone_name, zone_detail=None, max_people_in_zone=0, current_visitor_count=0, zone_time=None):
+def add_zone(bar_id, zone_name, zone_detail, max_people_in_zone, current_visitor_count, zone_time):
+    zone_image = '' 
+    current_visitor_count = 0
+    update_date_time = None
+    
     conn = db_conn()
     cur = conn.cursor()
+
     cur.execute(
-        'INSERT INTO zone (bar_id, zone_name, zone_detail, max_people_in_zone, current_visitor_count, zone_time) '
-        'VALUES (%s, %s, %s, %s, %s, %s) RETURNING zone_id',
-        (bar_id, zone_name, zone_detail, max_people_in_zone, current_visitor_count, zone_time)
+        'INSERT INTO zone (bar_id, zone_name, zone_detail, max_people_in_zone, current_visitor_count, update_date_time, zone_time, zone_image) '
+        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING zone_id',
+        (bar_id, zone_name, zone_detail, max_people_in_zone, current_visitor_count, update_date_time, zone_time, zone_image)
     )
     zone_id = cur.fetchone()[0]
     conn.commit()

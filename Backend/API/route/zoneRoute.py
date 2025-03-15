@@ -27,7 +27,7 @@ from Application.Service.feature.zoneVisitorHistoryService import (
     add_zone_visitor_history_service
 )
 
-from Application.objroi import get_human_count
+from Application.objroi import get_zone_human_count
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta
 import pytz 
@@ -55,7 +55,7 @@ def get_all_zones_endpoint():
     return jsonify({'zones': zone_list})
 
 # def get_visitor_count(zone_id):
-#     count = get_human_count(zone_id)  
+#     count = get_zone_human_count(zone_id)  
 #     visitor_counts_cache[zone_id] = count
     
 #     print("test count in zoneroute",count)
@@ -219,7 +219,7 @@ def update_catch_count():
         
         print(f"Zone is Open.")
         video_path = "zone"
-        human_count = get_human_count(zone.zone_id, video_path)
+        human_count = get_zone_human_count(zone.zone_id, video_path)
         print(f"{zone} count = {human_count}")
 
         if not isinstance(human_count, int):
@@ -332,8 +332,8 @@ def serve_actual_image(file_name):
 #     for zone in zones:
 #         # ดึงจำนวนคนจากแต่ละโซน
 #         print(f"before human count")
-#         # human_count = get_human_count(zone.zone_id)  # ค่าที่ได้จะเป็น int เช่น 5, 3
-#         human_count, _ = get_human_count(zone.zone_id)
+#         # human_count = get_zone_human_count(zone.zone_id)  # ค่าที่ได้จะเป็น int เช่น 5, 3
+#         human_count, _ = get_zone_human_count(zone.zone_id)
 
 #         print(f"count = {human_count}")
 

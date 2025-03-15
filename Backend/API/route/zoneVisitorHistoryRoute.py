@@ -11,7 +11,7 @@ from Application.Service.feature.zoneService import (
     update_zone_count_service
 )
 
-from Application.objroi import get_human_count
+from Application.objroi import get_zone_human_count
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta
 import requests
