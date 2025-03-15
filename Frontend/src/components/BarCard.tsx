@@ -136,7 +136,18 @@ const BarCard: React.FC<Bar> = ({
           >
             <path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z" />
           </svg>
-          <div className="text-xl">{currentVisitors} / {max_people_in_bar}</div>
+          <div
+            className={`text-xl font-bold ${currentVisitors / max_people_in_bar < 0.5
+                ? 'text-green-400'
+                : currentVisitors / max_people_in_bar < 0.75
+                  ? 'text-yellow-400'
+                  : currentVisitors / max_people_in_bar < 1
+                    ? 'text-orange-500'
+                    : 'text-red-600'
+              }`}
+          >
+            {currentVisitors} / {max_people_in_bar}
+          </div>
         </div>
 
         <div className="text-sm font-normal text-gray-500 dark:text-gray-400">

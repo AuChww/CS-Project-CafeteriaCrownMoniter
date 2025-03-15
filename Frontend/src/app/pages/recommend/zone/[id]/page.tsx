@@ -173,9 +173,9 @@ const ZonePage = () => {
 
   return (
     <div className="container mt-12 mx-auto p-4 w-full h-screen overflow-y-auto space-y-12">
-      <div className="flex w-full gap-6 xl:pt-10">
+      <div className="w-full xl:pt-10">
         <div className="grid grid-cols-2">
-          <div className="pl-8">
+          <div className="pl-8 ">
             <h1 className="text-3xl font-bold mb-4 text-green-500">
               {zone.zone_name}
             </h1>
@@ -200,9 +200,22 @@ const ZonePage = () => {
             /> */}
             <div className="text-lg text-gray-700">{zone.zone_detail}</div>
 
-            <div className="text-lg text-gray-700">
-              <strong>Current Visitors:</strong> {zone.current_visitor_count} /{" "}
-              {zone.max_people_in_zone}
+            <div className="flex space-x-1 text-sm text-gray-500 dark:text-gray-400 ">
+              <svg fill="#000000" width="25px" height="25px" viewBox="-3 0 19 19" xmlns="http://www.w3.org/2000/svg" className="cf-icon-svg"><path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z" /></svg>
+
+              <div
+                className={`text-xl font-bold ${zone.current_visitor_count / zone.max_people_in_zone < 0.5
+                  ? 'text-green-400'
+                  : zone.current_visitor_count / zone.max_people_in_zone < 0.75
+                    ? 'text-yellow-400'
+                    : zone.current_visitor_count / zone.max_people_in_zone < 1
+                      ? 'text-orange-500'
+                      : 'text-red-600'
+                  }`}
+              >
+                {zone.current_visitor_count} / {zone.max_people_in_zone}
+              </div>
+
             </div>
             <div className="text-lg text-gray-700">
               <strong>Operating Hours:</strong> {zone.zone_time}

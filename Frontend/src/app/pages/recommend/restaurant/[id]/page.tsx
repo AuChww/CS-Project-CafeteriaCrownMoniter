@@ -13,6 +13,7 @@ interface Restaurant {
   restaurant_location: string;
   restaurant_detail: string;
   restaurant_image: string;
+  restaurant_rating: number;
   total_rating: number;
   total_reviews: number;
   current_visitor_count: number;
@@ -235,7 +236,7 @@ const RestaurantPage = () => {
     <div className="container mt-12 mx-auto p-4 w-full h-screen space-y-12">
       <div className="">
         <div className="grid grid-cols-2 gap-6 xl:pt-10">
-          <div className="space-y-3">
+          <div className="space-y-3 pl-8">
             <h1 className="text-3xl font-bold text-green-500">
               {restaurant.restaurant_name}
             </h1>
@@ -259,6 +260,10 @@ const RestaurantPage = () => {
             <p className="text-lg text-gray-700">
               {restaurant.restaurant_detail}
             </p>
+            <div className="text-lg text-gray-700 flex">
+              <strong><svg fill="#000000" width="25px" height="25px" viewBox="-3 0 19 19" xmlns="http://www.w3.org/2000/svg" className="cf-icon-svg"><path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z" /></svg>
+              </strong> {restaurant.current_visitor_count} {" "}
+            </div>
             <p className="text-base text-gray-500 flex space-x-1">
               <img src="/image/icons/location.svg" alt="location" />
               <span>{restaurant.restaurant_location}</span>
@@ -269,6 +274,12 @@ const RestaurantPage = () => {
                 {restaurant.total_rating} ({restaurant.total_reviews} reviews)
               </span>
             </p>
+            <div className="text-lg text-gray-700">
+              <strong>Operating Hours:</strong>
+            </div>
+            <div className="text-lg text-gray-700">
+              <strong>Lastest Update:</strong> {restaurant.update_date_time}
+            </div>
           </div>
           <div className="mt-8">
             <h2 className="text-2xl font-bold mb-4">Reviews</h2>
@@ -283,11 +294,10 @@ const RestaurantPage = () => {
                           <svg
                             key={index}
                             xmlns="http://www.w3.org/2000/svg"
-                            className={`h-5 w-5 ${
-                              index < review.rating
+                            className={`h-5 w-5 ${index < review.rating
                                 ? "fill-current"
                                 : "text-gray-300"
-                            }`}
+                              }`}
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
@@ -354,9 +364,8 @@ const RestaurantPage = () => {
               <svg
                 key={index}
                 xmlns="http://www.w3.org/2000/svg"
-                className={`h-6 w-6 cursor-pointer ${
-                  index < rating ? "fill-yellow-500" : "text-gray-300"
-                }`}
+                className={`h-6 w-6 cursor-pointer ${index < rating ? "fill-yellow-500" : "text-gray-300"
+                  }`}
                 onClick={() => setRating(index + 1)}
                 viewBox="0 0 24 24"
                 fill="none"
@@ -419,9 +428,8 @@ const RestaurantPage = () => {
                   <svg
                     key={index}
                     xmlns="http://www.w3.org/2000/svg"
-                    className={`h-6 w-6 cursor-pointer ${
-                      index < rating ? "fill-yellow-500" : "text-gray-300"
-                    }`}
+                    className={`h-6 w-6 cursor-pointer ${index < rating ? "fill-yellow-500" : "text-gray-300"
+                      }`}
                     onClick={() => setRating(index + 1)}
                     viewBox="0 0 24 24"
                     fill="none"
