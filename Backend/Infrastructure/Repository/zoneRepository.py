@@ -131,19 +131,35 @@ def get_all_report_by_zone_id(zone_id):
     ]
     return reports
 
-def add_zone(bar_id, zone_name, zone_detail=None, max_people_in_zone=0, current_visitor_count=0, zone_time=None):
+def add_zone(bar_id, zone_name, zone_detail, max_people_in_zone, current_visitor_count, zone_time):
+    zone_image = '' 
+    current_visitor_count = 0
+    update_date_time = None
+    
     conn = db_conn()
     cur = conn.cursor()
+
     cur.execute(
-        'INSERT INTO zone (bar_id, zone_name, zone_detail, max_people_in_zone, current_visitor_count, zone_time) '
-        'VALUES (%s, %s, %s, %s, %s, %s) RETURNING zone_id',
-        (bar_id, zone_name, zone_detail, max_people_in_zone, current_visitor_count, zone_time)
+        'INSERT INTO zone (bar_id, zone_name, zone_detail, max_people_in_zone, current_visitor_count, update_date_time, zone_time, zone_image) '
+        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING zone_id',
+        (bar_id, zone_name, zone_detail, max_people_in_zone, current_visitor_count, update_date_time, zone_time, zone_image)
     )
     zone_id = cur.fetchone()[0]
     conn.commit()
     cur.close()
     conn.close()
     return zone_id
+
+def update_zone_image_path(zone_id, file_name):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute(
+        'UPDATE zone SET zone_image = %s WHERE zone_id = %s',
+        (file_name, zone_id)
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
 
 def update_zone(zone_id, data):
     conn = db_conn()

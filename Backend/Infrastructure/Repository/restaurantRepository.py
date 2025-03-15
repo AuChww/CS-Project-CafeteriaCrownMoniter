@@ -105,18 +105,19 @@ def get_all_reviews_by_restaurant_id(restaurant_id):
     return reviews
 
 
-def add_restaurant(zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_image=None):
+def add_restaurant(zone_id, restaurant_name, restaurant_location, restaurant_detail):
     conn = db_conn()
     cur = conn.cursor()
     restaurant_rating = 0
     total_rating = 0
-    total_review = 0
+    total_reviews = 0
+    restaurant_image = ''
 
     # Insert into the RESTAURANT table and return restaurant_id
     cur.execute(
-        'INSERT INTO restaurant (zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_rating, total_rating, total_review, restaurant_image) '
-        'VALUES (%s, %s, %s, %s, %s) RETURNING restaurant_id',
-        (zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_rating, total_rating, total_review, restaurant_image)
+        'INSERT INTO restaurant (zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_rating, total_rating, total_reviews, restaurant_image) '
+        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING restaurant_id',
+        (zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_rating, total_rating, total_reviews, restaurant_image)
     )
     restaurant_id = cur.fetchone()[0]
 
@@ -126,6 +127,17 @@ def add_restaurant(zone_id, restaurant_name, restaurant_location, restaurant_det
     conn.close()
 
     return restaurant_id
+
+def update_restaurant_image_path(restaurant_id, file_name):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute(
+        'UPDATE restaurant SET restaurant_image = %s WHERE restaurant_id = %s',
+        (file_name, restaurant_id)
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
 
 def update_restaurant(restaurant_id, data):
     conn = db_conn()

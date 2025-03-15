@@ -5,6 +5,7 @@ from Infrastructure.Repository.zoneRepository import (
     get_restaurant_by_zone_id,
     get_all_report_by_zone_id,
     add_zone,
+    update_zone_image_path,
     update_zone,
     update_zone_count,
     delete_zone
@@ -25,8 +26,11 @@ def get_restaurant_by_zone_id_service(zone_id):
 def get_all_report_by_zone_id_service(zone_id):
     return get_all_report_by_zone_id(zone_id)
 
-def add_zone_service(bar_id, zone_name, zone_detail=None, max_people_in_zone=0, current_visitor_count=0, zone_time=None):
+def add_zone_service(bar_id, zone_name, zone_detail, max_people_in_zone, current_visitor_count, zone_time):
     return add_zone(bar_id, zone_name, zone_detail, max_people_in_zone, current_visitor_count, zone_time)
+
+def update_zone_image (zone_id, file_name):
+    return update_zone_image_path(zone_id, file_name)
 
 def update_zone_service(zone_id, data):
     return update_zone(zone_id, data)

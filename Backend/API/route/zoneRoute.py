@@ -18,6 +18,7 @@ from Application.Service.feature.zoneService import (
     get_restaurant_by_zone_id_service,
     get_all_report_by_zone_id_service,
     add_zone_service,
+    update_zone_image,
     update_zone_service,
     update_zone_count_service,
     delete_zone_service
@@ -121,20 +122,29 @@ def get_all_report_by_zone_id_endpoint(zone_id):
 
 @zone_bp.route('/api/v1/addZone', methods=['POST'])
 def add_zone_endpoint():
-    data = request.json
+    data = request.form
     bar_id = data.get('bar_id')
     zone_name = data.get('zone_name')
-    zone_detail = data.get('zone_detail', '')
-    max_people_in_zone = data.get('max_people_in_zone', 0)
-    current_visitor_count = data.get('current_visitor_count', 0)
-    zone_time = data.get('zone_time', None)
-    zone_image = data.get('zone_image','')
-
-    if not bar_id or not zone_name:
-        return jsonify({'message': 'Missing required fields'}), 400
+    max_people_in_zone = data.get('max_people_in_zone')
+    zone_detail = data.get('zone_detail')
+    zone_time = data.get('zone_time', None) 
+    zone_image = request.files.get('zone_image')
+    current_visitor_count = 0
 
     zone_id = add_zone_service(bar_id, zone_name, zone_detail, max_people_in_zone, current_visitor_count, zone_time)  # Use the service function here
-    return jsonify({'message': 'Zone added successfully', 'zone_id': zone_id}), 201
+      
+    if not zone_image:
+        file_name = f'default.png'
+    else :
+        file_path = f'public/image/zoneImages/zone{zone_id}.png'
+        file_name = f'zone{zone_id}.png'
+        zone_image.save(file_path)
+        print(f"Image saved to {file_path}")
+        
+    
+    update_zone_image(zone_id, file_name) 
+    
+    return jsonify({'message': 'Zone added successfully', 'zone_id': zone_id, 'file_name': file_name}), 201
 
 @zone_bp.route('/api/v1/updateZone/<int:zone_id>', methods=['PUT'])
 def update_zone_endpoint(zone_id):

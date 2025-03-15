@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import React from "react";
+import BarAndRestaurant from "@/components/BarAndRestaurant";
 
 interface Bar {
   bar_id: number;
@@ -23,38 +23,8 @@ interface BarDetailProps {
 }
 
 const AllBar: React.FC<BarDetailProps> = ({ bars, restaurants }) => {
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const { id } = useParams(); // ดึง id จาก URL
-  const [bar, setBar] = useState<Bar | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchBar = async () => {
-      try {
-        let response = await fetch(
-          `http://localhost:8000/api/v1/getBarImage/bar${id}.png`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch image");
-        }
-
-        const data = await response.json();
-        if (data.url) {
-          setImageUrl(data.url); // ใช้ URL ที่ดึงมา
-        } else {
-          throw new Error("No image URL returned");
-        }
-      } catch (error) {
-        console.error("Error fetching image:", error);
-      }
-    };
-
-    fetchBar();
-  }, [id]);
-
   return (
+
     <div>
       <h1 className="text-3xl mt-12 font-bold mb-4">Bars and Nearby Restaurants</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -67,8 +37,8 @@ const AllBar: React.FC<BarDetailProps> = ({ bars, restaurants }) => {
             <a href="#">
               <img
                 className="rounded-t-lg"
-                src={imageUrl ? imageUrl : `/image/barImages/${bar.bar_image}`} // หากดึง URL ได้จาก API ให้ใช้ URL นั้น, ถ้าไม่ได้ให้ใช้ path เดิม
-                alt={bar.bar_name}
+                src={`/image/barImages/${bar.bar_image}`}
+                alt="{bar_name}"
               />
             </a>
             <div className="p-5">
