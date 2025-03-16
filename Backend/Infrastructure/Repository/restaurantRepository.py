@@ -114,12 +114,13 @@ def add_restaurant(zone_id, restaurant_name, restaurant_location, restaurant_det
     total_rating = 0
     total_reviews = 0
     restaurant_image = ''
+    current_visitor_count = 0
 
     # Insert into the RESTAURANT table and return restaurant_id
     cur.execute(
-        'INSERT INTO restaurant (zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_rating, total_rating, total_reviews, restaurant_image) '
-        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING restaurant_id',
-        (zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_rating, total_rating, total_reviews, restaurant_image)
+        'INSERT INTO restaurant (zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_rating, total_rating, total_reviews, restaurant_image, current_visitor_count) '
+        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING restaurant_id',
+        (zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_rating, total_rating, total_reviews, restaurant_image, current_visitor_count)
     )
     restaurant_id = cur.fetchone()[0]
 
@@ -165,18 +166,29 @@ def update_restaurant(restaurant_id, data):
     conn.close()
     return updated
 
-def update_restaurant_count(restaurant_id, count):
+def update_restaurant_count(human_count_data):
     conn = db_conn()
     cur = conn.cursor()
-    cur.execute(
-        "UPDATE restaurant SET current_visitor_count = %s WHERE restaurant_id = %s",
-        (count, restaurant_id)  # count ต้องเป็น int ที่ส่งไปที่นี่
-    )
-    updated = cur.rowcount > 0
+
+    # ใช้ SQL เพื่ออัปเดตหลายแถวในครั้งเดียว
+    for i in range(0, len(human_count_data)):
+        zone_id, count = human_count_data[i]  # ดึงทั้ง zone_id และ count ออกมาทีละคู่
+        
+        # ตรวจสอบว่า zone_id และ count เป็นประเภทที่ถูกต้อง
+        if isinstance(zone_id, int) and isinstance(count, int):
+            cur.execute(
+                "UPDATE restaurant SET current_visitor_count = %s WHERE restaurant_id = %s",
+                (count, zone_id)  # count จะถูกส่งไปที่ current_visitor_count และ zone_id ที่ restaurant_id
+            )
+        else:
+            print(f"Invalid data: zone_id={zone_id}, count={count}")
+
     conn.commit()
     cur.close()
     conn.close()
-    return updated
+    return True
+
+
 
 def delete_restaurant(restaurant_id):
     conn = db_conn()

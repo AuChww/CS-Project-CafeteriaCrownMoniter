@@ -1,9 +1,9 @@
 import Image from "next/image";
-import { MdEdit } from "react-icons/md";
+import { MdEdit, MdDeleteForever } from "react-icons/md"; //แก้ไขการนำเข้าที่ซ้ำ
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import DeleteBar from "@/components/admin_component/bar_button/deleteBar";
-import EditBar from "@/components/admin_component/bar_button/editBar";
+import PopUpEditBar from "./bar_button/popUpEditBar";
+import PopUpDeleteBar from "./bar_button/popUpDeleteBar";
 
 interface CrowdCardProps {
   bar_id: number;
@@ -25,18 +25,19 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
   const router = useRouter();
   const [currentVisitors, setCurrentVisitors] = useState(0);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [showEditPopup, setShowEditPopup] = useState(false);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
 
-  const toggleEditModal = () => {
-    setIsEditModalOpen(!isEditModalOpen);
-  };
+  const handleEditClick = () => setShowEditPopup(true);
+  const handleDeleteClick = () => setShowDeletePopup(true);
 
-
+  const closeEditPopup = () => setShowEditPopup(false);
+  const closeDeletePopup = () => setShowDeletePopup(false);
 
   useEffect(() => {
     const fetchVisitorData = async () => {
       try {
-        // 1. ดึงข้อมูลโซนทั้งหมดที่เกี่ยวข้องกับ bar_id
+        // Fetch visitor data logic here...
         const zonesRes = await fetch(
           `http://127.0.0.1:8000/api/v1/getAllZonesByBarId/${bar_id}`
         );
@@ -48,17 +49,13 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
           0
         );
 
-        // 2. ดึงข้อมูลร้านอาหารทั้งหมดที่เกี่ยวข้องกับแต่ละ zone_id
         let totalRestaurantVisitors = 0;
-
         await Promise.all(
           zonesData.zones.map(async (zone: { zone_id: number }) => {
             const restaurantRes = await fetch(
               `http://127.0.0.1:8000/api/v1/getRestaurantByZoneId/${zone.zone_id}`
             );
             const restaurantData = await restaurantRes.json();
-
-            // รวม current_visitor_count ของทุกร้านอาหารในโซนนั้น
             totalRestaurantVisitors += (
               restaurantData.restaurants || []
             ).reduce(
@@ -69,7 +66,6 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
           })
         );
 
-        // 3. รวมค่า current_visitor ทั้งหมดจากโซนและร้านอาหาร
         setCurrentVisitors(totalZoneVisitors + totalRestaurantVisitors);
       } catch (error) {
         console.error("Error fetching visitor data:", error);
@@ -105,7 +101,6 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
 
       if (response.ok) {
         alert("ลบข้อมูลสำเร็จ");
-        // รีเฟรชหน้าหรืออัพเดตข้อมูลใหม่
         router.push("/admin/dashboard");
       } else {
         alert("เกิดข้อผิดพลาดในการลบข้อมูล");
@@ -116,21 +111,14 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
   };
 
   return (
-    <div className="bg-white hover:scale-110 duration-300  rounded-lg shadow-lg p-2 border border-gray-200 hover:bg-gray-100">
+    <div className="bg-white hover:scale-110 duration-300 rounded-lg shadow-lg p-2 border border-gray-200 hover:bg-gray-100">
       <div onClick={() => router.push(`/pages/recommend/bar/${bar_id}`)}>
         <div className="h-full flex">
-          {/* <img
-            className="rounded-t-lg w-1/2 h-full"
-            src={`/image/barImages/${bar_image}`}
-            alt="{bar_name}"
-          /> */}
-
           {imageUrl ? (
             <img
-            
-            className="rounded-t-lg w-1/2 h-full"
+              className="rounded-t-lg w-1/2 h-full"
               src={imageUrl}
-              alt=" Image"
+              alt="Image"
               width="500"
             />
           ) : (
@@ -143,85 +131,25 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
           </a>
         </div>
         <div className="px-2 flex justify-between">
-          <div className="flex  mt-2 ">
-            <div className="mt-1 mr-2 text-xs">visitor :</div>
-            <div className=" text-md">
+          <div className="flex mt-2">
+            <div className="mt-1 mr-2 text-xs">visitor:</div>
+            <div className="text-md">
               {currentVisitors} / {max_people_in_bar}
             </div>
           </div>
-
-          {/* Bar Score */}
-          <div className="flex items-center mt-2 space-x-2">
-            <div className="flex items-center space-x-1 rtl:space-x-reverse">
-              <svg
-                className="w-3 h-3 text-yellow-300"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 22 20"
-              >
-                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-              </svg>
-              <svg
-                className="w-3 h-3 text-yellow-300"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 22 20"
-              >
-                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-              </svg>
-              <svg
-                className="w-3 h-3 text-yellow-300"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 22 20"
-              >
-                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-              </svg>
-              <svg
-                className="w-3 h-3 text-yellow-300"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 22 20"
-              >
-                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-              </svg>
-              <svg
-                className="w-3 h-3 text-gray-200 dark:text-gray-600"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 22 20"
-              >
-                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-              </svg>
-            </div>
+        </div>
+        {/* Edit and Delete icons */}
+        <div className="flex justify-end mt-2 mr-1">
+          <div onClick={handleEditClick}>
+            <MdEdit className="text-gray-600 w-6 h-6 cursor-pointer" />
+          </div>
+          <div onClick={handleDeleteClick}>
+            <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
           </div>
         </div>
-      </div>
-
-      <div className="flex justify-end mt-2 mr-1">
-
-      <button onClick={toggleEditModal}>
-        <MdEdit className="text-gray-600 w-6 h-6" />
-      </button>
-      {isEditModalOpen && (
-        <EditBar 
-          bar_id={bar_id} 
-          bar_name={bar_name} 
-          bar_location={bar_location} 
-          bar_detail={bar_detail} 
-          bar_image={bar_image} 
-          onUpdate={() => {
-            console.log("Updated!");
-            toggleEditModal(); // Close the modal after update
-          }} 
-        />
-      )}
-        <DeleteBar btar_id={bar_id} onDelete={handleDelete} />
+        {/* Show popups */}
+        {showEditPopup && <PopUpEditBar onClose={closeEditPopup} />}
+        {showDeletePopup && <PopUpDeleteBar onClose={closeDeletePopup} />}
       </div>
     </div>
   );

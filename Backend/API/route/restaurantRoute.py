@@ -10,7 +10,10 @@ from Application.Service.feature.restaurantService import (
      delete_restaurant_service
      
 )
-from Application.objroi import get_human_count
+from API.route.zoneRoute import (
+    is_zone_open
+)
+from Application.objroi import get_restaurant_human_count
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta
 import pytz 
@@ -127,7 +130,7 @@ timezone = pytz.timezone('Asia/Bangkok')
 
 
 #     for restaurant in restaurants:
-#         human_count = get_human_count(restaurant.restaurant_id)
+#         human_count = get_zone_human_count(restaurant.restaurant_id)
 
 #         if not isinstance(human_count, int):
 #             print(f"Invalid human count for restaurant: {restaurant.restaurant_id}")
@@ -139,33 +142,112 @@ timezone = pytz.timezone('Asia/Bangkok')
 
 #     print(f"Update Human count Amount: {human_count} | Restaurant: {restaurant.restaurant_id}")
 
+# @restaurant_bp.route('/api/v1/updateRestaurantHumanCount/<int:zone_id>', methods=['PATCH'])
+# def update_restaurant_human_count():
+#     print(f"update_human_count {datetime.now(timezone)}")
+#     restaurants = get_all_restaurants_service()
+
+#     if not restaurants:
+#         print(f"[{datetime.now(timezone)}] No restaurants found")
+#         return
+
+#     # for restaurant in range(0, len(restaurants), 2):
+#     #     print(f"restaurant_id: {restaurant.restaurant_id}")
+#     #     # แก้ไขจาก unpacking เป็นการดึงค่าเพียงอย่างเดียว
+#     #     human_count = get_restaurant_human_count(restaurant.restaurant_id, restaurant.restaurant_id + 1)
+#     #     print(f"restaurant_id: {restaurant},{restaurant + 1} | restaurant_count_amount: {human_count}")
+
+#     #     if not isinstance(human_count, int):
+#     #         print(f"[{datetime.now}] Invalid human count for restaurant {restaurant.restaurant_id}")
+#     #         continue
+
+#     #     update_date_time = datetime.now(pytz.utc).astimezone(timezone)
+#     #     update_date_time_str = update_date_time.strftime('%Y-%m-%d %H:%M:%S')
+        
+#     #     update_restaurant_count_service(human_count)
+
+#     #     print(f"[{datetime.now(timezone)}] Updated Restaurant_id  {restaurant.restaurant_id} with count {human_count}")
+#     #     print(f"-------------------------------------------------------------------------------------------------")
+
+#     for i in range(0, len(restaurants), 2):
+#         # ดึง restaurant_id ทีละสองตัว
+#         restaurant_id_1 = restaurants[i].restaurant_id
+#         restaurant_id_2 = restaurants[i].restaurant_id + 1
+
+#         # ดึงค่า human_count ออกมา
+#         human_count = get_restaurant_human_count(restaurant_id_1, restaurant_id_2)
+#         print(f"res human count {restaurant_id_1} and {restaurant_id_2} : {human_count}")
+
+#         # ตรวจสอบข้อมูลที่ได้
+#         if not isinstance(human_count, list):
+#             print(f"[{datetime.now()}] Invalid human count for restaurant {restaurant_id_1} and {restaurant_id_2}")
+#             continue
+
+#         # แปลงข้อมูลในรูปแบบ (zone_id, count, zone_id, count)
+#         human_count_data = []
+#         for zone_id, count in human_count.items():
+#             human_count_data.append(zone_id)
+#             human_count_data.append(count)
+        
+#         print(f"restaurant human count {human_count_data}")
+
+
+#         # ส่งข้อมูลเข้าไปใน update service
+#         update_restaurant_count_service(*human_count_data)
+
+#         print(f"[{datetime.now()}] Updated Restaurant_id {restaurant_id_1} and {restaurant_id_2} with count {human_count}")
+#         print(f"-------------------------------------------------------------------------------------------------")
+
 @restaurant_bp.route('/api/v1/updateRestaurantHumanCount/<int:zone_id>', methods=['PATCH'])
 def update_restaurant_human_count():
-    print(f"update_human_count {datetime.now(timezone)}")
     restaurants = get_all_restaurants_service()
+    print(f"update_human_count {datetime.now(timezone)}")
 
     if not restaurants:
         print(f"[{datetime.now(timezone)}] No restaurants found")
         return
 
-    for restaurant in restaurants:
-        print(f"restaurant_id: {restaurant.restaurant_id}")
-        # แก้ไขจาก unpacking เป็นการดึงค่าเพียงอย่างเดียว
-        video_path = "restaurant"
-        human_count = get_human_count(restaurant.restaurant_id, video_path)
-        print(f"restaurant_id: {restaurant} | restaurant_count_amount: {human_count}")
+    for i in range(0, len(restaurants), 2):
+        restaurant = restaurants[i]
+        if not is_zone_open(restaurant.zone_id):
+            print(f"[{datetime.now(timezone)}] Restaurant {restaurant.restaurant_id} in Zone {restaurant.zone_id} is closed. Skipping...")
+            continue
+        
+        print(f"Zone {restaurant.zone_id} is Open.")
 
-        if not isinstance(human_count, int):
-            print(f"[{datetime.now}] Invalid human count for restaurant {restaurant.restaurant_id}")
+        # ดึง restaurant_id ทีละสองตัว
+        restaurant_id_1 = restaurants[i].restaurant_id
+        restaurant_id_2 = restaurants[i].restaurant_id + 1
+
+        # ดึงค่า human_count ออกมา
+        human_count = get_restaurant_human_count(restaurant_id_1, restaurant_id_2)
+        print(f"res human count {restaurant_id_1} and {restaurant_id_2} : {human_count}")
+
+        # ตรวจสอบว่า human_count เป็น list หรือไม่
+        if isinstance(human_count, list):
+            human_count_data = []
+            for i in range(0, len(human_count), 2):
+                zone_id = human_count[i]  # ดึง zone_id จากตำแหน่งคู่
+                count = human_count[i + 1]  # ดึง count จากตำแหน่งถัดไป
+                human_count_data.append(zone_id)
+                human_count_data.append(count)
+            
+            print(f"success instance restaurant human count {human_count_data}")
+        else:
+            print(f"[{datetime.now()}] Invalid human count format for restaurant {restaurant_id_1} and {restaurant_id_2}")
             continue
 
-        update_date_time = datetime.now(pytz.utc).astimezone(timezone)
-        update_date_time_str = update_date_time.strftime('%Y-%m-%d %H:%M:%S')
-        
-        update_restaurant_count_service(restaurant.restaurant_id,human_count)
+        # ตรวจสอบข้อมูลที่ได้
+        if not human_count_data:
+            print(f"[{datetime.now()}] No valid human count data for restaurant {restaurant_id_1} and {restaurant_id_2}")
+            continue
 
-        print(f"[{datetime.now(timezone)}] Updated Restaurant_id  {restaurant.restaurant_id} with count {human_count}")
+        # ส่งข้อมูลเข้าไปใน update service
+        update_restaurant_count_service(human_count_data)
+
+        print(f"[{datetime.now()}] Updated Restaurant_id {restaurant_id_1} and {restaurant_id_2} with count {human_count_data}")
         print(f"-------------------------------------------------------------------------------------------------")
+
         
 def start_scheduler():
     # ตั้งค่าไทม์โซนเป็นไทย
@@ -175,7 +257,7 @@ def start_scheduler():
     now = datetime.now(tz)
     
     # คำนวณเวลาที่เหลือจนถึงชั่วโมงถัดไปที่ลงท้ายด้วย :00:00
-    next_run = (now + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
+    next_run = (now + timedelta(hours=0)).replace(minute=1, second=0, microsecond=0)
     delay = (next_run - now).total_seconds()
 
     # Debugging

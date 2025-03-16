@@ -27,8 +27,8 @@ def update_restaurant_image_service (restaurant_id, file_name):
 def update_restaurant_service(restaurant_id, data):
     return update_restaurant(restaurant_id, data)
 
-def update_restaurant_count_service(restaurant_id, count):
-    return update_restaurant_count (restaurant_id, count)
+def update_restaurant_count_service(human_count_data):
+    return update_restaurant_count (human_count_data)
 
 def delete_restaurant_service(restaurant_id):
     return delete_restaurant(restaurant_id)

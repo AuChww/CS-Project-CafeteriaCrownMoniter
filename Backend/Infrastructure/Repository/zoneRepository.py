@@ -94,15 +94,17 @@ def get_restaurant_by_zone_id(zone_id):
 
     restaurants = [
         {
-            'restaurant_id': row[0],
-            'zone_id': row[1],
-            'restaurant_name': row[2],
-            'restaurant_location': row[3],
-            'restaurant_detail': row[4],
-            'restaurant_rating': row[5],
-            'total_rating': row[6],
-            'total_reviews': row[7],
-            'restaurant_image': row[8],
+            'restaurant_id' : row[0],
+            'zone_id' : row[1],  # แก้ไขเป็น zone_id จาก row[1]
+            'restaurant_name' : row[2],
+            'restaurant_location' : row[3],
+            'restaurant_detail' : row[4],
+            'restaurant_rating' : row[5],
+            'total_rating' : row[6],
+            'total_reviews' : row[7],
+            'restaurant_image' : row[8],
+            'current_visitor_count' : row[9],
+            'update_date_time' : row[10] 
         }
         for row in data
     ]
