@@ -148,8 +148,8 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
           </div>
         </div>
         {/* Show popups */}
-        {showEditPopup && <PopUpEditBar onClose={closeEditPopup} />}
-        {showDeletePopup && <PopUpDeleteBar onClose={closeDeletePopup} />}
+        {/* {showEditPopup && <PopUpEditBar onClose={closeEditPopup} />}
+        {showDeletePopup && <PopUpDeleteBar onClose={closeDeletePopup} />} */}
       </div>
     </div>
   );
