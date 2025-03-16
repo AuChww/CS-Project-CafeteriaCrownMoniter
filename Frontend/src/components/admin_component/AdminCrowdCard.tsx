@@ -3,6 +3,10 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import DeleteBar from "@/components/admin_component/bar_button/deleteBar";
 import EditBar from "@/components/admin_component/bar_button/editBar";
+import { MdDeleteForever } from "react-icons/md";
+import { MdEdit } from "react-icons/md";
+import PopUpEditBar from "./bar_button/popUpEditBar";
+import PopUpDeleteBar from "./bar_button/popUpDeleteBar";
 
 interface CrowdCardProps {
     bar_id: number;
@@ -23,6 +27,14 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
 }) => {
     const router = useRouter();
     const [currentVisitors, setCurrentVisitors] = useState(0);
+    const [showEditPopup, setShowEditPopup] = useState(false);
+    const [showDeletePopup, setShowDeletePopup] = useState(false);
+
+    const handleEditClick = () => setShowEditPopup(true);
+    const handleDeleteClick = () => setShowDeletePopup(true);
+
+    const closeEditPopup = () => setShowEditPopup(false);
+    const closeDeletePopup = () => setShowDeletePopup(false);
 
     useEffect(() => {
         const fetchVisitorData = async () => {
@@ -166,10 +178,22 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
                 </div>
             </div>
 
-            <div className="flex justify-end mt-2 mr-1">
-                <EditBar />
-                <DeleteBar onDelete={handleDelete} />
-            </div>
+            {/* <div className="flex justify-end mt-2 mr-1">
+                <div onClick={handleEditClick}>
+                    <MdEdit className='text-gray-600 w-6 h-6 cursor-pointer' />
+                </div>
+                <div onClick={handleDeleteClick}>
+                    <MdDeleteForever className='text-red-600 w-6 h-6 cursor-pointer' />
+                </div>
+
+                {showEditPopup && (
+                    <PopUpEditBar onClose={closeEditPopup} />
+                )}
+
+                {showDeletePopup && (
+                    <PopUpDeleteBar onClose={closeDeletePopup} />
+                )}
+            </div> */}
         </div >
     );
 };
