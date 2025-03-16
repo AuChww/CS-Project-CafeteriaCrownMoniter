@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { MdEdit } from "react-icons/md";
 import { MdDeleteForever } from "react-icons/md";
 
@@ -87,45 +87,44 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
   zone_image
 }) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  
-    useEffect(() => {
-      const fetchBars = async () => {
-        try {
-          const response = await fetch(
-            `http://localhost:8000/api/v1/getZoneImage/zone${zone_id}.png`
-          );
-          if (!response.ok) throw new Error("Failed to fetch image URL");
-  
-          const data = await response.json();
-          setImageUrl(data.url);
-        } catch (error) {
-          console.error("Error fetching image:", error);
-        }
-      };
-  
-      fetchBars();
-    }, []);
+  const fetchBars = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/v1/getZoneImage/zone${zone_id}.png`
+      );
+      if (!response.ok) throw new Error("Failed to fetch image URL");
+
+      const data = await response.json();
+      setImageUrl(data.url);
+    } catch (error) {
+      console.error("Error fetching image:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBars();
+  }, []);
 
   return (
     <div
       key={zone_id}
-      className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 "
+      // className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 "
     >
       {/* <img
           className="rounded-t-lg w-full max-h-60"
           src={zone_image ? `/image/zoneImages/${zone_image}` : `/image/zoneImages/placeholder.jpg`}
           alt={zone_name}
         /> */}
-        {imageUrl ? (
-              <img
-                className="rounded-t-lg w-full max-h-60"
-                src={imageUrl}
-                alt={zone_name}
-                width="500"
-              />
-            ) : (
-              <div>Loading image...</div>
-            )}
+      {imageUrl ? (
+        <img
+          className="rounded-t-lg w-full max-h-60"
+          src={imageUrl}
+          alt={zone_name}
+          width="500"
+        />
+      ) : (
+        <div>Loading image...</div>
+      )}
       <div className="p-5 space-y-3 ">
 
 
@@ -159,10 +158,11 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
           <div>{zone_time}</div>
         </div> */}
 
-        <div className="flex justify-end">
-          <MdEdit  className='text-gray-600 w-6 h-6'/>
-          <MdDeleteForever className='text-red-600 w-6 h-6' />
-        </div>
+        {/* <div className="flex justify-end">
+          <div onClick={() => handleDelete(zone_id, zone_name)}>
+            <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
+          </div>
+        </div> */}
       </div>
     </div>
   );

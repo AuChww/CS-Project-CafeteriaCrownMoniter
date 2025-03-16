@@ -5,8 +5,6 @@ import DeleteBar from "@/components/admin_component/bar_button/deleteBar";
 import EditBar from "@/components/admin_component/bar_button/editBar";
 import { MdDeleteForever } from "react-icons/md";
 import { MdEdit } from "react-icons/md";
-import PopUpEditBar from "./bar_button/popUpEditBar";
-import PopUpDeleteBar from "./bar_button/popUpDeleteBar";
 
 interface CrowdCardProps {
     bar_id: number;
@@ -27,14 +25,9 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
 }) => {
     const router = useRouter();
     const [currentVisitors, setCurrentVisitors] = useState(0);
-    const [showEditPopup, setShowEditPopup] = useState(false);
-    const [showDeletePopup, setShowDeletePopup] = useState(false);
 
-    const handleEditClick = () => setShowEditPopup(true);
-    const handleDeleteClick = () => setShowDeletePopup(true);
 
-    const closeEditPopup = () => setShowEditPopup(false);
-    const closeDeletePopup = () => setShowDeletePopup(false);
+
 
     useEffect(() => {
         const fetchVisitorData = async () => {
@@ -74,32 +67,12 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
 
         fetchVisitorData();
     }, [bar_id]);
-
-    const handleDelete = async () => {
-        const confirmDelete = window.confirm("คุณต้องการลบข้อมูลนี้หรือไม่?");
-        if (!confirmDelete) return;
-
-        try {
-            const response = await fetch(`http://127.0.0.1:8000/api/v1/deleteBar/${bar_id}`, {
-                method: 'DELETE',
-            });
-
-            if (response.ok) {
-                alert("ลบข้อมูลสำเร็จ");
-                // รีเฟรชหน้าหรืออัพเดตข้อมูลใหม่
-                router.push('/admin/dashboard');
-            } else {
-                alert("เกิดข้อผิดพลาดในการลบข้อมูล");
-            }
-        } catch (error) {
-            console.error("Error deleting bar:", error);
-        }
-    };
+    
 
 
     return (
         <div
-            // className="bg-white hover:scale-110 duration-300  rounded-lg shadow-lg p-2 border border-gray-200 hover:bg-gray-100"
+        // className="bg-white hover:scale-110 duration-300  rounded-lg shadow-lg p-2 border border-gray-200 hover:bg-gray-100"
         >
             <div onClick={() => router.push(`/pages/recommend/bar/${bar_id}`)}>
                 <div className="h-full flex">
@@ -179,21 +152,33 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
             </div>
 
             {/* <div className="flex justify-end mt-2 mr-1">
-                <div onClick={handleEditClick}>
-                    <MdEdit className='text-gray-600 w-6 h-6 cursor-pointer' />
+                <div onClick={() => handleEditClick()}>
+                    <MdEdit className="text-gray-600 w-6 h-6 cursor-pointer" />
                 </div>
-                <div onClick={handleDeleteClick}>
-                    <MdDeleteForever className='text-red-600 w-6 h-6 cursor-pointer' />
+                <div onClick={() => handleDelete(bar_id,bar_name)}>
+                    <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
                 </div>
-
-                {showEditPopup && (
-                    <PopUpEditBar onClose={closeEditPopup} />
-                )}
-
-                {showDeletePopup && (
-                    <PopUpDeleteBar onClose={closeDeletePopup} />
-                )}
             </div> */}
+{/* 
+            {showEditPopup && (
+                <PopUpEditBar
+                    barId={bar_id}
+                    onClose={closeEditPopup}
+                    bar_name={bar_name}
+                    bar_location={bar_location}
+                    max_people_in_bar={max_people_in_bar}
+                    bar_detail={bar_detail}
+                    bar_image={bar_image}
+                />
+            )}
+
+            {showDeletePopup && (
+                <PopUpDeleteBar
+                    barId={bar_id}
+                    bar_name={bar_name}
+                    onClose={closeDeletePopup}
+                />
+            )} */}
         </div >
     );
 };

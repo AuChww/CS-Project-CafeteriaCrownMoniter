@@ -17,6 +17,7 @@ import {
 import DayOfWeekVisitorChart from "@/components/bar/DayBarBarChart";
 import VisitorBarChart from "@/components/bar/BarBarChart";
 import { useRouter } from "next/navigation";
+import { MdDeleteForever } from "react-icons/md";
 
 interface Bar {
   bar_id: number;
@@ -81,55 +82,55 @@ const BarPage = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [currentVisitors, setCurrentVisitors] = useState(0);
 
-  useEffect(() => {
-    const fetchBarAndZones = async () => {
-      try {
-        setLoading(true);
+  const fetchBarAndZones = async () => {
+    try {
+      setLoading(true);
 
-        const [getBarResponse, getAllZoneByBarIdResponse] = await Promise.all([
-          fetch(`http://127.0.0.1:8000/api/v1/getBarId/${id}`),
-          fetch(`http://127.0.0.1:8000/api/v1/getAllZonesByBarId/${id}`),
-        ]);
+      const [getBarResponse, getAllZoneByBarIdResponse] = await Promise.all([
+        fetch(`http://127.0.0.1:8000/api/v1/getBarId/${id}`),
+        fetch(`http://127.0.0.1:8000/api/v1/getAllZonesByBarId/${id}`),
+      ]);
 
-        if (!getBarResponse.ok || !getAllZoneByBarIdResponse.ok) {
-          throw new Error("Failed to fetch bar details or zones");
-        }
-
-        const barData: Bar = await getBarResponse.json();
-        const zonesData: { zones: Zone[] } =
-          await getAllZoneByBarIdResponse.json(); // กำหนดให้รับข้อมูลเป็น object ที่มี key zones
-
-        setBar(barData);
-        setZones(zonesData.zones || []); // เข้าถึงข้อมูลใน key zones
-        setError(null); // Clear any previous errors
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false); // Always stop loading
+      if (!getBarResponse.ok || !getAllZoneByBarIdResponse.ok) {
+        throw new Error("Failed to fetch bar details or zones");
       }
 
-      try {
-        let response = await fetch(
-          `http://localhost:8000/api/v1/getBarImage/bar${id}.png`
+      const barData: Bar = await getBarResponse.json();
+      const zonesData: { zones: Zone[] } =
+        await getAllZoneByBarIdResponse.json(); // กำหนดให้รับข้อมูลเป็น object ที่มี key zones
+
+      setBar(barData);
+      setZones(zonesData.zones || []); // เข้าถึงข้อมูลใน key zones
+      setError(null); // Clear any previous errors
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false); // Always stop loading
+    }
+
+    try {
+      let response = await fetch(
+        `http://localhost:8000/api/v1/getBarImage/bar${id}.png`
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          "Failed to fetch both restaurant image and fallback image"
         );
-
-        if (!response.ok) {
-          throw new Error(
-            "Failed to fetch both restaurant image and fallback image"
-          );
-        }
-
-        const data = await response.json();
-        if (data.url) {
-          setImageUrl(data.url); // ใช้ URL ที่ดึงมา
-        } else {
-          throw new Error("No image URL returned");
-        }
-      } catch (error) {
-        console.error("Error fetching image:", error);
       }
-    };
 
+      const data = await response.json();
+      if (data.url) {
+        setImageUrl(data.url); // ใช้ URL ที่ดึงมา
+      } else {
+        throw new Error("No image URL returned");
+      }
+    } catch (error) {
+      console.error("Error fetching image:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchBarAndZones();
   }, [id]);
 
@@ -190,6 +191,25 @@ const BarPage = () => {
 
     fetchVisitorData();
   }, [id]);
+
+  const handleDelete = async (bar_id: number, bar_name: string) => {
+    const confirmDelete = window.confirm(`Are you sure to delete Zone ${bar_id} : ${bar_name} ?`);
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/v1/deleteZone/${bar_id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        fetchBarAndZones();
+      } else {
+        alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+      }
+    } catch (error) {
+      console.error("Error deleting bar:", error);
+    }
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div className="text-red-500">Error: {error}</div>;
@@ -258,22 +278,28 @@ const BarPage = () => {
               zones.map((zone) => (
                 <div
                   key={zone.zone_id}
-                  onClick={() =>
-                    router.push(`/pages/recommend/zone/${zone.bar_id}`)
-                  }
-                  className="cursor-pointer"
+                  className="max-w-sm p-2 w-60 bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 transition-transform transform hover:scale-105 duration-300"
                 >
-                  <ZoneCard
-                    zone_id={zone.zone_id}
-                    bar_id={zone.bar_id}
-                    zone_name={zone.zone_name}
-                    zone_detail={zone.zone_detail}
-                    max_people_in_zone={zone.max_people_in_zone}
-                    current_visitor_count={zone.current_visitor_count}
-                    update_date_time={zone.update_date_time}
-                    zone_time={zone.zone_time}
-                    zone_image={zone.zone_image}
-                  />
+                  <div onClick={() =>
+                    router.push(`/pages/recommend/zone/${zone.bar_id}`)
+                  }>
+                    <ZoneCard
+                      zone_id={zone.zone_id}
+                      bar_id={zone.bar_id}
+                      zone_name={zone.zone_name}
+                      zone_detail={zone.zone_detail}
+                      max_people_in_zone={zone.max_people_in_zone}
+                      current_visitor_count={zone.current_visitor_count}
+                      update_date_time={zone.update_date_time}
+                      zone_time={zone.zone_time}
+                      zone_image={zone.zone_image}
+                    />
+                  </div>
+                  <div className="flex justify-end">
+                    <div onClick={() => handleDelete(zone.zone_id, zone.zone_name)}>
+                      <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
+                    </div>
+                  </div>
                 </div>
               ))}
           </div>
