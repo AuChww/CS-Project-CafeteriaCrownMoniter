@@ -42,31 +42,34 @@ export default function Admin() {
     setShowDeletePopup(true);
   };
 
-  const closeEditPopup = () => {
+  const closeEditPopup = async () => {
     setShowEditPopup(false);
     setSelectedBarId(null);
+    await fetchBars();  // ดึงข้อมูลใหม่หลังจากปิด Popup
   };
 
-  const closeDeletePopup = () => {
+  const closeDeletePopup = async () => {
     setShowDeletePopup(false);
     setSelectedBarId(null);
+    await fetchBars();  // ดึงข้อมูลใหม่หลังจากปิด Popup
   };
 
   // ดึงข้อมูลจาก API
-  useEffect(() => {
-    const fetchBars = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/api/v1/getAllBars");
-        if (!response.ok) {
-          throw new Error("Failed to fetch bars");
-        }
-        const data = await response.json();
-        setBars(data.bars); // Assuming the API returns { bars: [...] }
-      } catch (error) {
-        console.error("Error fetching bars:", error);
+  const fetchBars = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/v1/getAllBars");
+      if (!response.ok) {
+        throw new Error("Failed to fetch bars");
       }
-    };
+      const data = await response.json();
+      setBars(data.bars); // Assuming the API returns { bars: [...] }
+    } catch (error) {
+      console.error("Error fetching bars:", error);
+    }
+  };
 
+  // ดึงข้อมูลเมื่อเริ่มต้น
+  useEffect(() => {
     fetchBars();
   }, []);
 
