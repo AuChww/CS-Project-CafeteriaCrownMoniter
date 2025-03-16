@@ -110,12 +110,22 @@ const BarCard: React.FC<Bar> = ({
       className="bg-white hover:scale-105 duration-300 w-60 rounded-lg shadow-lg p-2 border border-gray-200 hover:bg-gray-100"
     >
       <div className="h-48">
-        <img
+        {/* <img
           className="rounded-t-lg h-full"
           src={`/image/barImages/${bar_image}`}
           alt={bar_name}
           width="500"
-        />
+        /> */}
+        {imageUrl ? (
+              <img
+                className="w-full object-cover rounded-md mb-4"
+                src={imageUrl}
+                alt=" Image"
+                width="500"
+              />
+            ) : (
+              <div>Loading image...</div>
+            )}
       </div>
 
       <div className="px-2 h-60 space-y-3 mt-3">
