@@ -30,12 +30,27 @@ export default function Admin() {
   const router = useRouter();
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [selectedBarId, setSelectedBarId] = useState<number | null>(null);
 
-  const handleEditClick = () => setShowEditPopup(true);
-  const handleDeleteClick = () => setShowDeletePopup(true);
+  const handleEditClick = (barId: number) => {
+    setSelectedBarId(barId);
+    setShowEditPopup(true);
+  };
 
-  const closeEditPopup = () => setShowEditPopup(false);
-  const closeDeletePopup = () => setShowDeletePopup(false);
+  const handleDeleteClick = (barId: number) => {
+    setSelectedBarId(barId);
+    setShowDeletePopup(true);
+  };
+
+  const closeEditPopup = () => {
+    setShowEditPopup(false);
+    setSelectedBarId(null);
+  };
+
+  const closeDeletePopup = () => {
+    setShowDeletePopup(false);
+    setSelectedBarId(null);
+  };
 
   // ดึงข้อมูลจาก API
   useEffect(() => {
@@ -67,7 +82,7 @@ export default function Admin() {
       <div className="grid grid-cols-1 mt-6 sm:grid-cols-4 lg:grid-cols-6 gap-6">
 
         {bars.map((bar) => (
-          <div key={bar.bar_id}
+          <div key={bar.bar_id} className="bg-white hover:scale-110 duration-300  rounded-lg shadow-lg p-2 border border-gray-200 hover:bg-gray-100"
           //  onClick={() => router.push(`/pages/recommend/bar/${bar.bar_id}`)}
           >
             <AdminCrowdCard
@@ -80,24 +95,24 @@ export default function Admin() {
               bar_detail={bar.bar_detail}
             />
             <div className="flex justify-end mt-2 mr-1">
-              <div onClick={handleEditClick}>
-                <MdEdit className='text-gray-600 w-6 h-6 cursor-pointer' />
+              <div onClick={() => handleEditClick(bar.bar_id)}>
+                <MdEdit className="text-gray-600 w-6 h-6 cursor-pointer" />
               </div>
-              <div onClick={handleDeleteClick}>
-                <MdDeleteForever className='text-red-600 w-6 h-6 cursor-pointer' />
+              <div onClick={() => handleDeleteClick(bar.bar_id)}>
+                <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
               </div>
-
-              {showEditPopup && (
-                <PopUpEditBar onClose={closeEditPopup} />
-              )}
-
-              {showDeletePopup && (
-                <PopUpDeleteBar onClose={closeDeletePopup} />
-              )}
             </div>
+
+            {showEditPopup && selectedBarId && (
+              <PopUpEditBar barId={selectedBarId} onClose={closeEditPopup} />
+            )}
+
+            {showDeletePopup && selectedBarId && (
+              <PopUpDeleteBar barId={selectedBarId} onClose={closeDeletePopup} />
+            )}
           </div>
         ))}
       </div>
-    </div>
+    </div >
   );
 }

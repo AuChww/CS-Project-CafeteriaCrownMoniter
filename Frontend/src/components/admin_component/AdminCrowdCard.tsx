@@ -99,7 +99,7 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
 
     return (
         <div
-            className="bg-white hover:scale-110 duration-300  rounded-lg shadow-lg p-2 border border-gray-200 hover:bg-gray-100"
+            // className="bg-white hover:scale-110 duration-300  rounded-lg shadow-lg p-2 border border-gray-200 hover:bg-gray-100"
         >
             <div onClick={() => router.push(`/pages/recommend/bar/${bar_id}`)}>
                 <div className="h-full flex">
