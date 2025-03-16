@@ -28,8 +28,9 @@ interface Bar {
 export default function Admin() {
   const [bars, setBars] = useState<Bar[]>([]);
   const router = useRouter();
-  const [showEditPopup, setShowEditPopup] = useState(false);
+  const [showEditPopup, setShowEditPopup] = useState(true);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [selectedBar, setSelectedBar] = useState<Bar | null>(null);
 
   const handleEditClick = () => setShowEditPopup(true);
   const handleDeleteClick = () => setShowDeletePopup(true);
@@ -65,10 +66,10 @@ export default function Admin() {
       </div>
 
       <div className="grid grid-cols-1 mt-6 sm:grid-cols-4 lg:grid-cols-6 gap-6">
-
         {bars.map((bar) => (
-          <div key={bar.bar_id}
-          //  onClick={() => router.push(`/pages/recommend/bar/${bar.bar_id}`)}
+          <div
+            key={bar.bar_id}
+            //  onClick={() => router.push(`/pages/recommend/bar/${bar.bar_id}`)}
           >
             <AdminCrowdCard
               key={bar.bar_id}
@@ -81,19 +82,28 @@ export default function Admin() {
             />
             <div className="flex justify-end mt-2 mr-1">
               <div onClick={handleEditClick}>
-                <MdEdit className='text-gray-600 w-6 h-6 cursor-pointer' />
+                <MdEdit className="text-gray-600 w-6 h-6 cursor-pointer" />
               </div>
               <div onClick={handleDeleteClick}>
-                <MdDeleteForever className='text-red-600 w-6 h-6 cursor-pointer' />
+                <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
               </div>
 
-              {showEditPopup && (
+              {/* {showEditPopup && (
                 <PopUpEditBar onClose={closeEditPopup} />
+              )} */}
+
+              {showEditPopup && selectedBar && (
+                <EditBar
+                  bar_id={selectedBar.bar_id}
+                  bar_name={selectedBar.bar_name}
+                  bar_location={selectedBar.bar_location}
+                  bar_detail={selectedBar.bar_detail}
+                  bar_image={selectedBar.bar_image}
+                  onUpdate={closeEditPopup}
+                />
               )}
 
-              {showDeletePopup && (
-                <PopUpDeleteBar onClose={closeDeletePopup} />
-              )}
+              {showDeletePopup && <PopUpDeleteBar onClose={closeDeletePopup} />}
             </div>
           </div>
         ))}
