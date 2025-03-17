@@ -1,69 +1,68 @@
 import React, { useState, useRef, useEffect } from "react";
 
-interface Bar {
-  bar_id: number;
-  bar_name: string;
-  bar_detail: string;
-  bar_image: string;
-  current_visitor_count: number;
-  max_people_in_bar: number;
+interface Restaurant {
+  restaurant_id: number;
+  restaurant_name: string;
+  restaurant_detail: string;
+  restaurant_location: string;
+  restaurant_image: string;
 }
 
-interface EditBarProps {
-  bars: Bar[];
+interface EditRestaurantProps {
+  restaurants: Restaurant[];
 }
 
-const EditBar: React.FC<EditBarProps> = ({ bars }) => {
-  const [barName, setBarName] = useState("");
-  const [barDetail, setBarDetail] = useState("");
-  const [maxPeopleInBar, setMaxPeopleInBar] = useState("");
-  const [barImage, setBarImage] = useState<File | null>(null);
+const EditRestaurant: React.FC<EditRestaurantProps> = ({ restaurants }) => {
+  const [restaurantName, setRestaurantName] = useState("");
+  const [restaurantDetail, setRestaurantDetail] = useState("");
+  const [restaurantLocation, setRestaurantLocation] = useState("");
+  const [restaurantImage, setRestaurantImage] = useState<File | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedBar, setSelectedBar] = useState("");
+  const [selectedRestaurant, setSelectedRestaurant] = useState("");
   const [error, setError] = useState<string | null>(null); // Error state
   const [isSubmitting, setIsSubmitting] = useState(false); // Disable submit while submitting
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [previousBarName, setPreviousBarName] = useState("");
-  const [previousBarDetail, setPreviousBarDetail] = useState("");
-  const [previousMaxPeopleInBar, setPreviousMaxPeopleInBar] = useState("");
-  const [previousBarImage, setPreviousBarImage] = useState("");
-  const [previousSelectedBar, setPreviousSelectedBar] = useState("");
-  const [previousBarLocation, setPreviousBarLocation] = useState("");
-  const [barLocation, setBarLocation] = useState("");
+  const [previousRestaurantName, setPreviousRestaurantName] = useState("");
+  const [previousRestaurantDetail, setPreviousRestaurantDetail] = useState("");
+  const [previousRestaurantLocation, setPreviousRestaurantLocation] =
+    useState("");
+
+  const [previousRestaurantImage, setPreviousRestaurantImage] = useState("");
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedBar(e.target.value);
+    setSelectedRestaurant(e.target.value);
   };
 
-  const handleEditBar = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleEditRestaurant = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // ตรวจสอบค่าที่เปลี่ยนไป ถ้าไม่มีการเปลี่ยนแปลง ให้ใช้ค่าเดิมจาก state
-    const Selected = selectedBar.trim || previousSelectedBar;
-    const updatedBarName = barName.trim() || previousBarName;
-    const updatedBarDetail = barDetail.trim() || previousBarDetail;
-    const updatedBarLocation = barLocation.trim() || previousBarLocation;
-    const updatedMaxPeopleInBar = maxPeopleInBar.trim() || previousMaxPeopleInBar;
+    const updatedRestaurantName =
+      restaurantName.trim() || previousRestaurantName;
+    const updatedRestaurantDetail =
+      restaurantDetail.trim() || previousRestaurantDetail;
+    const updatedRestaurantLocation =
+      restaurantLocation.trim() || previousRestaurantLocation;
 
     const formData = new FormData();
-    formData.append("bar_id", selectedBar);
-    formData.append("bar_name", updatedBarName);
-    formData.append("bar_detail", updatedBarDetail);
-    formData.append("bar_location", updatedBarLocation);
-    formData.append("max_people_in_bar", updatedMaxPeopleInBar);
+    formData.append("restaurant_id", selectedRestaurant);
+    formData.append("restaurant_name", updatedRestaurantName);
+    formData.append("restaurant_detail", updatedRestaurantDetail);
+    formData.append("restaurant_location", updatedRestaurantLocation);
 
-    if (barImage) {
-      formData.append("bar_image", barImage);
+    if (restaurantImage) {
+      formData.append("restaurant_image", restaurantImage);
+    } else {
+      formData.append("restaurant_image", previousRestaurantImage);
     }
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/v1/updateBar/${selectedBar}`,
+        `http://127.0.0.1:8000/api/v1/updateRestaurant/${selectedRestaurant}`,
         {
           method: "PATCH",
           body: formData,
@@ -74,15 +73,14 @@ const EditBar: React.FC<EditBarProps> = ({ bars }) => {
         throw new Error("Error submitting form");
       }
 
-      console.log("Bar updated successfully");
+      console.log("Restaurant updated successfully");
 
       // Reset form fields after successful submission
-      setBarName("");
-      setBarDetail("");
-      setMaxPeopleInBar("");
-      setSelectedBar("");
-      setBarLocation("")
-      setBarImage(null);
+      setSelectedRestaurant("");
+      setRestaurantName("");
+      setRestaurantDetail("");
+      setRestaurantLocation("");
+      setRestaurantImage(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = ""; // ล้างค่า input file เพื่อให้ UI อัปเดต
       }
@@ -99,47 +97,53 @@ const EditBar: React.FC<EditBarProps> = ({ bars }) => {
   };
 
   useEffect(() => {
-    if (!selectedBar) return;
+    if (!selectedRestaurant) return;
 
     setIsLoading(true);
-    fetch(`http://127.0.0.1:8000/api/v1/getBarId/${selectedBar}`)
+    fetch(
+      `http://127.0.0.1:8000/api/v1/getRestaurantId/${selectedRestaurant}`
+    )
       .then((response) => {
-        if (!response.ok) throw new Error("Failed to fetch bar data");
+        if (!response.ok) throw new Error("Failed to fetch restaurant data");
         return response.json();
       })
       .then((data) => {
-        setBarName(data.bar_name || "");
-        setBarDetail(data.bar_detail || "");
-        setBarLocation(data.bar_location || "");
-        setMaxPeopleInBar(data.max_people_in_bar?.toString() || "");
-        setPreviousBarImage(data.bar_image || ""); // เก็บค่ารูปภาพเดิม
-        setBarImage(null);
+        setRestaurantName(data.restaurant_name || "");
+        setRestaurantDetail(data.restaurant_detail || "");
+        setRestaurantLocation(data.restaurant|| "");
+        setPreviousRestaurantImage(data.restaurant_image || ""); // เก็บค่ารูปภาพเดิม
+        setRestaurantImage(null);
         setError(null);
       })
       .catch((err) => setError(err.message))
       .finally(() => setIsLoading(false));
-    console.log("selectedBar in useEffect:", selectedBar);
-  }, [selectedBar]);
+    console.log("selectedRestaurant in useEffect:", selectedRestaurant);
+  }, [selectedRestaurant]);
 
   return (
     <>
-      <form className="py-2 px-4 md:p-5" onSubmit={handleEditBar}>
+      <form className="py-2 px-4 md:p-5" onSubmit={handleEditRestaurant}>
         <div className="grid gap-3 mb-8 grid-cols-2">
           <div className="col-span-2">
             <div className="relative z-0 mb-6 w-full group">
               <select
-                value={selectedBar}
-                onChange={(e) => setSelectedBar(e.target.value)}
+                value={selectedRestaurant}
+                onChange={(e) => setSelectedRestaurant(e.target.value)}
                 className={`block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 
-                  appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 
-                  focus:outline-none focus:ring-0 focus:border-blue-600 peer ${
-                    selectedBar === "" ? "text-gray-500" : "text-gray-900"
-                  }`}
+                    appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 
+                    focus:outline-none focus:ring-0 focus:border-blue-600 peer ${
+                      selectedRestaurant === ""
+                        ? "text-gray-500"
+                        : "text-gray-900"
+                    }`}
               >
-                <option value="">Choose a bar</option>
-                {bars.map((bar) => (
-                  <option key={bar.bar_id} value={bar.bar_id}>
-                    {bar.bar_name}
+                <option value="">Choose a restaurant</option>
+                {restaurants.map((restaurant) => (
+                  <option
+                    key={restaurant.restaurant_id}
+                    value={restaurant.restaurant_id}
+                  >
+                    {restaurant.restaurant_name}
                   </option>
                 ))}
               </select>
@@ -150,16 +154,16 @@ const EditBar: React.FC<EditBarProps> = ({ bars }) => {
             <div className="relative z-0 mb-6 w-full group">
               <input
                 type="text"
-                name="bar_name"
+                name="restaurant_name"
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
-                value={barName}
-                onChange={(e) => setBarName(e.target.value)}
+                value={restaurantName}
+                onChange={(e) => setRestaurantName(e.target.value)}
                 disabled={isLoading}
                 required
               />
               <label className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-                Bar name
+                Restaurant name
               </label>
             </div>
           </div>
@@ -168,58 +172,43 @@ const EditBar: React.FC<EditBarProps> = ({ bars }) => {
             <div className="relative z-0 mb-6 w-full group">
               <input
                 type="text"
-                name="bar_detail"
+                name="restaurant_detail"
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
-                value={barDetail}
-                onChange={(e) => setBarDetail(e.target.value)}
+                value={restaurantDetail}
+                onChange={(e) => setRestaurantDetail(e.target.value)}
                 disabled={isLoading}
                 required
               />
               <label className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-                Bar detail
+                Restaurant detail
               </label>
             </div>
           </div>
 
-          <div className="col-span-1">
+          <div className="col-span-2">
             <div className="relative z-0 mb-6 w-full group">
               <input
                 type="text"
-                name="bar_detail"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                placeholder=" "
-                value={barLocation}
-                onChange={(e) => setBarLocation(e.target.value)}
-                disabled={isLoading}
-                required
-              />
-              <label className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-                Bar Location
-              </label>
-            </div>
-          </div>
-          <div className="col-span-1">
-            <div className="relative z-0 mb-6 w-full group">
-              <input
-                type="number"
-                name="max_seating_in_bar"
-                id="max_seating_in_bar"
-                value={maxPeopleInBar}
-                onChange={(e) => setMaxPeopleInBar(e.target.value)}
+                name="restaurant_location"
+                id="restaurant_location"
+                value={restaurantLocation}
+                onChange={(e) => setRestaurantLocation(e.target.value)}
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
                 disabled={isLoading}
                 required
               />
               <label
-                htmlFor="max_seating_in_bar"
+                htmlFor="restaurant_location"
                 className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
-                Max Seating in Bar
+               Restaurant Location
               </label>
             </div>
           </div>
+
+          
 
           <div className="col-span-2">
             <label className="block mb-1 text-sm font-medium text-gray-500 dark:text-white">
@@ -231,27 +220,23 @@ const EditBar: React.FC<EditBarProps> = ({ bars }) => {
               ref={fileInputRef}
               onChange={(e) => {
                 if (e.target.files && e.target.files.length > 0) {
-                  setBarImage(e.target.files[0]); // บันทึกไฟล์ใน state
+                  setRestaurantImage(e.target.files[0]); // บันทึกไฟล์ใน state
                 }
               }}
             />
           </div>
         </div>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {error && <div className="text-red-500 text-sm mb-3">{error}</div>}
 
         <button
           type="submit"
           disabled={isSubmitting}
           className="px-6 py-2 bg-blue-600 text-white rounded-md disabled:bg-gray-300"
         >
-          {isSubmitting ? "Submitting..." : "Update Bar"}
+          {isSubmitting ? "Submitting..." : "Update Restaurant"}
         </button>
       </form>
-
-
-
-
 
       {isModalOpen && (
         <div
@@ -305,7 +290,7 @@ const EditBar: React.FC<EditBarProps> = ({ bars }) => {
                 </g>
               </svg>
               <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                Bar Updated Successfully
+                Restaurant Updated Successfully
               </h3>
               <button
                 onClick={toggleModal}
@@ -321,4 +306,4 @@ const EditBar: React.FC<EditBarProps> = ({ bars }) => {
   );
 };
 
-export default EditBar;
+export default EditRestaurant;

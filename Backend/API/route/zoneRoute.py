@@ -146,14 +146,40 @@ def add_zone_endpoint():
     
     return jsonify({'message': 'Zone added successfully', 'zone_id': zone_id, 'file_name': file_name}), 201
 
-@zone_bp.route('/api/v1/updateZone/<int:zone_id>', methods=['PUT'])
+# @zone_bp.route('/api/v1/updateZone/<int:zone_id>', methods=['PUT'])
+# def update_zone_endpoint(zone_id):
+#     data = request.json
+#     updated = update_zone_service(zone_id, data)  # Use the service function here
+#     if not updated:
+#         return jsonify({'message': 'Zone not found'}), 404
+
+#     return jsonify({'message': 'Zone updated successfully'})
+
+@zone_bp.route('/api/v1/updateZone/<int:zone_id>', methods=['PATCH'])
 def update_zone_endpoint(zone_id):
-    data = request.json
-    updated = update_zone_service(zone_id, data)  # Use the service function here
+    # Get form data and files
+    data = request.form.to_dict()  # Convert form data to dictionary
+    zone_image = request.files.get('zone_image')
+
+    # Optionally add the file to the dictionary if it's present
+    if zone_image:
+        data['zone_image'] = zone_image
+    
+    # Get the individual fields from the data dictionary
+    zone_id = data.get('zone_id')
+    zone_name = data.get('zone_name')
+    zone_detail = data.get('zone_detail')
+    max_people_in_zone = data.get('max_people_in_zone')
+    zone_time = data.get('zone_time')
+    current_visitor_count = 0  # Set default value for current_visitor_count
+    
+    # Update the zone using the service function
+    updated = update_zone_service(zone_id, data)  # Pass the full data dictionary
     if not updated:
         return jsonify({'message': 'Zone not found'}), 404
 
     return jsonify({'message': 'Zone updated successfully'})
+
 
 # กำหนดโซนเวลาประเทศไทย
 timezone = pytz.timezone("Asia/Bangkok")

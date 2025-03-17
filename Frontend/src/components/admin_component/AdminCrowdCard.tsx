@@ -139,14 +139,14 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
           </div>
         </div>
         {/* Edit and Delete icons */}
-        <div className="flex justify-end mt-2 mr-1">
+        {/* <div className="flex justify-end mt-2 mr-1">
           <div onClick={handleEditClick}>
             <MdEdit className="text-gray-600 w-6 h-6 cursor-pointer" />
           </div>
           <div onClick={handleDeleteClick}>
             <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
           </div>
-        </div>
+        </div> */}
         {/* Show popups */}
         {/* {showEditPopup && <PopUpEditBar onClose={closeEditPopup} />}
         {showDeletePopup && <PopUpDeleteBar onClose={closeDeletePopup} />} */}

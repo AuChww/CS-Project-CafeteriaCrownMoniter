@@ -306,10 +306,19 @@ def serve_actual_image(file_name):
 
 
 
-@restaurant_bp.route('/api/v1/updateRestaurant/<int:restaurant_id>', methods=['PUT'])
+@restaurant_bp.route('/api/v1/updateRestaurant/<int:restaurant_id>', methods=['PATCH'])
 def update_restaurant(restaurant_id):
-    data = request.json
-    updated = update_restaurant_service(restaurant_id, data)  # ส่งข้อมูลทั้งหมดยัง service
+    data = request.form.to_dict()  
+    restaurant_image = request.files.get('restaurant_image')
+
+    if restaurant_image:
+        data['restaurant_image'] = restaurant_image
+
+    restaurant_id = data.get('restaurant_id')
+    restaurant_name = data.get('restaurant_name')
+    restaurant_detail = data.get('restaurant_detail')
+    restaurant_location = data.get('restaurant_location')
+    updated = update_restaurant_service(restaurant_id, data)  
     if not updated:
         return jsonify({'message': 'Restaurant not found'}), 404
 

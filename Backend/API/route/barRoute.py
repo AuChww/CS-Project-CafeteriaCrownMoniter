@@ -7,6 +7,7 @@ from Application.Service.feature.barService import  (
     get_all_restaurants_by_bar_id_service,
     get_all_reviews_by_bar_id_service,
     get_all_zones_by_bar_id_service,
+    get_bar_image_service,
     add_bar_service,
     update_bar_image,
     update_bar_service,
@@ -198,11 +199,58 @@ def add_bar():
 
 
 
-@bar_bp.route('/api/v1/updateBar/<int:bar_id>', methods=['PUT'])
+# @bar_bp.route('/api/v1/updateBar/<int:bar_id>', methods=['PUT'])
+# def update_bar(bar_id):
+    
+#     data = request.json
+#     updated = update_bar_service(bar_id, data)  # ส่งข้อมูลทั้งหมดยัง service
+#     if not updated:
+#         return jsonify({'message': 'Bar not found'}), 404
+
+#     return jsonify({'message': 'Bar updated successfully'})
+
+@bar_bp.route('/api/v1/updateBar/<int:bar_id>', methods=['PATCH'])
 def update_bar(bar_id):
     
-    data = request.json
-    updated = update_bar_service(bar_id, data)  # ส่งข้อมูลทั้งหมดยัง service
+    data = request.form.to_dict()  
+    bar_image = request.files.get('bar_image')
+
+    bar_id = data.get('bar_id')
+    bar_name = data.get('bar_name')
+    bar_detail = data.get('bar_detail')
+    max_people_in_bar = data.get('max_people_in_bar')
+    bar_time = data.get('bar_time')
+    updated = update_bar_service(bar_id, data)
+    
+    previous_file_name = get_bar_image_service(bar_id)
+    
+    file_name = f'bar{bar_id}.png'
+    file_path = os.path.join('public', 'image', 'barImages', file_name)
+    if bar_image:
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)  # ลบไฟล์เก่า
+                print(f"Old image {file_path} deleted.")
+            except Exception as e:
+                print(f"Error deleting old image: {e}")
+
+        try:
+            bar_image.save(file_path)  # บันทึกไฟล์ใหม่
+            print(f"New image saved to {file_path}")
+        except Exception as e:
+            print(f"Error saving image: {e}")
+            return jsonify({'message': 'Failed to save image'}), 500
+    else:
+        file_name = previous_file_name if previous_file_name else 'default.png'  # ถ้าไม่มีภาพใหม่ ให้ใช้ default.png
+
+    # อัปเดตชื่อไฟล์ภาพในข้อมูล
+    data['bar_image'] = file_name
+    
+    updated = update_bar_service(bar_id, data)
+    
+    # อัปเดตข้อมูล bar_id ในฐานข้อมูล (ถ้าจำเป็น)
+    update_bar_image(bar_id, file_name)  # เพิ่ม
+    
     if not updated:
         return jsonify({'message': 'Bar not found'}), 404
 
