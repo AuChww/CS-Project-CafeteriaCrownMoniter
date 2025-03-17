@@ -131,6 +131,8 @@ import AddTab from "@/components/admin_component/bar_button/addTab";
 import PopUpEditBar from "@/components/admin_component/bar_button/popUpEditBar";
 import PopUpDeleteBar from "@/components/admin_component/bar_button/popUpDeleteBar";
 import EditTab from "@/components/admin_component/bar_button/editTab";
+import { MdDeleteForever } from "react-icons/md";
+import { MdEdit } from "react-icons/md";
 
 interface Bar {
   bar_id: number;
@@ -145,10 +147,9 @@ interface Bar {
 
 export default function Admin() {
   const [bars, setBars] = useState<Bar[]>([]);
-  const [showEditPopup, setShowEditPopup] = useState(false);
-  const [showDeletePopup, setShowDeletePopup] = useState(false);
-  const [selectedBar, setSelectedBar] = useState<Bar | null>(null);
+  const router = useRouter();
 
+  // ดึงข้อมูลจาก API
   const fetchBars = async () => {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/v1/getAllBars");
@@ -166,26 +167,23 @@ export default function Admin() {
     fetchBars();
   }, []);
 
-  const handleEditClick = (barId: number) => {
-    setSelectedBar(bars.find((bar) => bar.bar_id === barId) || null);
-    setShowEditPopup(true);
-  };
+  const handleDelete = async (bar_id: number, bar_name: string) => {
+    const confirmDelete = window.confirm(`Are you sure to delete Bar ${bar_id} : ${bar_name} ?`);
+    if (!confirmDelete) return;
 
-  const handleDeleteClick = (barId: number) => {
-    setSelectedBar(bars.find((bar) => bar.bar_id === barId) || null);
-    setShowDeletePopup(true);
-  };
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/v1/deleteBar/${bar_id}`, {
+        method: 'DELETE',
+      });
 
-  const closeEditPopup = () => {
-    setShowEditPopup(false);
-    setSelectedBar(null);
-    fetchBars(); // Refresh data after closing popup
-  };
-
-  const closeDeletePopup = () => {
-    setShowDeletePopup(false);
-    setSelectedBar(null);
-    fetchBars(); // Refresh data after closing popup
+      if (response.ok) {
+        fetchBars();
+      } else {
+        alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+      }
+    } catch (error) {
+      console.error("Error deleting bar:", error);
+    }
   };
 
   return (
@@ -213,33 +211,11 @@ export default function Admin() {
               bar_image={bar.bar_image}
               bar_detail={bar.bar_detail}
             />
-
-            <div className="flex justify-end space-x-3 mt-2 mr-1">
-              <div onClick={() => handleEditClick(bar.bar_id)}>
-                <MdEdit className="text-gray-600 w-6 h-6 cursor-pointer" />
-              </div>
-              <div onClick={() => handleDeleteClick(bar.bar_id)}>
+            <div className="flex justify-end mt-2 mr-1">
+              <div onClick={() => handleDelete(bar.bar_id, bar.bar_name)}>
                 <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
               </div>
             </div>
-
-            {/* {showEditPopup && selectedBar && (
-             <PopUpEditBar barId={selectedBar.bar_id} onClose={() => setShowEditPopup(false)} />
-            )} */}
-
-            {showEditPopup && selectedBar && (
-              <PopUpEditBar
-                barId={selectedBar.bar_id}
-                onClose={() => setShowEditPopup(false)}
-              />
-            )}
-
-            {showDeletePopup && selectedBar && (
-              <PopUpDeleteBar
-                barId={selectedBar.bar_id}
-                onClose={closeDeletePopup}
-              />
-            )}
           </div>
         ))}
       </div>

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import RestaurantCard from "@/components/RestaurantCard";
 import { IoIosWarning } from "react-icons/io";
+import { MdDeleteForever } from "react-icons/md";
 
 interface Zone {
   zone_id: number;
@@ -56,69 +57,90 @@ const ZonePage = () => {
   const navigateToReports = () => {
     router.push("/pages/report"); // เปลี่ยนเส้นทางไปที่หน้า /pages/report
   };
+
+  const fetchZoneAndRestaurants = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // ดึงข้อมูลโซน
+      const getZoneResponse = await fetch(
+        `http://127.0.0.1:8000/api/v1/getZoneById/${id}`
+      );
+      if (!getZoneResponse.ok) {
+        throw new Error("Failed to fetch zone data");
+      }
+      const zoneData: Zone = await getZoneResponse.json();
+      setZone(zoneData);
+    } catch (err: any) {
+      setError(err.message);
+    }
+
+    try {
+      // ดึงข้อมูลร้านอาหาร
+      const getRestaurantsResponse = await fetch(
+        `http://127.0.0.1:8000/api/v1/getRestaurantByZoneId/${id}`
+      );
+      if (!getRestaurantsResponse.ok) {
+        throw new Error("Failed to fetch restaurant data");
+      }
+      const restaurantsData = await getRestaurantsResponse.json();
+      setRestaurants(restaurantsData.restaurants);
+    } catch (err: any) {
+      setError(err.message);
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/v1/getZoneImage/zone${id}.png`
+      );
+      if (!response.ok) throw new Error("Failed to fetch image URL");
+
+      const data = await response.json();
+      setImageUrl(data.url);
+    } catch (error) {
+      console.error("Error fetching image:", error);
+    }
+
+    try {
+      // ดึง URL วิดีโอ
+      const getVideoResponse = await fetch(
+        `http://127.0.0.1:8000/api/v1/getZoneVideo/${id}.mp4`
+      );
+      if (!getVideoResponse.ok) {
+        throw new Error("Failed to fetch video");
+      }
+      const videoData = await getVideoResponse.json();
+      setVideoUrl(videoData.url);
+    } catch (err: any) {
+      setError(err.message);
+    }
+
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchZoneAndRestaurants = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        // ดึงข้อมูลโซน
-        const getZoneResponse = await fetch(
-          `http://127.0.0.1:8000/api/v1/getZoneById/${id}`
-        );
-        if (!getZoneResponse.ok) {
-          throw new Error("Failed to fetch zone data");
-        }
-        const zoneData: Zone = await getZoneResponse.json();
-        setZone(zoneData);
-      } catch (err: any) {
-        setError(err.message);
-      }
-
-      try {
-        // ดึงข้อมูลร้านอาหาร
-        const getRestaurantsResponse = await fetch(
-          `http://127.0.0.1:8000/api/v1/getRestaurantByZoneId/${id}`
-        );
-        if (!getRestaurantsResponse.ok) {
-          throw new Error("Failed to fetch restaurant data");
-        }
-        const restaurantsData = await getRestaurantsResponse.json();
-        setRestaurants(restaurantsData.restaurants);
-      } catch (err: any) {
-        setError(err.message);
-      }
-
-      try {
-        const response = await fetch(
-          `http://localhost:8000/api/v1/getZoneImage/zone${id}.png`
-        );
-        if (!response.ok) throw new Error("Failed to fetch image URL");
-
-        const data = await response.json();
-        setImageUrl(data.url);
-      } catch (error) {
-        console.error("Error fetching image:", error);
-      }
-
-      try {
-        // ดึง URL วิดีโอ
-        const getVideoResponse = await fetch(
-          `http://127.0.0.1:8000/api/v1/getZoneVideo/${id}.mp4`
-        );
-        if (!getVideoResponse.ok) {
-          throw new Error("Failed to fetch video");
-        }
-        const videoData = await getVideoResponse.json();
-        setVideoUrl(videoData.url);
-      } catch (err: any) {
-        setError(err.message);
-      }
-
-      setLoading(false);
-    };
     fetchZoneAndRestaurants();
   }, [id]);
+
+  const handleDelete = async (bar_id: number, bar_name: string) => {
+    const confirmDelete = window.confirm(`Are you sure to delete Restaurant ${bar_id} : ${bar_name} ?`);
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/v1/deleteRestaurant/${bar_id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        fetchZoneAndRestaurants();
+      } else {
+        alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+      }
+    } catch (error) {
+      console.error("Error deleting bar:", error);
+    }
+  };
 
   //     useEffect(() => {
   //     const fetchZoneAndRestaurants = async () => {
@@ -235,27 +257,33 @@ const ZonePage = () => {
                 restaurants.map((restaurant) => (
                   <div
                     key={restaurant.restaurant_id}
-                    onClick={() =>
+                    className="max-w-sm w-60 p-2 bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 transition-transform transform hover:scale-105 duration-300"
+                  >
+                    <div onClick={() =>
                       router.push(
                         `/pages/recommend/restaurant/${restaurant.restaurant_id}`
                       )
-                    }
-                    className="cursor-pointer"
-                  >
-                    <RestaurantCard
-                      key={restaurant.restaurant_id}
-                      restaurant_id={restaurant.restaurant_id}
-                      zone_id={restaurant.zone_id}
-                      restaurant_name={restaurant.restaurant_name}
-                      restaurant_location={restaurant.restaurant_location}
-                      restaurant_detail={restaurant.restaurant_detail}
-                      restaurant_rating={restaurant.restaurant_rating}
-                      total_rating={restaurant.total_rating}
-                      total_reviews={restaurant.total_reviews}
-                      restaurant_image={restaurant.restaurant_image}
-                      current_visitor_count={restaurant.current_visitor_count}
-                      update_date_time={restaurant.update_date_time}
-                    />
+                    }>
+                      <RestaurantCard
+                        key={restaurant.restaurant_id}
+                        restaurant_id={restaurant.restaurant_id}
+                        zone_id={restaurant.zone_id}
+                        restaurant_name={restaurant.restaurant_name}
+                        restaurant_location={restaurant.restaurant_location}
+                        restaurant_detail={restaurant.restaurant_detail}
+                        restaurant_rating={restaurant.restaurant_rating}
+                        total_rating={restaurant.total_rating}
+                        total_reviews={restaurant.total_reviews}
+                        restaurant_image={restaurant.restaurant_image}
+                        current_visitor_count={restaurant.current_visitor_count}
+                        update_date_time={restaurant.update_date_time}
+                      />
+                    </div>
+                    <div className="flex justify-end bg-white">
+                      <div onClick={() => handleDelete(restaurant.restaurant_id, restaurant.restaurant_name)}>
+                        <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
+                      </div>
+                    </div>
                   </div>
                 ))}
             </div>

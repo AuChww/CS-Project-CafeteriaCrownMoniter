@@ -50,10 +50,11 @@ const RestaurantCard: React.FC<Restaurant> = ({
 
     fetchBars();
   }, []);
+  
   return (
     <div
       key={restaurant_id}
-      className="max-w-sm w-60 bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 transition-transform transform hover:scale-105 duration-300"
+    //   className="max-w-sm w-60 bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 transition-transform transform hover:scale-105 duration-300"
     >
       {/* Image Section */}
       <a href="#">
@@ -148,10 +149,10 @@ const RestaurantCard: React.FC<Restaurant> = ({
           </div>
         </div>
 
-        <div className="flex justify-end">
+        {/* <div className="flex justify-end">
           <MdEdit className='text-gray-600 w-6 h-6' />
           <MdDeleteForever className='text-red-600 w-6 h-6' />
-        </div>
+        </div> */}
       </div>
     </div>
   );
