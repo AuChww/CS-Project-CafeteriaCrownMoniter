@@ -17,6 +17,7 @@ from Application.Service.feature.zoneService import (
     get_visitor_history_by_zone_id_service,
     get_restaurant_by_zone_id_service,
     get_all_report_by_zone_id_service,
+    get_zone_image_service,
     add_zone_service,
     update_zone_image,
     update_zone_service,
@@ -160,10 +161,6 @@ def update_zone_endpoint(zone_id):
     # Get form data and files
     data = request.form.to_dict()  # Convert form data to dictionary
     zone_image = request.files.get('zone_image')
-
-    # Optionally add the file to the dictionary if it's present
-    if zone_image:
-        data['zone_image'] = zone_image
     
     # Get the individual fields from the data dictionary
     zone_id = data.get('zone_id')
@@ -174,7 +171,38 @@ def update_zone_endpoint(zone_id):
     current_visitor_count = 0  # Set default value for current_visitor_count
     
     # Update the zone using the service function
-    updated = update_zone_service(zone_id, data)  # Pass the full data dictionary
+    updated = update_zone_service(zone_id, data)  
+    
+    previous_file_name = get_zone_image_service(zone_id)
+    
+    file_name = f'zone{zone_id}.png'
+    file_path = os.path.join('public', 'image', 'zoneImages', file_name)
+    if zone_image:
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)  # ลบไฟล์เก่า
+                print(f"Old image {file_path} deleted.")
+            except Exception as e:
+                print(f"Error deleting old image: {e}")
+
+        try:
+            zone_image.save(file_path)  # บันทึกไฟล์ใหม่
+            print(f"New image saved to {file_path}")
+        except Exception as e:
+            print(f"Error saving image: {e}")
+            return jsonify({'message': 'Failed to save image'}), 500
+    else:
+        file_name = previous_file_name if previous_file_name else 'default.png'  # ถ้าไม่มีภาพใหม่ ให้ใช้ default.png
+
+    # อัปเดตชื่อไฟล์ภาพในข้อมูล
+    data['zone_image'] = file_name
+    
+    # updated = update_zone_service(zone_id, data)
+    
+    # อัปเดตข้อมูล zone_id ในฐานข้อมูล (ถ้าจำเป็น)
+    update_zone_image(zone_id, file_name)
+    
+    
     if not updated:
         return jsonify({'message': 'Zone not found'}), 404
 

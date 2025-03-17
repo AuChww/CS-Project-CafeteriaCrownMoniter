@@ -110,7 +110,7 @@ const EditRestaurant: React.FC<EditRestaurantProps> = ({ restaurants }) => {
       .then((data) => {
         setRestaurantName(data.restaurant_name || "");
         setRestaurantDetail(data.restaurant_detail || "");
-        setRestaurantLocation(data.restaurant|| "");
+        setRestaurantLocation(data.restaurant_location|| "");
         setPreviousRestaurantImage(data.restaurant_image || ""); // เก็บค่ารูปภาพเดิม
         setRestaurantImage(null);
         setError(null);

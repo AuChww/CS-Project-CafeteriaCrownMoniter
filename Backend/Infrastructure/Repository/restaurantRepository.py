@@ -107,6 +107,17 @@ def get_all_reviews_by_restaurant_id(restaurant_id):
     return reviews
 
 
+def get_restaurant_image(restaurant_id):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute("SELECT restaurant_image FROM restaurant WHERE restaurant_id = %s", (restaurant_id,))
+    result = cur.fetchone()
+    cur.close()
+    conn.close()
+    
+    return result[0] if result else None 
+
+
 def add_restaurant(zone_id, restaurant_name, restaurant_location, restaurant_detail):
     conn = db_conn()
     cur = conn.cursor()

@@ -246,7 +246,7 @@ def update_bar(bar_id):
     # อัปเดตชื่อไฟล์ภาพในข้อมูล
     data['bar_image'] = file_name
     
-    updated = update_bar_service(bar_id, data)
+    # updated = update_bar_service(bar_id, data)
     
     # อัปเดตข้อมูล bar_id ในฐานข้อมูล (ถ้าจำเป็น)
     update_bar_image(bar_id, file_name)  # เพิ่ม
