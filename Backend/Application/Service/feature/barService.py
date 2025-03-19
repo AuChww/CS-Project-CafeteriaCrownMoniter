@@ -5,7 +5,8 @@ from Infrastructure.Repository.barRepository import (
     get_all_restaurants_by_bar_id,
     get_all_reviews_by_bar_id,
     get_all_zones_by_bar_id,
-    get_bar_image, add_bar,
+    get_bar_image,
+    add_bar,
     update_bar_image_path,
     update_bar,
     delete_bar )

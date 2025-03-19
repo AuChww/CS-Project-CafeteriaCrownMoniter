@@ -283,11 +283,10 @@ const RestaurantPage = () => {
                           <svg
                             key={index}
                             xmlns="http://www.w3.org/2000/svg"
-                            className={`h-5 w-5 ${
-                              index < review.rating
+                            className={`h-5 w-5 ${index < review.rating
                                 ? "fill-current"
                                 : "text-gray-300"
-                            }`}
+                              }`}
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
@@ -343,68 +342,73 @@ const RestaurantPage = () => {
       </div>
 
       {/* ส่วนเพิ่มรีวิว */}
-      <div className="mt-8">
-        <h3 className="text-xl font-bold mb-4">Add Your Review</h3>
-        <div className="mb-4">
-          <label htmlFor="rating" className="block text-gray-700">
-            Rating
-          </label>
-          <div className="flex gap-2">
-            {[...Array(5)].map((_, index) => (
-              <svg
-                key={index}
-                xmlns="http://www.w3.org/2000/svg"
-                className={`h-6 w-6 cursor-pointer ${
-                  index < rating ? "fill-yellow-500" : "text-gray-300"
-                }`}
-                onClick={() => setRating(index + 1)}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 17.75l-6.162 3.24 1.174-6.874L2 7.87l6.902-1.004L12 1l2.098 5.866L21 7.87l-5.012 6.246 1.174 6.874z" />
-              </svg>
-            ))}
+      {user ? (
+        <div className="mt-8">
+          <h3 className="text-xl font-bold mb-4">Add Your Review</h3>
+          <div className="mb-4">
+            <label htmlFor="rating" className="block text-gray-700">
+              Rating
+            </label>
+            <div className="flex gap-2">
+              {[...Array(5)].map((_, index) => (
+                <svg
+                  key={index}
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`h-6 w-6 cursor-pointer ${index < rating ? "fill-yellow-500" : "text-gray-300"
+                    }`}
+                  onClick={() => setRating(index + 1)}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 17.75l-6.162 3.24 1.174-6.874L2 7.87l6.902-1.004L12 1l2.098 5.866L21 7.87l-5.012 6.246 1.174 6.874z" />
+                </svg>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className="mb-4">
-          <label htmlFor="comment" className="block text-gray-700">
-            Comment
-          </label>
-          <textarea
-            id="comment"
-            className="w-full p-2 border rounded"
-            rows={4}
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="Write your review here..."
-          />
-        </div>
+          <div className="mb-4">
+            <label htmlFor="comment" className="block text-gray-700">
+              Comment
+            </label>
+            <textarea
+              id="comment"
+              className="w-full p-2 border rounded"
+              rows={4}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Write your review here..."
+            />
+          </div>
 
-        <div className="mb-4">
-          <label htmlFor="reviewImage" className="block text-gray-700">
-            Upload Image
-          </label>
-          <input
-            id="reviewImage"
-            type="file"
-            accept="image/*"
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-            onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-          />
-        </div>
+          <div className="mb-4">
+            <label htmlFor="reviewImage" className="block text-gray-700">
+              Upload Image
+            </label>
+            <input
+              id="reviewImage"
+              type="file"
+              accept="image/*"
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+            />
+          </div>
 
-        <button
-          onClick={handleAddReview}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Submit Review
-        </button>
-      </div>
+          <button
+            onClick={handleAddReview}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Submit Review
+          </button>
+        </div>
+      ) : (
+        <div className="my-8 py-8 text-center">
+          <p>Please Login before reviews.</p>
+        </div>
+      )}
 
       {editingReview && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
@@ -419,9 +423,8 @@ const RestaurantPage = () => {
                   <svg
                     key={index}
                     xmlns="http://www.w3.org/2000/svg"
-                    className={`h-6 w-6 cursor-pointer ${
-                      index < rating ? "fill-yellow-500" : "text-gray-300"
-                    }`}
+                    className={`h-6 w-6 cursor-pointer ${index < rating ? "fill-yellow-500" : "text-gray-300"
+                      }`}
                     onClick={() => setRating(index + 1)}
                     viewBox="0 0 24 24"
                     fill="none"

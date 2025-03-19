@@ -17,6 +17,7 @@ from Application.Service.feature.zoneService import (
     get_visitor_history_by_zone_id_service,
     get_restaurant_by_zone_id_service,
     get_all_report_by_zone_id_service,
+    get_zone_image_service,
     add_zone_service,
     update_zone_image,
     update_zone_service,
@@ -121,7 +122,7 @@ def get_all_report_by_zone_id_endpoint(zone_id):
     return jsonify({'reports': reports})
 
 @zone_bp.route('/api/v1/addZone', methods=['POST'])
-def add_zone_endpoint():
+def add_zone():
     data = request.form
     bar_id = data.get('bar_id')
     zone_name = data.get('zone_name')
@@ -156,14 +157,10 @@ def add_zone_endpoint():
 #     return jsonify({'message': 'Zone updated successfully'})
 
 @zone_bp.route('/api/v1/updateZone/<int:zone_id>', methods=['PATCH'])
-def update_zone_endpoint(zone_id):
+def update_zone(zone_id):
     # Get form data and files
     data = request.form.to_dict()  # Convert form data to dictionary
     zone_image = request.files.get('zone_image')
-
-    # Optionally add the file to the dictionary if it's present
-    if zone_image:
-        data['zone_image'] = zone_image
     
     # Get the individual fields from the data dictionary
     zone_id = data.get('zone_id')
@@ -174,7 +171,38 @@ def update_zone_endpoint(zone_id):
     current_visitor_count = 0  # Set default value for current_visitor_count
     
     # Update the zone using the service function
-    updated = update_zone_service(zone_id, data)  # Pass the full data dictionary
+    updated = update_zone_service(zone_id, data)  
+    
+    previous_file_name = get_zone_image_service(zone_id)
+    
+    file_name = f'zone{zone_id}.png'
+    file_path = os.path.join('public', 'image', 'zoneImages', file_name)
+    if zone_image:
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)  # ลบไฟล์เก่า
+                print(f"Old image {file_path} deleted.")
+            except Exception as e:
+                print(f"Error deleting old image: {e}")
+
+        try:
+            zone_image.save(file_path)  # บันทึกไฟล์ใหม่
+            print(f"New image saved to {file_path}")
+        except Exception as e:
+            print(f"Error saving image: {e}")
+            return jsonify({'message': 'Failed to save image'}), 500
+    else:
+        file_name = previous_file_name if previous_file_name else 'default.png'  # ถ้าไม่มีภาพใหม่ ให้ใช้ default.png
+
+    # อัปเดตชื่อไฟล์ภาพในข้อมูล
+    data['zone_image'] = file_name
+    
+    # updated = update_zone_service(zone_id, data)
+    
+    # อัปเดตข้อมูล zone_id ในฐานข้อมูล (ถ้าจำเป็น)
+    update_zone_image(zone_id, file_name)
+    
+    
     if not updated:
         return jsonify({'message': 'Zone not found'}), 404
 
@@ -240,7 +268,7 @@ def is_zone_open(zone_id):
 
 
 @zone_bp.route('/api/v1/updateCatchCount/<int:zone_id>', methods=['PATCH'])
-def update_catch_count():
+def update_zone_human_count():
     print(f"update_catch_count {datetime.now(timezone)}")
     zones = get_all_zones_service()
 
@@ -254,8 +282,7 @@ def update_catch_count():
             continue
         
         print(f"Zone is Open.")
-        video_path = "zone"
-        human_count = get_zone_human_count(zone.zone_id, video_path)
+        human_count = get_zone_human_count(zone.zone_id)
         print(f"{zone} count = {human_count}")
 
         if not isinstance(human_count, int):
@@ -301,11 +328,11 @@ def start_scheduler():
     # สร้าง Scheduler
     scheduler = BackgroundScheduler(timezone=tz)
 
-    update_catch_count()
+    update_zone_human_count()
     # save_zone_visitor_history()
 
     # เพิ่ม Job ที่จะเริ่มทำงานทันทีที่โปรแกรมเริ่ม และทำซ้ำทุกๆ 1 นาที
-    scheduler.add_job(update_catch_count, "cron", minute="*/1", timezone=tz, start_date=now)
+    scheduler.add_job(update_zone_human_count, "cron", minute="*/1", timezone=tz, start_date=now)
 
     # เพิ่ม Job ที่จะเริ่มทำงานทันทีที่โปรแกรมเริ่ม และทำซ้ำทุกๆ 1 ชั่วโมง
     # scheduler.add_job(save_zone_visitor_history, "cron", minute="*/1", timezone=tz, start_date=now)
@@ -398,7 +425,7 @@ def serve_actual_image(file_name):
 
 
 @zone_bp.route('/api/v1/deleteZone/<int:zone_id>', methods=['DELETE'])
-def delete_zone_endpoint(zone_id):
+def delete_zone(zone_id):
     deleted = delete_zone_service(zone_id)  # Use the service function here
     if not deleted:
         return jsonify({'message': 'Zone not found'}), 404

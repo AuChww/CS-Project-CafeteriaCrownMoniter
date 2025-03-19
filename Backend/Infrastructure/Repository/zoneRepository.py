@@ -202,6 +202,17 @@ def update_zone(zone_id, data):
     return updated
 
 
+def get_zone_image(zone_id):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute("SELECT zone_image FROM zone WHERE zone_id = %s", (zone_id,))
+    result = cur.fetchone()
+    cur.close()
+    conn.close()
+    
+    return result[0] if result else None 
+
+
 def update_zone_count(zone_id, count, update_date_time):
     """ อัปเดตค่าจำนวนคนที่อยู่ในโซน และอัปเดตเวลาล่าสุด """
     conn = db_conn()

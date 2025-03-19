@@ -120,7 +120,7 @@ const EditTab = () => {
       {/* ปุ่มเปิด Modal */}
       <button
         onClick={openModal}
-        className="px-4 py-2 bg-blue-500 text-white rounded"
+        className="px-4 py-2 bg-green-400 hover:bg-green-300 duration-300 text-white rounded"
       >
         Edit Tab
       </button>
@@ -142,7 +142,7 @@ const EditTab = () => {
                     onClick={() => handleTabChange("bar")}
                     className={`inline-block p-4 border-b-2 rounded-t-lg ${
                       activeTab === "bar"
-                        ? "border-blue-500 text-blue-500"
+                        ? "border-green-400 text-green-400"
                         : "border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                     }`}
                   >
@@ -154,7 +154,7 @@ const EditTab = () => {
                     onClick={() => handleTabChange("zone")}
                     className={`inline-block p-4 border-b-2 rounded-t-lg ${
                       activeTab === "zone"
-                        ? "border-blue-500 text-blue-500"
+                        ? "border-green-400 text-green-400"
                         : "border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                     }`}
                   >
@@ -166,7 +166,7 @@ const EditTab = () => {
                     onClick={() => handleTabChange("restaurant")}
                     className={`inline-block p-4 border-b-2 rounded-t-lg ${
                       activeTab === "restaurant"
-                        ? "border-blue-500 text-blue-500"
+                        ? "border-green-400 text-green-400"
                         : "border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                     }`}
                   >

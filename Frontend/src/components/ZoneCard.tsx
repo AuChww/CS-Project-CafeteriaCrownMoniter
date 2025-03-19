@@ -4,6 +4,7 @@ import { MdDeleteForever } from "react-icons/md";
 import RestaurantCard from "./RestaurantCard";
 import { useRouter } from "next/navigation";
 import { IoIosWarning } from "react-icons/io";
+import { useAuth } from "@/context/AuthContext";
 
 interface ZoneCardProps {
   zone_id: number;
@@ -103,12 +104,21 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
   zone_time,
   zone_image
 }) => {
+  const { user, role } = useAuth();
+  const [userRole, setUserRole] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const router = useRouter();
   const navigateToReports = () => {
     router.push("/pages/report"); // เปลี่ยนเส้นทางไปที่หน้า /pages/report
   };
+
+  useEffect(() => {
+    if (role) {
+      setUserRole(role);
+    }
+  }, [role]);
+
 
   const fetchBars = async () => {
     try {
@@ -213,16 +223,19 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
             <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
           </div>
         </div> */}
-
-          <div className="flex justify-end">
-            <button
-              onClick={navigateToReports}
-              className="flex bg-red-600 duration-200 rounded-lg px-3 py-2 text-md text-white font-bold hover:bg-yellow-200 hover:text-red-600"
-            >
-              <IoIosWarning className="mt-0.5 mr-2 w-5 h-5" />
-              Report
-            </button>
-          </div>
+          {user ? (
+            <div className="flex justify-end">
+              <button
+                onClick={navigateToReports}
+                className="flex bg-red-600 duration-200 rounded-lg px-3 py-2 text-md text-white font-bold hover:bg-yellow-200 hover:text-red-600"
+              >
+                <IoIosWarning className="mt-0.5 mr-2 w-5 h-5" />
+                Report
+              </button>
+            </div>
+          ) : (
+            <div></div>
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-4 p-2 pt-60">
@@ -255,11 +268,13 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
                     update_date_time={restaurant.update_date_time}
                   />
                 </div>
-                <div className="flex justify-end bg-white ">
-                  <div onClick={() => handleDeleteRes(restaurant.restaurant_id, restaurant.restaurant_name)}>
-                    <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
+                {userRole === "admin" && (
+                  <div className="flex justify-end bg-white ">
+                    <div onClick={() => handleDeleteRes(restaurant.restaurant_id, restaurant.restaurant_name)}>
+                      <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             ))}
         </div>

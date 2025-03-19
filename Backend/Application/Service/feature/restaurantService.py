@@ -2,6 +2,7 @@ from Infrastructure.Repository.restaurantRepository import (
     get_all_restaurants,
     get_restaurant_by_id,
     get_all_reviews_by_restaurant_id,
+    get_restaurant_image,
     add_restaurant, 
     update_restaurant_image_path,
     update_restaurant, 
@@ -17,6 +18,9 @@ def get_restaurant_by_id_service(restaurant_id):
 
 def get_all_reviews_by_restaurant_id_service(restaurant_id):
     return get_all_reviews_by_restaurant_id(restaurant_id)
+
+def get_restaurant_image_service(restaurant_id):
+    return get_restaurant_image(restaurant_id)
 
 def add_restaurant_service(zone_id, restaurant_name, restaurant_location, restaurant_detail):
     return add_restaurant(zone_id, restaurant_name, restaurant_location, restaurant_detail)

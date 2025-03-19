@@ -120,48 +120,6 @@ def get_all_zones_by_bar_id(bar_id):
     return jsonify({'zones': zone_list})
 
 
-# @bar_bp.route('/api/v1/addBar', methods=['POST'])
-# def add_bar():
-#     print(f"in add_bar")
-#     data = request.json
-#     bar_name = data.get('bar_name')
-#     bar_location = data.get('bar_location')
-#     bar_detail = data.get('bar_detail')
-#     max_people_in_bar = data.get("max_people_in_bar")
-#     bar_image = data.get('bar_image')  # รับ bar_image จาก request
-    
-#     print(f"bar_name: {bar_name} in Bar route")
-#     print(f"bar_location: {bar_location}")
-#     print(f"bar_detail: {bar_detail}")
-#     print(f"bar_image: {bar_image}")
-    
-
-#     if not all([bar_name, bar_location]):
-#         return jsonify({'message': 'Missing required fields'}), 400
-#     bar_id = add_bar_service(bar_name, bar_location, bar_detail, max_people_in_bar, bar_image)  # ส่ง bar_image ไปยัง service
-#     return jsonify({'message': 'Bar added successfully', 'bar_id': bar_id}), 201
-
-# @bar_bp.route('/api/v1/addBar', methods=['POST'])
-# def add_bar():
-#     bar_name = request.form.get('bar_name')
-#     bar_location = request.form.get('bar_location')
-#     bar_detail = request.form.get('bar_detail')
-#     max_people_in_bar = request.form.get('max_people_in_bar')
-    
-#     # รับไฟล์ภาพจาก request
-#     bar_image = request.files.get('bar_image')
-    
-#     # ตรวจสอบว่า bar_image ถูกส่งมา
-#     if bar_image:
-#         # เพิ่มข้อมูลบาร์ในฐานข้อมูล (หรือทำการประมวลผลก่อน)
-#         bar_id, file_path = add_bar_service(bar_name, bar_location, bar_detail, max_people_in_bar, bar_image)
-        
-#         # บันทึกไฟล์ภาพ (ถ้าฟังก์ชันไม่ทำแล้ว)
-#         bar_image.save(file_path)
-#         print(f"Image saved to {file_path}")
-        
-#     return jsonify({'message': 'Bar added successfully', 'bar_id': bar_id}), 201
-
 @bar_bp.route('/api/v1/addBar', methods=['POST'])
 def add_bar():
     bar_name = request.form.get('bar_name')
@@ -187,10 +145,6 @@ def add_bar():
         bar_image.save(file_path)  # บันทึกไฟล์ภาพ
         print(f"Image saved to {file_path}")
     
-    # file_path = f'public/image/barImages/bar{bar_id}.png'
-    # file_name = f'bar{bar_id}.png'
-    # bar_image.save(file_path)
-    # print(f"Image saved to {file_path}")
     
     # อัปเดตข้อมูล bar_id ในฐานข้อมูล (ถ้าจำเป็น)
     update_bar_image(bar_id, file_name)  # เพิ่มการอัปเดตไฟล์เส้นทาง
@@ -199,15 +153,6 @@ def add_bar():
 
 
 
-# @bar_bp.route('/api/v1/updateBar/<int:bar_id>', methods=['PUT'])
-# def update_bar(bar_id):
-    
-#     data = request.json
-#     updated = update_bar_service(bar_id, data)  # ส่งข้อมูลทั้งหมดยัง service
-#     if not updated:
-#         return jsonify({'message': 'Bar not found'}), 404
-
-#     return jsonify({'message': 'Bar updated successfully'})
 
 @bar_bp.route('/api/v1/updateBar/<int:bar_id>', methods=['PATCH'])
 def update_bar(bar_id):
@@ -229,7 +174,7 @@ def update_bar(bar_id):
     if bar_image:
         if os.path.exists(file_path):
             try:
-                os.remove(file_path)  # ลบไฟล์เก่า
+                os.remove(file_path)  # ลบไฟล์เก่าb
                 print(f"Old image {file_path} deleted.")
             except Exception as e:
                 print(f"Error deleting old image: {e}")
@@ -246,7 +191,7 @@ def update_bar(bar_id):
     # อัปเดตชื่อไฟล์ภาพในข้อมูล
     data['bar_image'] = file_name
     
-    updated = update_bar_service(bar_id, data)
+    # updated = update_bar_service(bar_id, data)
     
     # อัปเดตข้อมูล bar_id ในฐานข้อมูล (ถ้าจำเป็น)
     update_bar_image(bar_id, file_name)  # เพิ่ม

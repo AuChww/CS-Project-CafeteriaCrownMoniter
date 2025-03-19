@@ -18,6 +18,7 @@ import DayOfWeekVisitorChart from "@/components/bar/DayBarBarChart";
 import VisitorBarChart from "@/components/bar/BarBarChart";
 import { useRouter } from "next/navigation";
 import { MdDeleteForever } from "react-icons/md";
+import { useAuth } from "@/context/AuthContext";
 
 interface Bar {
   bar_id: number;
@@ -81,6 +82,15 @@ const BarPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [currentVisitors, setCurrentVisitors] = useState(0);
+  const { user, role } = useAuth();
+  const [userRole, setUserRole] = useState("");
+
+  useEffect(() => {
+    if (role) {
+      setUserRole(role);
+    }
+  }, [role]);
+
 
   const fetchBarAndZones = async () => {
     try {
@@ -280,7 +290,7 @@ const BarPage = () => {
                   key={zone.zone_id}
                   className=" w-full bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 transition-transform transform hover:scale-105 duration-300"
                 >
-                  <div 
+                  <div
                   // onClick={() =>
                   //   router.push(`/pages/recommend/zone/${zone.bar_id}`)
                   // }
@@ -297,11 +307,13 @@ const BarPage = () => {
                       zone_image={zone.zone_image}
                     />
                   </div>
-                  <div className="flex justify-end p-4">
-                    <div onClick={() => handleDelete(zone.zone_id, zone.zone_name)}>
-                      <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
+                  {userRole === "admin" && (
+                    <div className="flex justify-end p-4">
+                      <div onClick={() => handleDelete(zone.zone_id, zone.zone_name)}>
+                        <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ))}
           </div>

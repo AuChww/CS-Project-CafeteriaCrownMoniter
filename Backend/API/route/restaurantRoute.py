@@ -3,6 +3,7 @@ from Application.Service.feature.restaurantService import (
      get_restaurant_by_id_service,
      get_all_restaurants_service,
      get_all_reviews_by_restaurant_id_service,
+     get_restaurant_image_service,
      add_restaurant_service,
      update_restaurant_image_service,
      update_restaurant_service,
@@ -311,14 +312,43 @@ def update_restaurant(restaurant_id):
     data = request.form.to_dict()  
     restaurant_image = request.files.get('restaurant_image')
 
-    if restaurant_image:
-        data['restaurant_image'] = restaurant_image
 
     restaurant_id = data.get('restaurant_id')
     restaurant_name = data.get('restaurant_name')
     restaurant_detail = data.get('restaurant_detail')
     restaurant_location = data.get('restaurant_location')
     updated = update_restaurant_service(restaurant_id, data)  
+    
+    previous_file_name = get_restaurant_image_service(restaurant_id)
+    
+    file_name = f'restaurant{restaurant_id}.png'
+    file_path = os.path.join('public', 'image', 'restaurantImages', file_name)
+    if restaurant_image:
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)  # ลบไฟล์เก่า
+                print(f"Old image {file_path} deleted.")
+            except Exception as e:
+                print(f"Error deleting old image: {e}")
+
+        try:
+            restaurant_image.save(file_path)  # บันทึกไฟล์ใหม่
+            print(f"New image saved to {file_path}")
+        except Exception as e:
+            print(f"Error saving image: {e}")
+            return jsonify({'message': 'Failed to save image'}), 500
+    else:
+        file_name = previous_file_name if previous_file_name else 'default.png'  # ถ้าไม่มีภาพใหม่ ให้ใช้ default.png
+
+    # อัปเดตชื่อไฟล์ภาพในข้อมูล
+    data['restaurant_image'] = file_name
+    
+    # updated = update_restaurant_service(restaurant_id, data)
+    
+    # อัปเดตข้อมูล restaurant_id ในฐานข้อมูล (ถ้าจำเป็น)
+    update_restaurant_image_service(restaurant_id, file_name)  # เพิ่ม
+    
+    
     if not updated:
         return jsonify({'message': 'Restaurant not found'}), 404
 
