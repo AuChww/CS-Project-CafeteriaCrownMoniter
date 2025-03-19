@@ -16,21 +16,15 @@ model = YOLO('yoloModel/yolov8s.pt')  # ใช้โมเดล YOLOv8
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 # เปิดวิดีโอด้วย OpenCV
-def get_zone_human_count(video_id, video_path):
+def get_zone_human_count(video_id):
     
-    print(f"video_path: {video_path}")
     
-    if video_path ==  "zone":
-        video_path = os.path.join(os.path.dirname(__file__), f"../public/video/zone/{video_id}.mp4")
+
+    video_path = os.path.join(os.path.dirname(__file__), f"../public/video/zone/{video_id}.mp4")
         # ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่
-        if not os.path.exists(video_path):
-            print(f"Video file for zone {video_id} not found.")
-            return 0  # ถ้าไม่มีวิดีโอ ให้คืนค่า 0 ไปเลย
-    else :
-        video_path = os.path.join(os.path.dirname(__file__), f"../public/video/restaurant/{video_id}.mp4")
-        if not os.path.exists(video_path):
-            print(f"Video file for zone {video_id} not found.")
-            return 0 
+    if not os.path.exists(video_path):
+        print(f"Video file for zone {video_id} not found.")
+        return 0  
     
     cap = cv2.VideoCapture(video_path)
     

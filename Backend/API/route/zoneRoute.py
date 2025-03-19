@@ -122,7 +122,7 @@ def get_all_report_by_zone_id_endpoint(zone_id):
     return jsonify({'reports': reports})
 
 @zone_bp.route('/api/v1/addZone', methods=['POST'])
-def add_zone_endpoint():
+def add_zone():
     data = request.form
     bar_id = data.get('bar_id')
     zone_name = data.get('zone_name')
@@ -157,7 +157,7 @@ def add_zone_endpoint():
 #     return jsonify({'message': 'Zone updated successfully'})
 
 @zone_bp.route('/api/v1/updateZone/<int:zone_id>', methods=['PATCH'])
-def update_zone_endpoint(zone_id):
+def update_zone(zone_id):
     # Get form data and files
     data = request.form.to_dict()  # Convert form data to dictionary
     zone_image = request.files.get('zone_image')
@@ -268,7 +268,7 @@ def is_zone_open(zone_id):
 
 
 @zone_bp.route('/api/v1/updateCatchCount/<int:zone_id>', methods=['PATCH'])
-def update_catch_count():
+def update_zone_human_count():
     print(f"update_catch_count {datetime.now(timezone)}")
     zones = get_all_zones_service()
 
@@ -282,8 +282,7 @@ def update_catch_count():
             continue
         
         print(f"Zone is Open.")
-        video_path = "zone"
-        human_count = get_zone_human_count(zone.zone_id, video_path)
+        human_count = get_zone_human_count(zone.zone_id)
         print(f"{zone} count = {human_count}")
 
         if not isinstance(human_count, int):
@@ -426,7 +425,7 @@ def serve_actual_image(file_name):
 
 
 @zone_bp.route('/api/v1/deleteZone/<int:zone_id>', methods=['DELETE'])
-def delete_zone_endpoint(zone_id):
+def delete_zone(zone_id):
     deleted = delete_zone_service(zone_id)  # Use the service function here
     if not deleted:
         return jsonify({'message': 'Zone not found'}), 404
