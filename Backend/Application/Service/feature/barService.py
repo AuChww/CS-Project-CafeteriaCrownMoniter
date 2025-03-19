@@ -32,7 +32,7 @@ def get_all_zones_by_bar_id_service(bar_id):
     return get_all_zones_by_bar_id(bar_id)
 
 def get_bar_image_service(bar_id):
-    return get_bar_iamge(bar_id)
+    return get_bar_image(bar_id)
 
 def add_bar_service(bar_name, bar_location, bar_detail, max_people_in_bar):
     return add_bar(bar_name, bar_location, bar_detail, max_people_in_bar)

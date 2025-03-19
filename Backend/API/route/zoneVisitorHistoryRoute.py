@@ -27,7 +27,7 @@ def get_all_zone_visitor_histories_endpoint():
             'zone_visitor_history_id': vh.zone_visitor_history_id,
             'date_time': vh.date_time,
             'zone_id': vh.zone_id,
-            'visitor_count': vh.visitor_count
+            'visitor_count': vh.visitor_count,
         }
         for vh in visitor_histories
     ]

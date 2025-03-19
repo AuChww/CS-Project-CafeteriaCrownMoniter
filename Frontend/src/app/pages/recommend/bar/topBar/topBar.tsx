@@ -11,6 +11,7 @@ interface Bar {
   bar_detail: string;
   bar_image: string;
   bar_location: string;
+  bar_rating: number;
   total_rating: number;
   total_reviews: number;
 }
@@ -79,6 +80,7 @@ const TopBar: React.FC = () => {
                 bar_detail={bar.bar_detail}
                 bar_image={bar.bar_image}
                 bar_location={bar.bar_location}
+                bar_rating={bar.bar_rating}
                 total_rating={bar.total_rating}
                 total_reviews={bar.total_reviews}
               />

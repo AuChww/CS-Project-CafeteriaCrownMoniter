@@ -83,7 +83,9 @@ def update_review(review_id):
 
 @review_bp.route('/api/v1/deleteReview/<int:review_id>', methods=['DELETE'])
 def delete_review(review_id):
-    deleted = delete_review_service(review_id)
+    reviews = get_review_by_id_service(review_id)
+
+    deleted = delete_review_service(review_id, reviews.restaurant_id)
     if deleted:
         return jsonify({'message': 'Review deleted successfully'}), 200
     else:

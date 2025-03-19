@@ -18,5 +18,5 @@ def add_review_service(user_id, restaurant_id, rating, comment, review_image=Non
 def update_review_service(review_id, user_id, restaurant_id, rating, comment, review_image=None):
     return update_review(review_id, user_id, restaurant_id, rating, comment, review_image)
 
-def delete_review_service(review_id):
-    return delete_review(review_id)
+def delete_review_service(review_id, restaurant_id):
+    return delete_review(review_id, restaurant_id)

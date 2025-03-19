@@ -103,6 +103,8 @@ def get_zone_human_count(video_id, video_path):
     # คืนค่าตัวสุดท้ายของ all_human_counts
     return all_human_counts[-1] if all_human_counts else 0
 
+# get_zone_human_count(9,'zone')
+
 
 def get_restaurant_human_count(restaurant_id_first,restaurant_id_second):
     # สร้าง path ไปยังไฟล์วิดีโอ

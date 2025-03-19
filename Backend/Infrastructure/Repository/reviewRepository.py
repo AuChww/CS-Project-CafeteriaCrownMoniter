@@ -108,10 +108,25 @@ def update_review(review_id, user_id, restaurant_id, rating, review_comment, rev
     conn.close()
     return updated
 
-def delete_review(review_id):
+def delete_review(review_id, restaurant_id):
     conn = db_conn()
     cur = conn.cursor()
     cur.execute('DELETE FROM review WHERE review_id = %s', (review_id,))
+    cur.execute('UPDATE restaurant SET total_rating = total_rating - 1, total_reviews = total_reviews - 1 WHERE restaurant_id = %s', (restaurant_id,))
+    cur.execute(
+        '''
+        UPDATE bar
+        SET 
+            total_rating = bar.total_rating - 1, 
+            total_reviews = bar.total_reviews - 1
+        FROM zone
+        WHERE bar.bar_id = zone.bar_id AND zone.zone_id = (
+            SELECT zone_id FROM restaurant WHERE restaurant_id = %s
+        )
+        ''',
+        (restaurant_id,)
+    )
+
     deleted = cur.rowcount > 0
     conn.commit()
     cur.close()

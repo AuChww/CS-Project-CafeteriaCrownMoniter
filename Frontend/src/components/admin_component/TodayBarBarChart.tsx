@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, TooltipProps } from "recharts";
 
-// Define types for the visitor history, chart data, and zone data
-interface ZoneVisitorHistory {
-  date_time: string;
-  visitor_count: number;
-  zone_visitor_history_id: number;
-  zone_id: number;
-}
-
+// Define types
 interface Zone {
   bar_id: number;
   zone_id: number;
   current_visitor_count: number;
   zone_name: string;
+}
+
+interface VisitorHistory {
+  date_time: string;
+  visitor_count: number;
+  zone_id?: number; // Optional for restaurant data
+  restaurant_id?: number;
 }
 
 interface ChartData {
@@ -22,48 +22,39 @@ interface ChartData {
   bar_id: number;
 }
 
+const CustomTooltip: React.FC<TooltipProps<number, string>> = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="custom-tooltip bg-white py-2 px-4 rounded-lg text-sm">
+        <div className="font-bold">{data.name}</div>
+        <div className="flex justify-center gap-x-2">
+          <div className="flex gap-x-1">
+            <div className="text-green-400">Id : </div>
+            {data.bar_id}
+          </div>
+          <div className="flex gap-x-1">
+            <div className="ml-2 text-green-400">Visitors : </div>
+            {data.value}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
 const TodayBarVisitorBarChart: React.FC = () => {
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [zones, setZones] = useState<Zone[]>([]);
+  const [visitorHistory, setVisitorHistory] = useState<VisitorHistory[]>([]);
+  const [restaurantVisitorHistory, setRestaurantVisitorHistory] = useState<VisitorHistory[]>([]);
+  const [barNames, setBarNames] = useState<{ [key: number]: string }>({});
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // Ensure this code runs only on the client
     setIsClient(true);
 
-    // Fetch visitor history data
-    fetch("http://127.0.0.1:8000/api/v1/getAllZoneVisitorHistory")
-      .then((response) => response.json())
-      .then((data) => {
-        const visitorHistories: ZoneVisitorHistory[] = data.visitor_histories;
-
-        // Get today's date
-        const today = new Date();
-        const startOfDay = new Date(today.setHours(0, 0, 0, 0)); // Set to midnight to get only today's data
-
-        // Filter data for today and process for the bar chart
-        const filteredData: ChartData[] = visitorHistories.reduce<ChartData[]>((acc, curr) => {
-          const recordDate = new Date(curr.date_time);
-          if (recordDate >= startOfDay && recordDate <= today) {
-            const zoneIndex = acc.findIndex((item) => item.bar_id === curr.zone_id); // Use zone_id to match bar_id
-            if (zoneIndex > -1) {
-              acc[zoneIndex].value += curr.visitor_count;
-            } else {
-              acc.push({
-                name: `Bar ${curr.zone_id}`, // Display bar name here
-                value: curr.visitor_count,
-                bar_id: curr.zone_id, // Assuming zone_id represents bar_id
-              });
-            }
-          }
-          return acc;
-        }, []);
-
-        setChartData(filteredData);
-      })
-      .catch((err) => console.error(err));
-
-    // Fetch zones data
     fetch("http://127.0.0.1:8000/api/v1/getAllZones")
       .then((response) => response.json())
       .then((data) => {
@@ -72,52 +63,102 @@ const TodayBarVisitorBarChart: React.FC = () => {
       .catch((err) => console.error(err));
   }, []);
 
-  // Combine the visitor history with zone data (aggregating visitor counts by bar_id)
+  useEffect(() => {
+    if (zones.length > 0) {
+      const fetchBarNames = async () => {
+        const barNameMap: { [key: number]: string } = {};
+
+        await Promise.all(
+          zones.map(async (zone) => {
+            if (!barNameMap[zone.bar_id]) {
+              try {
+                const res = await fetch(`http://127.0.0.1:8000/api/v1/getBarId/${zone.bar_id}`);
+                const data = await res.json();
+                barNameMap[zone.bar_id] = data.bar_name;
+              } catch (error) {
+                console.error("Error fetching bar name:", error);
+              }
+            }
+          })
+        );
+
+        setBarNames(barNameMap);
+      };
+
+      fetchBarNames();
+    }
+  }, [zones]);
+
+  // Fetch visitor history data (Zones)
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/v1/getAllZoneVisitorHistory")
+      .then((response) => response.json())
+      .then((data) => {
+        setVisitorHistory(data.visitor_histories);
+      })
+      .catch((err) => console.error(err));
+  }, []);
+
+  // Fetch visitor history data (Restaurants)
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/v1/getAllRestaurantVisitorHistory")
+      .then((response) => response.json())
+      .then((data) => {
+        setRestaurantVisitorHistory(data.visitor_histories);
+      })
+      .catch((err) => console.error(err));
+  }, []);
+
   const aggregateVisitorsByBar = () => {
     const aggregatedData: { [key: number]: number } = {};
 
-    // Sum the visitor count for each zone in the bar
-    zones.forEach((zone) => {
-      if (!aggregatedData[zone.bar_id]) {
-        aggregatedData[zone.bar_id] = 0;
+    const today = new Date();
+    const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+
+    // Aggregate Zone Visitors
+    visitorHistory.forEach((history) => {
+      const recordDate = new Date(history.date_time);
+      if (recordDate >= startOfDay && recordDate <= endOfDay) {
+        const zone = zones.find(z => z.zone_id === history.zone_id);
+        if (zone) {
+          const barId = zone.bar_id;
+          if (!aggregatedData[barId]) aggregatedData[barId] = 0;
+          aggregatedData[barId] += history.visitor_count;
+        }
       }
-      // Add the current visitor count for the zone to the corresponding bar
-      aggregatedData[zone.bar_id] += zone.current_visitor_count;
+    });
+
+    // Aggregate Restaurant Visitors
+    restaurantVisitorHistory.forEach((history) => {
+      const recordDate = new Date(history.date_time);
+      if (recordDate >= startOfDay && recordDate <= endOfDay) {
+        if (history.restaurant_id !== undefined) {
+          const barId = history.restaurant_id;
+          if (!aggregatedData[barId]) aggregatedData[barId] = 0;
+          aggregatedData[barId] += history.visitor_count;
+        }
+      }
     });
 
     return Object.keys(aggregatedData).map((bar_id) => ({
-      name: `Bar ${bar_id}`,
+      name: barNames[parseInt(bar_id)] || `Bar ${bar_id}`,
       value: aggregatedData[parseInt(bar_id)],
       bar_id: parseInt(bar_id),
     }));
   };
 
-  // Ensure the chart is rendered only after the component has mounted on the client
   if (!isClient) return null;
 
   return (
     <div className="text-center relative">
-      <h3>Visitor Count by Bar (Today)</h3>
-      <BarChart
-        width={600}
-        height={200}
-        data={aggregateVisitorsByBar()} // Use the aggregated data here
-        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-      >
+      <h3>Visitor Count in Bar (Today)</h3>
+      <BarChart width={600} height={200} data={aggregateVisitorsByBar()} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis 
-          dataKey="name" 
-          tick={{ fontSize: 14 }}  // Set font size for X-axis labels
-        />
-        <YAxis 
-          tick={{ fontSize: 14 }}  // Set font size for Y-axis labels
-        />
-        <Tooltip 
-          itemStyle={{ fontSize: 14 }} // Set font size for tooltip items
-        />
-        <Legend 
-          wrapperStyle={{ fontSize: 14 }}  // Set font size for the legend
-        />
+        <XAxis dataKey="bar_id" tick={{ fontSize: 14 }} />
+        <YAxis tick={{ fontSize: 14 }} />
+        <Tooltip content={<CustomTooltip />} />
+        <Legend wrapperStyle={{ fontSize: 14 }} />
         <Bar dataKey="value" fill="#33CC99" />
       </BarChart>
     </div>

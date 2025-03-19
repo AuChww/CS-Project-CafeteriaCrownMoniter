@@ -204,6 +204,9 @@ const CrowdCard: React.FC<Bar> = ({
               </svg>
             ))}
           </div>
+          <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-800 ml-3">
+            {total_rating}
+          </span>
         </div>
       </div>
     </div>

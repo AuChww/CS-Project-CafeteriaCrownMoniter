@@ -219,8 +219,8 @@ const BarPage = () => {
 
   return (
     <div className="container mt-12 mx-auto p-4 w-full h-screen overflow-y-auto space-y-12">
-      <div className="flex w-full gap-6 xl:pt-10">
-        <div className="grid grid-cols-2">
+      <div className="flex gap-6 xl:pt-10 ">
+        <div className="grid w-full grid-cols-2">
           <div className="pl-8">
             <h1 className="text-3xl font-bold mb-4 text-green-500">
               {bar.bar_name}
@@ -272,17 +272,19 @@ const BarPage = () => {
             </div>
           </div>
           {/* ZoneCard */}
-          <div className="grid grid-cols-2 gap-4 p-10 mt-3">
+          <div className="grid grid-cols-1 gap-4 p-10 mt-3">
             {zones &&
               Array.isArray(zones) &&
               zones.map((zone) => (
                 <div
                   key={zone.zone_id}
-                  className="max-w-sm p-2 w-60 bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 transition-transform transform hover:scale-105 duration-300"
+                  className=" w-full bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 transition-transform transform hover:scale-105 duration-300"
                 >
-                  <div onClick={() =>
-                    router.push(`/pages/recommend/zone/${zone.bar_id}`)
-                  }>
+                  <div 
+                  // onClick={() =>
+                  //   router.push(`/pages/recommend/zone/${zone.bar_id}`)
+                  // }
+                  >
                     <ZoneCard
                       zone_id={zone.zone_id}
                       bar_id={zone.bar_id}
@@ -295,7 +297,7 @@ const BarPage = () => {
                       zone_image={zone.zone_image}
                     />
                   </div>
-                  <div className="flex justify-end">
+                  <div className="flex justify-end p-4">
                     <div onClick={() => handleDelete(zone.zone_id, zone.zone_name)}>
                       <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
                     </div>
@@ -304,7 +306,6 @@ const BarPage = () => {
               ))}
           </div>
         </div>
-        <div></div>
       </div>
 
       {/* Comments Section */}

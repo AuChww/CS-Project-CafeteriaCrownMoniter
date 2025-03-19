@@ -128,11 +128,7 @@ import { MdDeleteForever, MdEdit } from "react-icons/md";
 import AdminSwipe from "@/components/admin_component/AdminSwipe";
 import AdminCrowdCard from "@/components/admin_component/AdminCrowdCard";
 import AddTab from "@/components/admin_component/bar_button/addTab";
-import PopUpEditBar from "@/components/admin_component/bar_button/popUpEditBar";
-import PopUpDeleteBar from "@/components/admin_component/bar_button/popUpDeleteBar";
 import EditTab from "@/components/admin_component/bar_button/editTab";
-import { MdDeleteForever } from "react-icons/md";
-import { MdEdit } from "react-icons/md";
 
 interface Bar {
   bar_id: number;

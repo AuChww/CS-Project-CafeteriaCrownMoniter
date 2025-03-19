@@ -14,7 +14,7 @@ def get_all_restaurant_visitor_histories():
         RestaurantVisitorHistoryEntity(
             restaurant_visitor_history_id=row[0],
             date_time=row[1],
-            zone_id=row[2],
+            restaurant_id=row[2],
             visitor_count=row[3]
         )
         for row in data
@@ -37,9 +37,10 @@ def get_visitor_history_by_restaurant_id(restaurant_id):
     if rows:
         return [
             RestaurantVisitorHistoryEntity(
-                date_time=row[2],  # date_time corresponds to row[2]
-                zone_id=row[0],
-                visitor_count=row[1]
+                restaurant_visitor_history_id=row[0],
+                date_time=row[1],
+                restaurant_id=row[2],
+                visitor_count=row[3]
             )
             for row in rows
         ]

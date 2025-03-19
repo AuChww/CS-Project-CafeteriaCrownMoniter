@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
-
-interface ZoneVisitorHistory {
-  date_time: string;
-  visitor_count: number;
-  zone_visitor_history_id: number;
-  zone_id: number;
-}
+import { BarChart, Bar, XAxis, YAxis, TooltipProps, CartesianGrid, Tooltip, Legend } from "recharts";
 
 interface Zone {
   bar_id: number;
@@ -15,90 +8,170 @@ interface Zone {
   zone_name: string;
 }
 
+interface VisitorHistory {
+  date_time: string;
+  visitor_count: number;
+  zone_id?: number; // Optional for restaurant data
+  restaurant_id?: number;
+}
+
 interface ChartData {
   name: string;
   value: number;
   bar_id: number;
 }
 
+const CustomTooltip: React.FC<TooltipProps<number, string>> = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="custom-tooltip bg-white py-2 px-4 rounded-lg text-sm">
+        <div className="font-bold">{data.name}</div>
+        <div className="flex justify-center gap-x-2">
+          <div className="flex gap-x-1">
+            <div className="text-green-400">Id : </div>
+            {data.bar_id}
+          </div>
+          <div className="flex gap-x-1">
+            <div className="ml-2 text-green-400">Visitors : </div>
+            {data.value}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
 const MonthBarVisitorBarChart: React.FC = () => {
   const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [visitorHistory, setVisitorHistory] = useState<VisitorHistory[]>([]);
+  const [restaurantVisitorHistory, setRestaurantVisitorHistory] = useState<VisitorHistory[]>([]);
+  const [thirtyDaysAgoDate, setThirtyDaysAgoDate] = useState<Date | null>(null);
+
   const [zones, setZones] = useState<Zone[]>([]);
+  const [barNames, setBarNames] = useState<{ [key: number]: string }>({});
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
+      setIsClient(true);
+  
+      fetch("http://127.0.0.1:8000/api/v1/getAllZones")
+        .then((response) => response.json())
+        .then((data) => {
+          setZones(data.zones);
+        })
+        .catch((err) => console.error(err));
+    }, []);
+  
 
-    const today = new Date();
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(today.getDate() - 30);
+  useEffect(() => {
+      if (zones.length > 0) {
+        const fetchBarNames = async () => {
+          const barNameMap: { [key: number]: string } = {};
+  
+          await Promise.all(
+            zones.map(async (zone) => {
+              if (!barNameMap[zone.bar_id]) {
+                try {
+                  const res = await fetch(`http://127.0.0.1:8000/api/v1/getBarId/${zone.bar_id}`);
+                  const data = await res.json();
+                  barNameMap[zone.bar_id] = data.bar_name;
+                } catch (error) {
+                  console.error("Error fetching bar name:", error);
+                }
+              }
+            })
+          );
+  
+          setBarNames(barNameMap);
+        };
+  
+        fetchBarNames();
+      }
+    }, [zones]);
 
-    Promise.all([
-      fetch("http://127.0.0.1:8000/api/v1/getAllZoneVisitorHistory").then((res) => res.json()),
-      fetch("http://127.0.0.1:8000/api/v1/getAllZones").then((res) => res.json()),
-    ])
-      .then(([visitorData, zoneData]) => {
-        if (!visitorData.zone_visitor_history_id || !Array.isArray(visitorData.visitor_histories)) return;
-        if (!zoneData.zones || !Array.isArray(zoneData.zones)) return;
-
-        setZones(zoneData.zones);
-
-        const visitorHistories: ZoneVisitorHistory[] = visitorData.visitor_histories
-
-        const filteredData = visitorHistories.reduce<ChartData[]>((acc, curr) => {
-          const recordDate = new Date(curr.date_time);
-          if (recordDate >= thirtyDaysAgo && recordDate <= today) {
-            const zoneIndex = acc.findIndex((item) => item.bar_id === curr.zone_id);
-            if (zoneIndex > -1) {
-              acc[zoneIndex].value += curr.visitor_count;
-            } else {
-              acc.push({
-                name: `Bar ${curr.zone_id}`,
-                value: curr.visitor_count,
-                bar_id: curr.zone_id,
-              });
-            }
-          }
-          return acc;
-        }, []);
-
-        setChartData(filteredData);
-      })
-      .catch((err) => console.error("Error fetching data:", err));
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/v1/getAllZoneVisitorHistory")
+      .then((response) => response.json())
+      .then((data) => setVisitorHistory(data.visitor_histories))
+      .catch((err) => console.error(err));
   }, []);
 
-  // ฟังก์ชันรวมข้อมูลจาก Zone และ ChartData
-  const aggregateVisitorsByBar = () => {
-    const aggregatedData = chartData.reduce<{ [key: number]: number }>((acc, curr) => {
-      const zone = zones.find((zone) => zone.zone_id === curr.bar_id);
-      if (zone) {
-        acc[zone.bar_id] = (acc[zone.bar_id] || 0) + curr.value;
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/v1/getAllRestaurantVisitorHistory")
+      .then((response) => response.json())
+      .then((data) => setRestaurantVisitorHistory(data.visitor_histories))
+      .catch((err) => console.error(err));
+  }, []);
+
+  useEffect(() => {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30); // 30 days ago
+    setThirtyDaysAgoDate(thirtyDaysAgo);
+  }, []);
+
+  useEffect(() => {
+    if (
+      visitorHistory.length === 0 ||
+      restaurantVisitorHistory.length === 0 ||
+      !thirtyDaysAgoDate ||
+      Object.keys(barNames).length === 0 // Check if barNames is populated
+    ) {
+      return; // Skip processing until barNames is populated
+    }
+  
+    const dailyVisitorMap: { [date: string]: { [barId: number]: number[] } } = {};
+  
+    visitorHistory.concat(restaurantVisitorHistory).forEach((history) => {
+      const recordDate = new Date(history.date_time);
+      if (recordDate >= thirtyDaysAgoDate) {
+        const dateKey = recordDate.toISOString().split("T")[0];
+        const barId = history.zone_id ?? history.restaurant_id!;
+  
+        if (!dailyVisitorMap[dateKey]) {
+          dailyVisitorMap[dateKey] = {};
+        }
+        if (!dailyVisitorMap[dateKey][barId]) {
+          dailyVisitorMap[dateKey][barId] = [];
+        }
+        dailyVisitorMap[dateKey][barId].push(history.visitor_count);
       }
-      return acc;
-    }, {});
-
-    return Object.keys(aggregatedData).map((bar_id) => ({
-      name: `Bar ${bar_id}`,
-      value: aggregatedData[parseInt(bar_id)],
-      bar_id: parseInt(bar_id),
+    });
+  
+    const aggregatedData: { [barId: number]: { total: number; days: number } } = {};
+  
+    Object.values(dailyVisitorMap).forEach((dayData) => {
+      Object.entries(dayData).forEach(([barId, counts]) => {
+        const id = parseInt(barId);
+        if (!aggregatedData[id]) {
+          aggregatedData[id] = { total: 0, days: 0 };
+        }
+        aggregatedData[id].total += counts.reduce((sum, count) => sum + count, 0) / counts.length;
+        aggregatedData[id].days += 1;
+      });
+    });
+  
+    const finalChartData = Object.entries(aggregatedData).map(([barId, data]) => ({
+      name: barNames[parseInt(barId)], // Now guaranteed to have the bar name
+      value: data.total / data.days,
+      bar_id: parseInt(barId),
     }));
-  };
+  
+    setChartData(finalChartData);
+  }, [visitorHistory, restaurantVisitorHistory, thirtyDaysAgoDate, barNames]);
+  
 
-  if (!isClient) return null;
+  if (!thirtyDaysAgoDate) return null; // Wait until thirtyDaysAgoDate is set
 
   return (
     <div className="text-center relative">
-      <h3>Visitor Count by Bar (30 Days Before)</h3>
-      <BarChart
-        width={600}
-        height={200}
-        data={aggregateVisitorsByBar()}
-        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-      >
+      <h3>Average Visitors in Bar (Last 30 Days)</h3>
+      <BarChart width={600} height={200} data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" tick={{ fontSize: 14 }} />
+        <XAxis dataKey="bar_id" tick={{ fontSize: 14 }} />
         <YAxis tick={{ fontSize: 14 }} />
-        <Tooltip itemStyle={{ fontSize: 14 }} />
+        <Tooltip content={<CustomTooltip />} />
         <Legend wrapperStyle={{ fontSize: 14 }} />
         <Bar dataKey="value" fill="#3366FF" />
       </BarChart>
