@@ -17,18 +17,15 @@ export function Register() {
         const { id, value } = e.target;
     
         if (id === "username") {
-            // Allow all inputs but validate format separately
             setFormData((prev) => ({
                 ...prev,
                 [id]: value,
             }));
-    
-            // Validate username after updating the value
             const usernamePattern = /^b\d{10}$/;
             if (!usernamePattern.test(value) && value !== "") {
                 setError("Username must start with 'b' and be followed by 10 digits.");
             } else {
-                setError(""); // Clear error if valid
+                setError("");
             }
         } else {
             setFormData((prev) => ({
@@ -42,7 +39,6 @@ export function Register() {
     const handleRegister = async () => {
         const { username, email, password, confirmPassword } = formData;
 
-        // Basic validation
         if (!username || !email || !password || !confirmPassword) {
             setError("All fields are required.");
             return;
@@ -62,8 +58,8 @@ export function Register() {
                     username,
                     email,
                     password,
-                    role: "user", // Default role
-                    user_image: `${username}.png`, // Example: Username-based image name
+                    role: "user",
+                    user_image: `${username}.png`,
                 }),
             });
 
@@ -74,11 +70,10 @@ export function Register() {
             const data = await response.json();
             console.log("Registration successful:", data);
 
-            // Redirect to login page
             router.push("/pages/authenticate/login/");
         } catch (err) {
             if (err instanceof Error) {
-                console.error(err.message); // Access the error message
+                console.error(err.message);
             } else {
                 console.error("An unknown error occurred.");
             }
@@ -88,7 +83,6 @@ export function Register() {
     return (
         <div className="bg-white buttonClick duration-500">
             <div className="flex justify-center h-screen">
-                {/* Left panel */}
                 <div className="hidden bg-cover lg:block lg:w-1/3">
                     <div className="flex items-center h-full bg-gray-900 bg-opacity-40">
                         <div className="flex w-full h-full flex-col justify-center px-10 py-16 lg:px- z-10 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 background-animate">
@@ -98,15 +92,12 @@ export function Register() {
                     </div>
                 </div>
 
-                {/* Registration form */}
                 <div className="flex items-center w-full max-w-lg px-6 mx-auto lg:w-4/6">
                     <div>
                         <h2 className="text-gray-800 text-4xl font-bold text-center mb-6">Create a KU Account</h2>
 
-                        {/* Error message */}
                         {error && <div className="text-red-500 mb-4 text-sm">{error}</div>}
 
-                        {/* Username */}
                         <div className="mb-4">
                             <div className="flex">
                                 <label className="text-gray-800 block font-bold text-sm">Username</label>
@@ -122,7 +113,6 @@ export function Register() {
                             />
                         </div>
 
-                        {/* Email */}
                         <div className="mb-4">
                             <label className="text-gray-800 block font-bold text-sm">Email</label>
                             <input
@@ -135,7 +125,6 @@ export function Register() {
                             />
                         </div>
 
-                        {/* Password */}
                         <div className="mb-4">
                             <label className="text-gray-800 block font-bold text-sm">Password</label>
                             <input
@@ -148,7 +137,6 @@ export function Register() {
                             />
                         </div>
 
-                        {/* Confirm Password */}
                         <div className="mb-4">
                             <label className="text-gray-800 block font-bold text-sm">Confirm Password</label>
                             <input
@@ -161,7 +149,6 @@ export function Register() {
                             />
                         </div>
 
-                        {/* Register Button */}
                         <div className="text-center">
                             <button
                                 onClick={handleRegister}
@@ -170,7 +157,6 @@ export function Register() {
                             </button>
                         </div>
 
-                        {/* Navigation */}
                         <div className="text-center mt-6">
                             <a
                                 onClick={() => router.push("/pages/authenticate/login/")}

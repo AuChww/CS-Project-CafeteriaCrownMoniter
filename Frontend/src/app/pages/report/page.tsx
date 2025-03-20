@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
+import { useAuth } from "@/context/AuthContext";
 
-const ReportPage = () => {
+const ReportPageContent = () => {
     const searchParams = useSearchParams();
-    const defaultZoneId = searchParams.get("zone_id") || ""; // ✅ รับ zone_id จาก URL
+    const defaultZoneId = searchParams.get("zone_id") || "";
     const router = useRouter();
+    const { user } = useAuth();
 
     const [zones, setZones] = useState<{ zone_id: number; zone_name: string }[]>([]);
     const [selectedZone, setSelectedZone] = useState(defaultZoneId);
@@ -27,7 +29,7 @@ const ReportPage = () => {
         setLoading(true);
 
         const formData = new FormData();
-        formData.append("user_id", "1"); // TODO: ดึงจากระบบ auth
+        formData.append("user_id", user?.userId);
         formData.append("zone_id", selectedZone);
         formData.append("report_status", "pending");
         formData.append("report_type", reportType);
@@ -41,7 +43,7 @@ const ReportPage = () => {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             alert("รายงานปัญหาสำเร็จ!");
-            router.push("/"); // ✅ กลับไปหน้าแรก
+            router.push("/");
         } catch (error) {
             console.error(error);
             alert("เกิดข้อผิดพลาด");
@@ -102,6 +104,14 @@ const ReportPage = () => {
                 </form>
             </div>
         </div>
+    );
+};
+
+const ReportPage = () => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ReportPageContent />
+        </Suspense>
     );
 };
 

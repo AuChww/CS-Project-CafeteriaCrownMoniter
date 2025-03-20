@@ -1,4 +1,3 @@
-import jwt
 import base64
 import hmac
 from hashlib import sha256

@@ -23,7 +23,6 @@ export default function Admin() {
   const [bars, setBars] = useState<Bar[]>([]);
   const router = useRouter();
 
-  // ดึงข้อมูลจาก API
   const fetchBars = async () => {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/v1/getAllBars");
@@ -31,7 +30,7 @@ export default function Admin() {
         throw new Error("Failed to fetch bars");
       }
       const data = await response.json();
-      setBars(data.bars); // Assuming the API returns { bars: [...] }
+      setBars(data.bars);
     } catch (error) {
       console.error("Error fetching bars:", error);
     }

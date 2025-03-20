@@ -13,6 +13,7 @@ interface Restaurant {
   restaurant_location: string;
   restaurant_detail: string;
   restaurant_image: string;
+  restaurant_rating: number;
   total_rating: number;
   total_reviews: number;
   current_visitor_count: number;

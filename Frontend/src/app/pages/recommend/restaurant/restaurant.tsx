@@ -72,7 +72,6 @@ const AllRestaurant: React.FC = () => {
               }
               className="relative w-60"
             >
-              {/* Top 3 Sticker */}
               {index < 3 && (
                 <div
                   className="absolute flex top-2 right-2 bg-gradient-to-r

@@ -20,7 +20,7 @@ interface Zone {
 interface VisitorHistory {
   date_time: string;
   visitor_count: number;
-  zone_id?: number; // Optional for restaurant data
+  zone_id?: number;
   restaurant_id?: number;
 }
 
@@ -181,7 +181,7 @@ const MonthBarVisitorBarChart: React.FC = () => {
     setChartData(finalChartData);
   }, [visitorHistory, restaurantVisitorHistory, thirtyDaysAgoDate, barNames]);
 
-  if (!thirtyDaysAgoDate) return null; // Wait until thirtyDaysAgoDate is set
+  if (!thirtyDaysAgoDate) return null;
 
   return (
     <div className="text-center relative">

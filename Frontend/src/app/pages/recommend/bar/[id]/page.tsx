@@ -2,8 +2,6 @@
 
 import { useParams } from "next/navigation"; // ใช้ useParams แทน useRouter
 import React, { useEffect, useState, useRef } from "react";
-import ApexCharts from "apexcharts";
-import dynamic from "next/dynamic";
 import ZoneCard from "@/components/ZoneCard";
 import {
   BarChart,
@@ -14,8 +12,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import DayOfWeekVisitorChart from "@/components/bar/DayBarBarChart";
-import VisitorBarChart from "@/components/bar/BarBarChart";
 import { useRouter } from "next/navigation";
 import { MdDeleteForever } from "react-icons/md";
 import { useAuth } from "@/context/AuthContext";
@@ -68,7 +64,7 @@ const BarPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [currentVisitors, setCurrentVisitors] = useState(0);
-  const { user, role } = useAuth();
+  const { role } = useAuth();
   const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
@@ -92,15 +88,15 @@ const BarPage = () => {
 
       const barData: Bar = await getBarResponse.json();
       const zonesData: { zones: Zone[] } =
-        await getAllZoneByBarIdResponse.json(); // กำหนดให้รับข้อมูลเป็น object ที่มี key zones
+        await getAllZoneByBarIdResponse.json(); 
 
       setBar(barData);
-      setZones(zonesData.zones || []); // เข้าถึงข้อมูลใน key zones
-      setError(null); // Clear any previous errors
+      setZones(zonesData.zones || []); 
+      setError(null);
     } catch (err: any) {
       setError(err.message);
     } finally {
-      setLoading(false); // Always stop loading
+      setLoading(false); 
     }
 
     try {
@@ -116,7 +112,7 @@ const BarPage = () => {
 
       const data = await response.json();
       if (data.url) {
-        setImageUrl(data.url); // ใช้ URL ที่ดึงมา
+        setImageUrl(data.url); 
       } else {
         throw new Error("No image URL returned");
       }
@@ -132,7 +128,6 @@ const BarPage = () => {
   useEffect(() => {
     const fetchVisitorData = async () => {
       try {
-        // 1. ดึงข้อมูลโซนทั้งหมดที่เกี่ยวข้องกับ bar_id
         const zonesRes = await fetch(
           `http://127.0.0.1:8000/api/v1/getAllZonesByBarId/${id}`
         );
@@ -144,7 +139,6 @@ const BarPage = () => {
           0
         );
 
-        // 2. ดึงข้อมูลร้านอาหารทั้งหมดที่เกี่ยวข้องกับแต่ละ zone_id
         let totalRestaurantVisitors = 0;
 
         await Promise.all(
@@ -154,7 +148,6 @@ const BarPage = () => {
             );
             const restaurantData = await restaurantRes.json();
 
-            // รวม current_visitor_count ของทุกร้านอาหารในโซนนั้น
             totalRestaurantVisitors += (
               restaurantData.restaurants || []
             ).reduce(
@@ -164,8 +157,6 @@ const BarPage = () => {
             );
           })
         );
-
-        // 3. รวมค่า current_visitor ทั้งหมดจากโซนและร้านอาหาร
         setCurrentVisitors(totalZoneVisitors + totalRestaurantVisitors);
       } catch (error) {
         console.error("Error fetching visitor data:", error);
@@ -265,7 +256,6 @@ const BarPage = () => {
               </div>
             </div>
           </div>
-          {/* ZoneCard */}
           <div className="grid grid-cols-1 gap-4 p-10 mt-3">
             {zones &&
               Array.isArray(zones) &&

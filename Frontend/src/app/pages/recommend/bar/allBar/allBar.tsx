@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import React from "react";
-import BarAndRestaurant from "@/components/BarAndRestaurant";
 
 interface Bar {
   bar_id: number;

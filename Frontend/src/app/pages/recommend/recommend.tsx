@@ -1,27 +1,31 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import TopBar from "./bar/topBar/topBar";
-import TopRestaurant from "./bar/topBar/topRestaurant";
 import AllBar from "./bar/allBar/allBar"
 
 interface Bar {
   bar_id: number;
   bar_name: string;
-  bar_location: string;
+  max_people_in_bar: number;
   bar_detail: string;
+  bar_image: string;
+  bar_location: string;
+  bar_rating: number;
   total_rating: number;
   total_reviews: number;
-  bar_image: string;
 }
 
 interface Restaurant {
   restaurant_id: number;
+  zone_id: number;
   restaurant_name: string;
   restaurant_location: string;
   restaurant_detail: string;
+  restaurant_image: string;
+  restaurant_rating: number;
   total_rating: number;
   total_reviews: number;
-  restaurant_image: string;
+  current_visitor_count: number;
+  update_date_time: string;
 }
 
 const RecommendPage: React.FC = () => {

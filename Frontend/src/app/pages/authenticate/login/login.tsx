@@ -1,63 +1,44 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import axios from "axios";
-import { setCookie } from "nookies";
 
 export function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState(""); // State to store error message
+    const [error, setError] = useState("");
     const { login } = useAuth();
     const router = useRouter();
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleLogin = async (username: string, password: string) => {
+        setIsLoading(true);
         try {
             const response = await fetch('http://127.0.0.1:8000/api/auth/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password }),
             });
-    
-            const text = await response.text(); // Get the raw response text
-            
+
+            const text = await response.text();
+
             if (response.ok) {
-                const data = JSON.parse(text); // Now parse JSON if response is valid
+                const data = JSON.parse(text);
                 localStorage.setItem('token', data.token);
-                localStorage.setItem('userId', data.userId); // Store userId
-                login(data.token); // Set the user in context
-    
-                // Redirect based on role
-                if (data.role === 'admin') {
-                    router.push('/pages/admin'); // Admin route
-                    setTimeout(() => {
-                        window.location.reload(); // รีโหลดหน้า
-                    }, 2500);
-                } else {
-                    router.push('/'); // User route
-                    setTimeout(() => {
-                        window.location.reload(); // รีโหลดหน้า
-                    }, 2500);
-                }
+                localStorage.setItem('userId', data.userId);
+                login(data.token); 
+                router.push(data.role === 'admin' ? '/pages/admin' : '/');
             } else {
                 setError('Invalid username or password');
             }
         } catch (error) {
-            console.error('Error logging in:', error);
             setError('An error occurred while logging in');
+        } finally {
+            setIsLoading(false);
         }
     };
-
-    useEffect(() => {
-        if (username && password) {
-            handleLogin(username, password); // Call the handleLogin function after component mounts
-        }
-    }, [username, password]);
-    
 
     return (
         <div className={`bg-white buttonClick duration-500`}>
@@ -85,8 +66,8 @@ export function Login() {
 
                         <div className="mt-8">
                             <form onSubmit={(e) => {
-                                e.preventDefault(); // Prevent page reload on form submit
-                                handleLogin(username, password); // Send username and password
+                                e.preventDefault();
+                                handleLogin(username, password); 
                             }}>
 
                                 <div>
@@ -109,7 +90,7 @@ export function Login() {
                                         className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md"
                                     />
                                 </div>
-                                {error && <div className="mt-4 text-red-500">{error}</div>} {/* Show error message */}
+                                {error && <div className="mt-4 text-red-500">{error}</div>}
 
                                 <div className="mt-6">
                                     <button

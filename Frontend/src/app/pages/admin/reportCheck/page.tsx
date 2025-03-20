@@ -41,17 +41,14 @@ const ReportCheck = () => {
     const router = useRouter();
 
     useEffect(() => {
-        // Get all reports
         axios.get("http://127.0.0.1:8000/api/v1/getAllReports").then((response) => {
             setReports(response.data.reports);
         });
 
-        // Get all users
         axios.get("http://127.0.0.1:8000/api/v1/getAllUsers").then((response) => {
             setUsers(response.data.users);
         });
 
-        // Get all zones
         axios.get("http://127.0.0.1:8000/api/v1/getAllZones").then((response) => {
             setZones(response.data.zones);
         });
@@ -76,13 +73,11 @@ const ReportCheck = () => {
         setReports((prev) => prev.filter((r) => r.report_id !== id));
     };
 
-    // Function to get the username by user_id
     const getUserName = (user_id: number) => {
         const user = users.find((u) => u.user_id === user_id);
         return user ? user.username : "ไม่พบผู้ใช้";
     };
 
-    // Function to get the zone name by zone_id
     const getZoneName = (zone_id: number) => {
         const zone = zones.find((z) => z.zone_id === zone_id);
         return zone ? zone.zone_name : "ไม่พบโซน";

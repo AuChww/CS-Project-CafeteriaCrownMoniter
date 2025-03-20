@@ -35,13 +35,13 @@ interface Restaurant {
 
 interface Review {
   review_id: number;
-  user_id: number; // user_id ที่จะใช้ดึงข้อมูลชื่อผู้ใช้
+  user_id: number;
   restaurant_id: number;
   review_comment: string;
   review_image: string;
   rating: number;
   created_time: string;
-  user_name?: string; // เพิ่ม property สำหรับ username
+  user_name?: string;
 }
 
 const ZonePage = () => {
@@ -55,7 +55,7 @@ const ZonePage = () => {
   const [error, setError] = useState<string | null>(null);
 
   const navigateToReports = () => {
-    router.push("/pages/report"); // เปลี่ยนเส้นทางไปที่หน้า /pages/report
+    router.push("/pages/report"); 
   };
 
   const fetchZoneAndRestaurants = async () => {
@@ -103,7 +103,6 @@ const ZonePage = () => {
     }
 
     try {
-      // ดึง URL วิดีโอ
       const getVideoResponse = await fetch(
         `http://127.0.0.1:8000/api/v1/getZoneVideo/${id}.mp4`
       );
@@ -146,6 +145,7 @@ const ZonePage = () => {
       console.error("Error deleting bar:", error);
     }
   };
+
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div className="text-red-500">Error: {error}</div>;
@@ -196,7 +196,6 @@ const ZonePage = () => {
                 Report
               </button>
             </div>
-            {/* Restaurant List */}
             <div className="grid grid-cols-2 gap-4 p-10">
               {restaurants &&
                 Array.isArray(restaurants) &&

@@ -1,12 +1,9 @@
 import { useEffect } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { MdOutlineRestaurant } from "react-icons/md";
 import { FaWarehouse } from "react-icons/fa";
 import { BiSolidLike } from "react-icons/bi";
-import ZoneVisitorBarChart from "./WeekZoneBarChart";
 import TodayZoneVisitorBarChart from "./TodayZoneBarChart";
-import BarVisitorBarChart from "./WeekBarBarChart";
 import TodayBarVisitorBarChart from "./TodayBarBarChart";
 import TodayBarVisitorPieChart from "./MonthBarPieChart";
 import WeekZoneVisitorBarChart from "./WeekZoneBarChart";
@@ -25,7 +22,6 @@ const AdminSwipe = () => {
                 nextButton.click();
             }
         }, 3000);
-
         return () => clearInterval(interval);
     }, []);
 

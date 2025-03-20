@@ -37,28 +37,25 @@ interface Zone {
 
 const ReportDetailPage = () => {
   const params = useParams();
-  const reportId = params.id as string; // ✅ ใช้ useParams() เพื่อดึงค่า id
   const [report, setReport] = useState<Report | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [zone, setZone] = useState<Zone | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    // ดึงข้อมูล Report
     axios
       .get(`http://127.0.0.1:8000/api/v1/getReportById/${params.id}`)
       .then((response) => {
-        console.log('API Response:', response.data); // Log the entire response
+        console.log('API Response:', response.data);
         if (response.data) {
-          setReport(response.data); // Set the report data directly
+          setReport(response.data);
           return response.data;
         }
         throw new Error("Report data is missing.");
       })
       .then((reportData) => {
-        console.log('Report Data:', reportData); // Log the report data
+        console.log('Report Data:', reportData);
         if (reportData && reportData.user_id) {
-          // ดึงข้อมูล User
           axios.get(`http://127.0.0.1:8000/api/v1/getUserId/${reportData.user_id}`).then((res) => {
             setUser(res.data);
           }).catch(error => console.error("Error fetching user:", error));
@@ -67,7 +64,6 @@ const ReportDetailPage = () => {
         }
 
         if (reportData && reportData.zone_id) {
-          // ดึงข้อมูล Zone
           axios.get(`http://127.0.0.1:8000/api/v1/getZoneById/${reportData.zone_id}`).then((res) => {
             setZone(res.data);
           }).catch(error => console.error("Error fetching zone:", error));
@@ -101,7 +97,6 @@ const ReportDetailPage = () => {
       <div className="p-8 w-full gap-6 xl:pt-10">
         <h1 className="text-3xl font-bold mb-4">Report {report.report_id}</h1>
         <div className="grid grid-cols-2 gap-x-4">
-          {/* รายละเอียด Report */}
           <div className="border p-4 rounded-lg shadow-md mb-6">
             <h2 className="text-2xl font-semibold mb-2">รายละเอียดรายงาน</h2>
             <div className="text-gray-500 mt-2">แจ้งเมื่อ : {new Date(report.created_time).toLocaleString()}</div>
@@ -114,7 +109,7 @@ const ReportDetailPage = () => {
                       ? "text-green-400"
                       : report.report_status === "rejected"
                         ? "text-red-400"
-                        : "text-blue-400" // สำหรับ "resolved"
+                        : "text-blue-400"
                     }`}
                 >
                   {report.report_status}
@@ -131,7 +126,6 @@ const ReportDetailPage = () => {
           </div>
 
           <div>
-            {/* รายละเอียดผู้ใช้ */}
             <div className="border p-4 rounded-lg shadow-md mb-6 ">
               <h2 className="text-xl font-semibold">ข้อมูลผู้แจ้ง</h2>
               <div className="flex items-center space-x-4 mt-2 text-zinc-600  mt-4" >
@@ -144,7 +138,6 @@ const ReportDetailPage = () => {
               </div>
             </div>
 
-            {/* รายละเอียดโซน */}
             <div className="border p-4 rounded-lg shadow-md mb-6">
               <h2 className="text-xl font-semibold">ข้อมูลโซน</h2>
               <div className="flex items-center space-x-4 mt-2 text-zinc-600 mt-4">
@@ -160,7 +153,6 @@ const ReportDetailPage = () => {
             </div>
           </div>
 
-          {/* ปุ่มจัดการ */}
           <div className="flex space-x-4  justify-end">
             {report.report_status === "pending" && (
               <>

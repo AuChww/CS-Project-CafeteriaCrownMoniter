@@ -6,21 +6,44 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [userId, setUserId] = useState(null);
     const [role, setRole] = useState(null);
+    const [usernameDecoded, setUsernameDecoded] = useState('');
 
     useEffect(() => {
-        // รับ token จาก localStorage เมื่อเริ่มต้น
         const token = localStorage.getItem("token");
-
-        // หากมี token ให้ถอดรหัสและเก็บข้อมูลผู้ใช้
+    
         if (token) {
-            const decodedUser = decodeJWT(token);
-            if (decodedUser) {
-                setUser(decodedUser);
-                setRole(decodedUser.role);
+            try {
+                const decoded = decodeJWT(token);
+                setUser({
+                    userId: decoded.user_id,
+                    username: decoded.username,
+                    role: decoded.role
+                });
+            } catch (error) {
+                console.error("Error decoding token:", error);
             }
         }
     }, []);
+
+
+    // useEffect(() => {
+    //     // รับ token จาก localStorage เมื่อเริ่มต้น
+    //     const token = localStorage.getItem("token");
+
+    //     // หากมี token ให้ถอดรหัสและเก็บข้อมูลผู้ใช้
+    //     if (token) {
+    //         try {
+    //             const decoded = decodeJWT(token);
+    //             setUsernameDecoded(decoded.username);
+    //             setUserId(decoded.user_id);
+    //             setRole(decoded.role);
+    //         } catch (error) {
+    //             console.error("Error decoding token:", error);
+    //         }
+    //     }
+    // }, [usernameDecoded,userId,role]);
 
     // ฟังก์ชันสำหรับถอดรหัส JWT
     // ฟังก์ชันสำหรับถอดรหัส JWT
