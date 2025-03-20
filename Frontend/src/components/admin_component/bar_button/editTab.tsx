@@ -4,14 +4,13 @@ import EditZone from "@/components/admin_component/bar_button/editZone";
 import EditRestaurant from "@/components/admin_component/bar_button/editRestaurant";
 
 interface Bar {
-    bar_id: number;
-    bar_name: string;
-    bar_detail: string;
-    bar_image: string;
-    current_visitor_count: number;
-    max_people_in_bar: number;
-  }
-
+  bar_id: number;
+  bar_name: string;
+  bar_detail: string;
+  bar_image: string;
+  current_visitor_count: number;
+  max_people_in_bar: number;
+}
 
 interface Zone {
   zone_id: number;
@@ -22,13 +21,12 @@ interface Zone {
   zone_image: string;
 }
 
-
 interface Restaurant {
-    restaurant_id: number;
-    restaurant_name: string;
-    restaurant_detail: string;
-    restaurant_location: string;
-    restaurant_image: string;
+  restaurant_id: number;
+  restaurant_name: string;
+  restaurant_detail: string;
+  restaurant_location: string;
+  restaurant_image: string;
 }
 
 const EditTab = () => {
@@ -45,7 +43,6 @@ const EditTab = () => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [restaurantList, setRestaurantList] = useState<Restaurant[]>([]);
   const [zoneList, setZoneList] = useState<Zone[]>([]);
-
 
   // เปิด Modal
   const openModal = () => {
@@ -64,54 +61,61 @@ const EditTab = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-        try {
-          const barsResponse = await fetch("http://127.0.0.1:8000/api/v1/getAllBars");
-      
-          if (!barsResponse.ok) {
-            throw new Error("Failed to fetch data");
-          }
-      
-          const barsData: { bars: Bar[] } = await barsResponse.json();
-      
-          setBarList(barsData.bars); // Set to barList instead of bars
-          setLoading(false);
-        } catch (err: any) {
-          setError(err.message);
-          setLoading(false);
+      try {
+        const barsResponse = await fetch(
+          "http://127.0.0.1:8000/api/v1/getAllBars"
+        );
+
+        if (!barsResponse.ok) {
+          throw new Error("Failed to fetch data");
         }
 
-        try {
-          const zonesResponse = await fetch("http://127.0.0.1:8000/api/v1/getAllZones");
-      
-          if (!zonesResponse.ok) {
-            throw new Error("Failed to fetch data");
-          }
-      
-          const zonesData: { zones: Zone[] } = await zonesResponse.json();
-      
-          setZoneList(zonesData.zones);
-          setLoading(false);
-        } catch (err: any) {
-          setError(err.message);
-          setLoading(false);
+        const barsData: { bars: Bar[] } = await barsResponse.json();
+
+        setBarList(barsData.bars); // Set to barList instead of bars
+        setLoading(false);
+      } catch (err: any) {
+        setError(err.message);
+        setLoading(false);
+      }
+
+      try {
+        const zonesResponse = await fetch(
+          "http://127.0.0.1:8000/api/v1/getAllZones"
+        );
+
+        if (!zonesResponse.ok) {
+          throw new Error("Failed to fetch data");
         }
 
-        try {
-            const restaurantsResponse = await fetch("http://127.0.0.1:8000/api/v1/getAllRestaurants");
-        
-            if (!restaurantsResponse.ok) {
-              throw new Error("Failed to fetch data");
-            }
-        
-            const restaurantsData: { restaurants: Restaurant[] } = await restaurantsResponse.json();
-        
-            setRestaurantList(restaurantsData.restaurants);
-            setLoading(false);
-          } catch (err: any) {
-            setError(err.message);
-            setLoading(false);
-          }
-      };
+        const zonesData: { zones: Zone[] } = await zonesResponse.json();
+
+        setZoneList(zonesData.zones);
+        setLoading(false);
+      } catch (err: any) {
+        setError(err.message);
+        setLoading(false);
+      }
+
+      try {
+        const restaurantsResponse = await fetch(
+          "http://127.0.0.1:8000/api/v1/getAllRestaurants"
+        );
+
+        if (!restaurantsResponse.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const restaurantsData: { restaurants: Restaurant[] } =
+          await restaurantsResponse.json();
+
+        setRestaurantList(restaurantsData.restaurants);
+        setLoading(false);
+      } catch (err: any) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
     fetchData();
   }, []);
 

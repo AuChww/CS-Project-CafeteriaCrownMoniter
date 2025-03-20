@@ -176,21 +176,6 @@ def update_bar_image_path(bar_id, file_name):
 
 
 
-# def update_bar(bar_id, data):
-#     conn = db_conn()
-#     cur = conn.cursor()
-#     cur.execute(
-#         'UPDATE bar SET bar_name = %s, bar_location = %s, bar_detail = %s, max_people_in_bar = %s, '
-#         'total_rating = %s, total_reviews = %s, bar_image = %s WHERE bar_id = %s',
-#         (data.get('bar_name'), data.get('bar_location'), data.get('bar_detail'), data.get('max_people_in_bar'),
-#          data.get('total_rating'), data.get('total_reviews'), data.get('bar_image'), bar_id)
-#     )
-#     updated = cur.rowcount > 0
-#     conn.commit()
-#     cur.close()
-#     conn.close()
-#     return updated
-
 def get_bar_image(bar_id):
     conn = db_conn()
     cur = conn.cursor()

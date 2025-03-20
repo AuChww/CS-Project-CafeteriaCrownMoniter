@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import CrowdCard from "@/components/CrowdCard";
 import YouTubeEmbed from "@/components/youtubeEmbed";
-import UpdateZoneCountButton from "@/components/ZoneCountTest";
 
 interface Bar {
   bar_id: number;
@@ -50,7 +49,7 @@ export default function HomePage() {
         </div>
         <Swipe />
       </div>
-      <div className="flex mt-2 grid grid-cols-5 gap-2 bg-green-500 p-2 rounded-lg">
+      <div className=" mt-2 grid grid-cols-5 gap-2 bg-green-500 p-2 rounded-lg">
         <YouTubeEmbed
           src="https://www.youtube.com/embed/GuI4SZtgYYY?autohide=1&modestbranding=1&rel=0"
           title="YouTube Video 1"

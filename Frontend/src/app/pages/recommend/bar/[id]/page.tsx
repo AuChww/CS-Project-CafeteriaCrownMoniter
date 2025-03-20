@@ -59,23 +59,9 @@ interface Restaurant {
 }
 
 const BarPage = () => {
-  // const { id } = useParams(); // ดึง id จาก URL
-  // const [bar, setBar] = useState<Bar | null>(null);
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const data = [
-    { month: "Sunday", sales: 50 },
-    { month: "Monday", sales: 40 },
-    { month: "Tuesday", sales: 300 },
-    { month: "Wednesday", sales: 320 },
-    { month: "Thursday", sales: 500 },
-    { month: "Friday", sales: 350 },
-    { month: "Saturday", sales: 200 },
-  ];
-
-  const { id } = useParams(); // ดึง id จาก URL
+  const { id } = useParams();
   const [bar, setBar] = useState<Bar | null>(null);
   const [zones, setZones] = useState<Zone[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -90,7 +76,6 @@ const BarPage = () => {
       setUserRole(role);
     }
   }, [role]);
-
 
   const fetchBarAndZones = async () => {
     try {
@@ -203,13 +188,18 @@ const BarPage = () => {
   }, [id]);
 
   const handleDelete = async (bar_id: number, bar_name: string) => {
-    const confirmDelete = window.confirm(`Are you sure to delete Zone ${bar_id} : ${bar_name} ?`);
+    const confirmDelete = window.confirm(
+      `Are you sure to delete Zone ${bar_id} : ${bar_name} ?`
+    );
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/deleteZone/${bar_id}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/v1/deleteZone/${bar_id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (response.ok) {
         fetchBarAndZones();
@@ -235,13 +225,7 @@ const BarPage = () => {
             <h1 className="text-3xl font-bold mb-4 text-green-500">
               {bar.bar_name}
             </h1>
-            {/* {bar.bar_image && (
-              <img
-                src={`/image/barImages/${bar.bar_image}`}
-                alt={bar.bar_name}
-                className="w-full object-cover rounded-md mb-4"
-              />
-            )}  */}
+
             {imageUrl ? (
               <img
                 className="w-full object-cover rounded-md mb-4"
@@ -290,11 +274,7 @@ const BarPage = () => {
                   key={zone.zone_id}
                   className=" w-full bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 transition-transform transform hover:scale-105 duration-300"
                 >
-                  <div
-                  // onClick={() =>
-                  //   router.push(`/pages/recommend/zone/${zone.bar_id}`)
-                  // }
-                  >
+                  <div>
                     <ZoneCard
                       zone_id={zone.zone_id}
                       bar_id={zone.bar_id}
@@ -309,7 +289,11 @@ const BarPage = () => {
                   </div>
                   {userRole === "admin" && (
                     <div className="flex justify-end p-4">
-                      <div onClick={() => handleDelete(zone.zone_id, zone.zone_name)}>
+                      <div
+                        onClick={() =>
+                          handleDelete(zone.zone_id, zone.zone_name)
+                        }
+                      >
                         <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
                       </div>
                     </div>
@@ -319,39 +303,6 @@ const BarPage = () => {
           </div>
         </div>
       </div>
-
-      {/* Comments Section */}
-      <section className="py-8 relative">
-        <div className="w-full max-w-7xl px-4 md:px-5 lg:px-20 mx-auto">
-          <div className=" mb-10">
-            <h2 className="text-gray-900 mb-8 text-4xl font-bold font-manrope leading-normal">
-              ยอดผู้ใช้บริการ
-            </h2>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#dddddd" />
-                <XAxis
-                  dataKey="month"
-                  tick={{
-                    fontSize: 12,
-                    fontFamily: "inherit",
-                    fill: "#616161",
-                  }}
-                />
-                <YAxis
-                  tick={{
-                    fontSize: 12,
-                    fontFamily: "inherit",
-                    fill: "#616161",
-                  }}
-                />
-                <Tooltip />
-                <RechartsBar dataKey="sales" fill="#068010" barSize={40} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };

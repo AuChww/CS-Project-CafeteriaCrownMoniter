@@ -85,12 +85,7 @@ def get_all_reviews_by_restaurant_id(restaurant_id):
 
 @restaurant_bp.route('/api/v1/addRestaurant', methods=['POST'])
 def add_restaurant():
-    # data = request.json
-    # bar_id = data.get('bar_id')
-    # restaurant_name = data.get('restaurant_name')
-    # restaurant_location = data.get('restaurant_location')
-    # restaurant_detail = data.get('restaurant_detail')
-    # restaurant_image = data.get('restaurant_image')  # รับ restaurant_image จาก request
+
     data = request.form
     zone_id = data.get('zone_id')
     restaurant_name = data.get('restaurant_name')
@@ -116,88 +111,7 @@ def add_restaurant():
     
     return jsonify({'message': 'Restaurant added successfully', 'restaurant_id': restaurant_id}), 201
 
-
-
 timezone = pytz.timezone('Asia/Bangkok')
-
-# @restaurant_bp.route('/api/v1/updateCountAllRestaurants', methods=['PATCH'])
-# def update_count_all_restaurants():
-#     print(f"Running scheduled task: update_count_all_restaurants | Time: {timezone}")
-#     restaurants = get_all_restaurants_service()
-
-#     if not restaurants:
-#         print("No restaurants found")
-#         return
-
-
-#     for restaurant in restaurants:
-#         human_count = get_zone_human_count(restaurant.restaurant_id)
-
-#         if not isinstance(human_count, int):
-#             print(f"Invalid human count for restaurant: {restaurant.restaurant_id}")
-#             continue  # ข้ามโซนนั้นถ้ามีปัญหา
-
-#         update_restaurant_count_service(restaurant.restaurant_id, human_count)
-#         # updated_counts[restaurant.restaurant_id] = human_count
-#         print(f"Updated restaurant {restaurant.restaurant_id}: {human_count} human count")
-
-#     print(f"Update Human count Amount: {human_count} | Restaurant: {restaurant.restaurant_id}")
-
-# @restaurant_bp.route('/api/v1/updateRestaurantHumanCount/<int:zone_id>', methods=['PATCH'])
-# def update_restaurant_human_count():
-#     print(f"update_human_count {datetime.now(timezone)}")
-#     restaurants = get_all_restaurants_service()
-
-#     if not restaurants:
-#         print(f"[{datetime.now(timezone)}] No restaurants found")
-#         return
-
-#     # for restaurant in range(0, len(restaurants), 2):
-#     #     print(f"restaurant_id: {restaurant.restaurant_id}")
-#     #     # แก้ไขจาก unpacking เป็นการดึงค่าเพียงอย่างเดียว
-#     #     human_count = get_restaurant_human_count(restaurant.restaurant_id, restaurant.restaurant_id + 1)
-#     #     print(f"restaurant_id: {restaurant},{restaurant + 1} | restaurant_count_amount: {human_count}")
-
-#     #     if not isinstance(human_count, int):
-#     #         print(f"[{datetime.now}] Invalid human count for restaurant {restaurant.restaurant_id}")
-#     #         continue
-
-#     #     update_date_time = datetime.now(pytz.utc).astimezone(timezone)
-#     #     update_date_time_str = update_date_time.strftime('%Y-%m-%d %H:%M:%S')
-        
-#     #     update_restaurant_count_service(human_count)
-
-#     #     print(f"[{datetime.now(timezone)}] Updated Restaurant_id  {restaurant.restaurant_id} with count {human_count}")
-#     #     print(f"-------------------------------------------------------------------------------------------------")
-
-#     for i in range(0, len(restaurants), 2):
-#         # ดึง restaurant_id ทีละสองตัว
-#         restaurant_id_1 = restaurants[i].restaurant_id
-#         restaurant_id_2 = restaurants[i].restaurant_id + 1
-
-#         # ดึงค่า human_count ออกมา
-#         human_count = get_restaurant_human_count(restaurant_id_1, restaurant_id_2)
-#         print(f"res human count {restaurant_id_1} and {restaurant_id_2} : {human_count}")
-
-#         # ตรวจสอบข้อมูลที่ได้
-#         if not isinstance(human_count, list):
-#             print(f"[{datetime.now()}] Invalid human count for restaurant {restaurant_id_1} and {restaurant_id_2}")
-#             continue
-
-#         # แปลงข้อมูลในรูปแบบ (zone_id, count, zone_id, count)
-#         human_count_data = []
-#         for zone_id, count in human_count.items():
-#             human_count_data.append(zone_id)
-#             human_count_data.append(count)
-        
-#         print(f"restaurant human count {human_count_data}")
-
-
-#         # ส่งข้อมูลเข้าไปใน update service
-#         update_restaurant_count_service(*human_count_data)
-
-#         print(f"[{datetime.now()}] Updated Restaurant_id {restaurant_id_1} and {restaurant_id_2} with count {human_count}")
-#         print(f"-------------------------------------------------------------------------------------------------")
 
 @restaurant_bp.route('/api/v1/updateRestaurantHumanCount/<int:zone_id>', methods=['PATCH'])
 def update_restaurant_human_count():

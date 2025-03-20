@@ -10,7 +10,7 @@ interface Bar {
 }
 
 interface AddZoneProps {
-  bars: Bar[]; // bars should be passed as a prop, not state
+  bars: Bar[];
 }
 
 const AddZone: React.FC<AddZoneProps> = ({ bars }) => {
@@ -20,10 +20,10 @@ const AddZone: React.FC<AddZoneProps> = ({ bars }) => {
   const [zoneImage, setZoneImage] = useState<File | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedZone, setSelectedZone] = useState("");
-  const [error, setError] = useState<string | null>(null); // Error state
-  const [isSubmitting, setIsSubmitting] = useState(false); // Disable submit while submitting
-  const [zoneStartTime, setZoneStartTime] = useState<string>(""); // For start time
-  const [zoneEndTime, setZoneEndTime] = useState<string>(""); // For end timeืยท
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [zoneStartTime, setZoneStartTime] = useState<string>("");
+  const [zoneEndTime, setZoneEndTime] = useState<string>("");
   const zoneTime = `${zoneStartTime}:00 - ${zoneEndTime}:00`;
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -62,19 +62,18 @@ const AddZone: React.FC<AddZoneProps> = ({ bars }) => {
 
       console.log("zone added successfully");
 
-      // Reset form fields after successful submission
       setZoneName("");
       setZoneDetail("");
       setMaxPeopleInZone("");
-      setZoneStartTime(""); // Reset start time
-      setZoneEndTime(""); // Reset end time
+      setZoneStartTime("");
+      setZoneEndTime("");
       setSelectedZone("");
       setZoneImage(null);
       if (fileInputRef.current) {
-        fileInputRef.current.value = ""; // ล้างค่า input file เพื่อให้ UI อัปเดต
+        fileInputRef.current.value = "";
       }
       setError(null);
-      toggleModal(); // Close the modal after submission
+      toggleModal();
     } catch (error) {
       setError(
         "There was an error while submitting the form. Please try again."
@@ -253,8 +252,7 @@ const AddZone: React.FC<AddZoneProps> = ({ bars }) => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-5 md:p-5 text-center space-y-6">
-              
-            <svg
+              <svg
                 viewBox="0 0 117 117"
                 version="1.1"
                 className="w-16 h-16 ml-auto mr-auto"

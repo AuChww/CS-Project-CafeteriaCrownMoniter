@@ -115,19 +115,6 @@ def add_restaurant_visitor_history_endpoint():
     restaurant_visitor_history_id = add_restaurant_visitor_history_service(date_time, restaurant_id, visitor_count)
     return jsonify({'message': 'Visitor history added successfully', 'restaurant_visitor_history_id': restaurant_visitor_history_id}), 201
 
-# @restaurant_visitor_history_bp.route('/api/v1/addVisitorHistory', methods=['POST'])
-# def add_visitor_history_endpoint():
-#     data = request.json
-#     date_time = data.get('date_time')
-#     restaurant_id = data.get('restaurant_id')
-#     visitor_count = data.get('visitor_count')
-
-#     if not date_time or not restaurant_id or visitor_count is None:
-#         return jsonify({'message': 'Missing required fields'}), 400
-
-#     visitor_history_id = add_visitor_history_service(date_time, restaurant_id, visitor_count)
-#     return jsonify({'message': 'Visitor history added successfully', 'visitor_history_id': visitor_history_id}), 201
-
 @restaurant_visitor_history_bp.route('/api/v1/updateRestaurantVisitorHistory/<int:restaurant_visitor_history_id>', methods=['PUT'])
 def update_restaurant_visitor_history_endpoint(restaurant_visitor_history_id):
     data = request.json

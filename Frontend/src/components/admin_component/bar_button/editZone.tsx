@@ -34,7 +34,8 @@ const EditZone: React.FC<EditZoneProps> = ({ zones }) => {
   const [previousZoneEndTime, setPreviousZoneEndTime] = useState("");
   const [previousZoneTime, setPreviousZoneTime] = useState("");
   const [previousZoneImage, setPreviousZoneImage] = useState("");
-  const [previousSelectedZone, setPreviousSelepreviousSelectedZone] = useState("");
+  const [previousSelectedZone, setPreviousSelepreviousSelectedZone] =
+    useState("");
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -43,7 +44,6 @@ const EditZone: React.FC<EditZoneProps> = ({ zones }) => {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedZone(e.target.value);
   };
-
 
   const handleEditZone = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -56,7 +56,7 @@ const EditZone: React.FC<EditZoneProps> = ({ zones }) => {
       setError("Please select a valid zone.");
       return;
     }
-  
+
     console.log("selectedZone after check:", selectedZone);
 
     // ตรวจสอบค่าที่เปลี่ยนไป ถ้าไม่มีการเปลี่ยนแปลง ให้ใช้ค่าเดิมจาก state
@@ -145,15 +145,13 @@ const EditZone: React.FC<EditZoneProps> = ({ zones }) => {
       })
       .catch((err) => setError(err.message))
       .finally(() => setIsLoading(false));
-      console.log("selectedZone in useEffect:", selectedZone);
+    console.log("selectedZone in useEffect:", selectedZone);
   }, [selectedZone]);
 
   return (
     <>
       <form className="py-2 px-4 md:p-5" onSubmit={handleEditZone}>
         <div className="grid gap-3 mb-8 grid-cols-2">
-
-            
           <div className="col-span-2">
             <div className="relative z-0 mb-6 w-full group">
               <select
@@ -374,4 +372,4 @@ const EditZone: React.FC<EditZoneProps> = ({ zones }) => {
   );
 };
 
-export default EditZone
+export default EditZone;

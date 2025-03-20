@@ -56,21 +56,6 @@ def get_all_zones_endpoint():
     ]
     return jsonify({'zones': zone_list})
 
-# def get_visitor_count(zone_id):
-#     count = get_zone_human_count(zone_id)  
-#     visitor_counts_cache[zone_id] = count
-    
-#     print("test count in zoneroute",count)
-#     return count
-
-# def objroi_scheduler():
-#     tz = pytz.timezone('Asia/Bangkok')
-#     scheduler = BackgroundScheduler(timezone=tz)
-    
-#     # ดึงค่าคนทุกๆ 10 นาที
-#     scheduler.add_job(update_visitor_counts, 'interval', minutes=10)
-    
-#     scheduler.start()
 
 @zone_bp.route('/api/v1/getZoneById/<int:zone_id>', methods=['GET'])
 def get_zone_by_id_endpoint(zone_id):
@@ -147,15 +132,6 @@ def add_zone():
     
     return jsonify({'message': 'Zone added successfully', 'zone_id': zone_id, 'file_name': file_name}), 201
 
-# @zone_bp.route('/api/v1/updateZone/<int:zone_id>', methods=['PUT'])
-# def update_zone_endpoint(zone_id):
-#     data = request.json
-#     updated = update_zone_service(zone_id, data)  # Use the service function here
-#     if not updated:
-#         return jsonify({'message': 'Zone not found'}), 404
-
-#     return jsonify({'message': 'Zone updated successfully'})
-
 @zone_bp.route('/api/v1/updateZone/<int:zone_id>', methods=['PATCH'])
 def update_zone(zone_id):
     # Get form data and files
@@ -215,22 +191,7 @@ utc_tz = pytz.utc
 
 
 
-# zone_operating_hours = {
-#     1: {"days": {0, 1, 2, 3, 4, 5, 6}, "start": "10:00", "end": "16:00"},  
-#     2: {"days": {0, 1, 2, 3, 4, 5, 6}, "start": "11:00", "end": "16:00"},  
-#     3: {"days": {0, 1, 2, 3, 4, 5}, "start": "12:00", "end": "16:00"},  
-#     4: {"days": {0, 1, 2, 3, 4, 5, 6}, "start": "12:00", "end": "16:00"}, 
-#     5: {"days": {0, 1, 2, 3, 4, 5}, "start": "13:00", "end": "16:00"}, 
-#     6: {"days": {0, 1, 2, 3, 4, 5}, "start": "14:00", "end": "16:00"}, 
-#     7: {"days": {0, 1, 2, 3, 4, 5}, "start": "10:00", "end": "16:00"}, 
-#     8: {"days": {0, 1, 2, 3, 4, 5}, "start": "12:00", "end": "16:00"}, 
-#     9: {"days": {0, 1, 2, 3, 4, 5}, "start": "10:00", "end": "16:00"}, 
-#     10: {"days": {0, 1, 2, 3, 4, 5}, "start": "12:00", "end": "16:00"}, 
-#     11: {"days": {0, 1, 2, 3, 4, 5}, "start": "12:00", "end": "16:00"}, 
-#     12: {"days": {0, 1, 2, 3, 4, 5}, "start": "13:00", "end": "16:00"}, 
-#     13: {"days": {0, 1, 2, 3, 4, 5}, "start": "13:00", "end": "16:00"}, 
-#     14: {"days": {0, 1, 2, 3, 4, 5}, "start": "14:00", "end": "16:00"}, 
-# }
+
 
 def get_zone_operating_hours_func():
     zones = get_all_zones_service()
@@ -376,54 +337,6 @@ def serve_actual_image(file_name):
     return send_from_directory(image_directory, file_name)
 
 
-
-
-
-# @zone_bp.route('/api/v1/updateCountAllZones', methods=['PATCH'])
-# def update_count_all_zones():
-#     # ดึงข้อมูลทุกโซน
-#     zones = get_all_zones_service()  
-
-#     # ตรวจสอบว่า zones มีข้อมูลหรือไม่
-#     if not zones:
-#         return {"error": "No zones found"}, 400
-
-#     # สร้าง dictionary เพื่อเก็บจำนวนคนในแต่ละโซน
-#     updated_counts = {}
-
-#     # วนลูปอัปเดตข้อมูล
-#     for zone in zones:
-#         # ดึงจำนวนคนจากแต่ละโซน
-#         print(f"before human count")
-#         # human_count = get_zone_human_count(zone.zone_id)  # ค่าที่ได้จะเป็น int เช่น 5, 3
-#         human_count, _ = get_zone_human_count(zone.zone_id)
-
-#         print(f"count = {human_count}")
-
-#         # เพิ่ม log เพื่อตรวจสอบค่าที่ได้
-#         print(f"Updating zone {zone.zone_id} with human count: {human_count}")
-
-#         # ตรวจสอบว่า human_count เป็น int หรือไม่
-#         if not isinstance(human_count, int):
-#             return {"error": f"Invalid human count for zone {zone.zone_id}"}, 400
-
-#         # อัปเดตข้อมูลจำนวนคนในโซน
-#         zone.current_visitor_count = human_count  # อัปเดตค่าในข้อมูล
-#         visitor_counts_cache[zone.zone_id] = human_count  # อัปเดตค่าในแคช
-
-#         # บันทึกลงฐานข้อมูลผ่าน service
-#         update_zone_count(zone.zone_id, human_count)  # ตรวจสอบว่า human_count เป็น int ที่ส่งไปที่นี่
-
-#         print(f"Zone {zone.zone_name}: {human_count} human count")
-
-#         # เก็บข้อมูลจำนวนคนในแต่ละโซน
-#         updated_counts[zone.zone_id] = human_count
-
-#     # ส่งคืน current_visitor_count ทั้งหมด
-#     return {"updated_counts": updated_counts}, 200
-
-
-
 @zone_bp.route('/api/v1/deleteZone/<int:zone_id>', methods=['DELETE'])
 def delete_zone(zone_id):
     deleted = delete_zone_service(zone_id)  # Use the service function here
@@ -432,5 +345,3 @@ def delete_zone(zone_id):
 
     return jsonify({'message': 'Zone deleted successfully'})
 
-# if __name__ == '__main__':
-#     zone_bp.run(debug=True)

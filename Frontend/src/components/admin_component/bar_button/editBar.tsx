@@ -48,7 +48,8 @@ const EditBar: React.FC<EditBarProps> = ({ bars }) => {
     const updatedBarName = barName.trim() || previousBarName;
     const updatedBarDetail = barDetail.trim() || previousBarDetail;
     const updatedBarLocation = barLocation.trim() || previousBarLocation;
-    const updatedMaxPeopleInBar = maxPeopleInBar.trim() || previousMaxPeopleInBar;
+    const updatedMaxPeopleInBar =
+      maxPeopleInBar.trim() || previousMaxPeopleInBar;
 
     const formData = new FormData();
     formData.append("bar_id", selectedBar);
@@ -81,7 +82,7 @@ const EditBar: React.FC<EditBarProps> = ({ bars }) => {
       setBarDetail("");
       setMaxPeopleInBar("");
       setSelectedBar("");
-      setBarLocation("")
+      setBarLocation("");
       setBarImage(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = ""; // ล้างค่า input file เพื่อให้ UI อัปเดต
@@ -248,10 +249,6 @@ const EditBar: React.FC<EditBarProps> = ({ bars }) => {
           {isSubmitting ? "Submitting..." : "Update Bar"}
         </button>
       </form>
-
-
-
-
 
       {isModalOpen && (
         <div

@@ -1,16 +1,15 @@
+import { useEffect, useState } from "react";
 import React from "react";
 import BarAndRestaurant from "@/components/BarAndRestaurant";
 
 interface Bar {
   bar_id: number;
   bar_name: string;
-  max_people_in_bar: number;
-  bar_detail: string;
-  bar_image: string;
   bar_location: string;
-  bar_rating: number;
+  bar_detail: string;
   total_rating: number;
   total_reviews: number;
+  bar_image: string;
 }
 
 interface Restaurant {
@@ -25,29 +24,56 @@ interface BarDetailProps {
 }
 
 const AllBar: React.FC<BarDetailProps> = ({ bars, restaurants }) => {
-  return (
+  const [imageUrls, setImageUrls] = useState<{ [key: number]: string }>({});
 
-    <div>
-      <h1 className="text-3xl mt-12 font-bold mb-4">Bars and Nearby Restaurants</h1>
+  useEffect(() => {
+    const fetchVisitorData = async (bar_id: number) => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/v1/getBarImage/bar${bar_id}.png`
+        );
+        if (!response.ok) throw new Error("Failed to fetch image URL");
+
+        const data = await response.json();
+        setImageUrls((prevState) => ({ ...prevState, [bar_id]: data.url }));
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    };
+
+    bars.forEach((bar) => {
+      fetchVisitorData(bar.bar_id);
+    });
+  }, [bars]); 
+
+  return (
+    <>
+      <h1 className="text-3xl mt-12 font-bold mb-4">
+        Bars and Nearby Restaurants
+      </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {bars.map((bar) => (
           <div
             key={bar.bar_id}
             className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
           >
-            {/* Bar Images */}
             <a href="#">
-              <img
-                className="rounded-t-lg"
-                src={`/image/barImages/${bar.bar_image}`}
-                alt="{bar_name}"
-              />
+              {imageUrls[bar.bar_id] ? (
+                <img
+                  className="rounded-t-lg h-40"
+                  src={imageUrls[bar.bar_id]}
+                  alt="Bar Image"
+                  width="500"
+                />
+              ) : (
+                <div>Loading image...</div>
+              )}
             </a>
             <div className="p-5">
               <h5 className="mb-3 text-base font-semibold text-gray-900 md:text-xl dark:text-white">
                 {bar.bar_name}
               </h5>
-              <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
+              <div className=" line-clamp-2 text-sm font-normal text-gray-500 dark:text-gray-400">
                 {bar.bar_detail}
               </div>
               <ul className="my-4 space-y-3">
@@ -85,7 +111,7 @@ const AllBar: React.FC<BarDetailProps> = ({ bars, restaurants }) => {
           </div>
         ))}
       </div>
-    </div>
+    </>
   );
 };
 

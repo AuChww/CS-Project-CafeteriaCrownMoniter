@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -41,7 +40,6 @@ interface Restaurant {
   update_date_time: string;
 }
 
-
 const CrowdCard: React.FC<Bar> = ({
   bar_id,
   bar_name,
@@ -59,7 +57,6 @@ const CrowdCard: React.FC<Bar> = ({
 
   const filledStars = Math.floor(bar_rating) || 0;
   const emptyStars = 5 - filledStars;
-
 
   useEffect(() => {
     const fetchVisitorData = async () => {
@@ -120,20 +117,11 @@ const CrowdCard: React.FC<Bar> = ({
   }, [bar_id]);
 
   return (
-    <div
-      // onClick={() => router.push(`/pages/recommend/bar/${bar_id}`)}
-      className="bg-white hover:scale-110 duration-300  rounded-lg shadow-lg p-2 border border-gray-200 hover:bg-gray-100"
-    >
-      <div className="h-48">
-        {/* <img
-          className="rounded-t-lg h-full"
-          src={`/image/barImages/${bar_image}`}
-          alt="{bar_name}"
-        /> */}
-
+    <div className="bg-white hover:scale-110 duration-300  rounded-lg shadow-lg p-2 border border-gray-200 hover:bg-gray-100">
+     
         {imageUrl ? (
           <img
-            className="rounded-t-lg h-full"
+            className="w-full h-40 object-cover rounded-md mb-4"
             src={imageUrl}
             alt=" Image"
             width="500"
@@ -141,10 +129,10 @@ const CrowdCard: React.FC<Bar> = ({
         ) : (
           <div>Loading image...</div>
         )}
-      </div>
+
       <div className="px-2 h-60 space-y-3 mt-3">
         <a href="#">
-          <h5 className=" text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          <h5 className=" text-xl font-bold tracking-tight text-gray-900 dark:text-white">
             {bar_name}
           </h5>
         </a>
@@ -163,14 +151,14 @@ const CrowdCard: React.FC<Bar> = ({
             {currentVisitors} / {max_people_in_bar}
           </div>
         </div>
-        <div className=" text-sm font-normal text-gray-500 dark:text-gray-400">
+        <p className=" line-clamp-2 text-sm font-normal text-gray-500 dark:text-gray-400">
           {bar_detail}
-        </div>
+        </p>
 
         {/* Bar Location */}
         <div className="flex space-x-1 text-sm text-gray-500 dark:text-gray-400 ">
           <img src="/image/icons/location.svg" alt="location pin" />
-          <div>{bar_location}</div>
+          <p className="line-clamp-2">{bar_location}</p>
         </div>
 
         {/* Bar Score */}

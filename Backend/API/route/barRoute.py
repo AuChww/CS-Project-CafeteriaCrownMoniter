@@ -209,17 +209,6 @@ def delete_bar(bar_id):
 
     return jsonify({'message': 'Bar deleted successfully'})
 
-
-# @bar_bp.route('/api/v1/getBarVideo/<string:file_name>', methods=['GET'])
-# def get_video_url(file_name):
-#     video_url = f"http://localhost:8000/videos/{file_name}"
-#     return jsonify({"url": video_url})
-
-# @bar_bp.route('/videos/<path:file_name>')
-# def serve_video(file_name):
-#     video_directory = os.path.join(os.getcwd(), "public", "video", "zone")
-#     return send_from_directory(video_directory, file_name)
-
 IMAGE_FOLDER = 'public/image/barImages'
 
 @bar_bp.route('/api/v1/getBarImage/<string:file_name>', methods=['GET'])

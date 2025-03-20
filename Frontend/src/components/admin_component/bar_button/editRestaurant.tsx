@@ -100,9 +100,7 @@ const EditRestaurant: React.FC<EditRestaurantProps> = ({ restaurants }) => {
     if (!selectedRestaurant) return;
 
     setIsLoading(true);
-    fetch(
-      `http://127.0.0.1:8000/api/v1/getRestaurantId/${selectedRestaurant}`
-    )
+    fetch(`http://127.0.0.1:8000/api/v1/getRestaurantId/${selectedRestaurant}`)
       .then((response) => {
         if (!response.ok) throw new Error("Failed to fetch restaurant data");
         return response.json();
@@ -110,7 +108,7 @@ const EditRestaurant: React.FC<EditRestaurantProps> = ({ restaurants }) => {
       .then((data) => {
         setRestaurantName(data.restaurant_name || "");
         setRestaurantDetail(data.restaurant_detail || "");
-        setRestaurantLocation(data.restaurant_location|| "");
+        setRestaurantLocation(data.restaurant_location || "");
         setPreviousRestaurantImage(data.restaurant_image || ""); // เก็บค่ารูปภาพเดิม
         setRestaurantImage(null);
         setError(null);
@@ -203,12 +201,10 @@ const EditRestaurant: React.FC<EditRestaurantProps> = ({ restaurants }) => {
                 htmlFor="restaurant_location"
                 className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
-               Restaurant Location
+                Restaurant Location
               </label>
             </div>
           </div>
-
-          
 
           <div className="col-span-2">
             <label className="block mb-1 text-sm font-medium text-gray-500 dark:text-white">

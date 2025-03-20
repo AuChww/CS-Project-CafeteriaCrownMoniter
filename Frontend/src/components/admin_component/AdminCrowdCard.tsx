@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import DeleteBar from "@/components/admin_component/bar_button/deleteBar";
 import EditBar from "@/components/admin_component/bar_button/editBar";
 import { MdDeleteForever } from "react-icons/md";
 import { MdEdit } from "react-icons/md";
@@ -30,7 +29,6 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
   useEffect(() => {
     const fetchVisitorData = async () => {
       try {
-        // 1. ดึงข้อมูลโซนทั้งหมดที่เกี่ยวข้องกับ bar_id
         const zonesRes = await fetch(
           `http://127.0.0.1:8000/api/v1/getAllZonesByBarId/${bar_id}`
         );
@@ -42,7 +40,6 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
           0
         );
 
-        // 2. ดึงข้อมูลร้านอาหารทั้งหมดที่เกี่ยวข้องกับแต่ละ zone_id
         let totalRestaurantVisitors = 0;
 
         await Promise.all(
@@ -52,7 +49,6 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
             );
             const restaurantData = await restaurantRes.json();
 
-            // รวม current_visitor_count ของทุกร้านอาหารในโซนนั้น
             totalRestaurantVisitors += (
               restaurantData.restaurants || []
             ).reduce(
@@ -63,7 +59,6 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
           })
         );
 
-        // 3. รวมค่า current_visitor ทั้งหมดจากโซนและร้านอาหาร
         setCurrentVisitors(totalZoneVisitors + totalRestaurantVisitors);
       } catch (error) {
         console.error("Error fetching visitor data:", error);
@@ -86,42 +81,31 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
   }, [bar_id]);
 
   return (
-    <div
-    // className="bg-white hover:scale-110 duration-300  rounded-lg shadow-lg p-2 border border-gray-200 hover:bg-gray-100"
-    >
+    <>
       <div onClick={() => router.push(`/pages/recommend/bar/${bar_id}`)}>
-        <div className="h-full flex">
-          {/* <img
-            className="rounded-t-lg w-1/2 h-full"
-            src={`/image/barImages/${bar_image}`}
-            alt="{bar_name}"
-          /> */}
+        {imageUrl ? (
+          <img
+            className=" w-auto h-30 object-cover rounded-t-lg "
+            src={imageUrl}
+            alt=" Image"
+          />
+        ) : (
+          <div>Loading image...</div>
+        )}
 
-          {imageUrl ? (
-            <img
-              className="rounded-t-lg w-1/2 h-full"
-              src={imageUrl}
-              alt=" Image"
-              width="500"
-            />
-          ) : (
-            <div>Loading image...</div>
-          )}
+        <div className="px-2 justify-between mt-4">
           <a href="#">
-            <h5 className="ml-2 text-md font-bold tracking-tight text-gray-900 dark:text-white">
+            <h5 className=" text-sm font-bold tracking-tight text-gray-900 dark:text-white">
               {bar_name.length > 20 ? `${bar_name.slice(0, 20)}...` : bar_name}
             </h5>
           </a>
-        </div>
-        <div className="px-2 flex justify-between">
-          <div className="flex  mt-2 ">
-            <div className="mt-1 mr-2 text-xs">visitor :</div>
+          <div className="mt-2 flex text-center  ">
+            <div className=" mr-2 text-md ">visitor :</div>
             <div className=" text-md">
               {currentVisitors} / {max_people_in_bar}
             </div>
           </div>
 
-          {/* Bar Score */}
           <div className="flex items-center mt-2 space-x-2">
             <div className="flex items-center space-x-1 rtl:space-x-reverse">
               <svg
@@ -173,36 +157,7 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
           </div>
         </div>
       </div>
-
-      {/* <div className="flex justify-end mt-2 mr-1">
-                <div onClick={() => handleEditClick()}>
-                    <MdEdit className="text-gray-600 w-6 h-6 cursor-pointer" />
-                </div>
-                <div onClick={() => handleDelete(bar_id,bar_name)}>
-                    <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
-                </div>
-            </div> */}
-      {/* 
-            {showEditPopup && (
-                <PopUpEditBar
-                    barId={bar_id}
-                    onClose={closeEditPopup}
-                    bar_name={bar_name}
-                    bar_location={bar_location}
-                    max_people_in_bar={max_people_in_bar}
-                    bar_detail={bar_detail}
-                    bar_image={bar_image}
-                />
-            )}
-
-            {showDeletePopup && (
-                <PopUpDeleteBar
-                    barId={bar_id}
-                    bar_name={bar_name}
-                    onClose={closeDeletePopup}
-                />
-            )} */}
-    </div>
+    </>
   );
 };
 

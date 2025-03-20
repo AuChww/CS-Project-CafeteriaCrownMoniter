@@ -63,17 +63,16 @@ const AddRestaurant: React.FC<AddZoneProps> = ({ zones }) => {
 
       console.log("zone added successfully");
 
-      // Reset form fields after successful submission
       setRestaurantName("");
       setRestaurantDetail("");
       setselectedZone("");
       setRestaurantLocation("");
       setRestaurantImage(null);
       if (fileInputRef.current) {
-        fileInputRef.current.value = ""; // ล้างค่า input file เพื่อให้ UI อัปเดต
+        fileInputRef.current.value = "";
       }
       setError(null);
-      toggleModal(); // Close the modal after submission
+      toggleModal();
     } catch (error) {
       setError(
         "There was an error while submitting the form. Please try again."

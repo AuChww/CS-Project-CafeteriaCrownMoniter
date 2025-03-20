@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 
-// Define types for the visitor history, chart data, and zone data
 interface ZoneVisitorHistory {
   date_time: string;
   visitor_count: number;
@@ -29,32 +28,35 @@ const TodayBarVisitorPieChart: React.FC = () => {
         thirtyDaysAgo.setDate(today.getDate() - 30);
 
         // Process the data for the last 30 days
-        const filteredData: ChartData[] = visitorHistories.reduce<ChartData[]>((acc, curr) => {
-          const recordDate = new Date(curr.date_time);
-          if (recordDate >= thirtyDaysAgo && recordDate <= today) {
-            const hour = recordDate.getHours();
-            const existingDataIndex = acc.findIndex((item) => item.hour === hour);
+        const filteredData: ChartData[] = visitorHistories.reduce<ChartData[]>(
+          (acc, curr) => {
+            const recordDate = new Date(curr.date_time);
+            if (recordDate >= thirtyDaysAgo && recordDate <= today) {
+              const hour = recordDate.getHours();
+              const existingDataIndex = acc.findIndex(
+                (item) => item.hour === hour
+              );
 
-            if (existingDataIndex > -1) {
-              acc[existingDataIndex].value += curr.visitor_count;
-            } else {
-              acc.push({
-                name: `${hour}:00 - ${hour + 1}:00`,
-                value: curr.visitor_count,
-                hour,
-              });
+              if (existingDataIndex > -1) {
+                acc[existingDataIndex].value += curr.visitor_count;
+              } else {
+                acc.push({
+                  name: `${hour}:00 - ${hour + 1}:00`,
+                  value: curr.visitor_count,
+                  hour,
+                });
+              }
             }
-          }
-          return acc;
-        }, []);
+            return acc;
+          },
+          []
+        );
 
-        // Calculate the average visitor count per hour
         const aggregatedData = filteredData.map((data) => ({
           ...data,
           value: data.value / 30,
         }));
 
-        // Sort by hour
         aggregatedData.sort((a, b) => a.hour - b.hour);
 
         setChartData(aggregatedData);
@@ -62,11 +64,31 @@ const TodayBarVisitorPieChart: React.FC = () => {
       .catch((err) => console.error(err));
   }, []);
 
-  // Define colors for the pie chart
   const COLORS = [
-    "#33CC99", "#FF6347", "#FFD700", "#8A2BE2", "#7FFF00", "#D2691E", "#DC143C", "#FF4500", "#CC66FF", "#FF8C00",
-    "#FF1493", "#00BFFF", "#7B68EE", "#32CD32", "#FF69B4", "#C71585", "#DB7093", "#FFFF00", "#20B2AA", "#B22222",
-    "#FF00FF", "#9932CC", "#FF4500", "#8B4513"
+    "#33CC99",
+    "#FF6347",
+    "#FFD700",
+    "#8A2BE2",
+    "#7FFF00",
+    "#D2691E",
+    "#DC143C",
+    "#FF4500",
+    "#CC66FF",
+    "#FF8C00",
+    "#FF1493",
+    "#00BFFF",
+    "#7B68EE",
+    "#32CD32",
+    "#FF69B4",
+    "#C71585",
+    "#DB7093",
+    "#FFFF00",
+    "#20B2AA",
+    "#B22222",
+    "#FF00FF",
+    "#9932CC",
+    "#FF4500",
+    "#8B4513",
   ];
 
   // Show loading state before data is ready

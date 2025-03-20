@@ -102,7 +102,7 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
   current_visitor_count,
   update_date_time,
   zone_time,
-  zone_image
+  zone_image,
 }) => {
   const { user, role } = useAuth();
   const [userRole, setUserRole] = useState("");
@@ -110,7 +110,7 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const router = useRouter();
   const navigateToReports = () => {
-    router.push("/pages/report"); // เปลี่ยนเส้นทางไปที่หน้า /pages/report
+    router.push("/pages/report");
   };
 
   useEffect(() => {
@@ -118,7 +118,6 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
       setUserRole(role);
     }
   }, [role]);
-
 
   const fetchBars = async () => {
     try {
@@ -134,7 +133,6 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
     }
 
     try {
-      // ดึงข้อมูลร้านอาหาร
       const getRestaurantsResponse = await fetch(
         `http://127.0.0.1:8000/api/v1/getRestaurantByZoneId/${zone_id}`
       );
@@ -149,13 +147,18 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
   };
 
   const handleDeleteRes = async (bar_id: number, bar_name: string) => {
-    const confirmDelete = window.confirm(`Are you sure to delete Restaurant ${bar_id} : ${bar_name} ?`);
+    const confirmDelete = window.confirm(
+      `Are you sure to delete Restaurant ${bar_id} : ${bar_name} ?`
+    );
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/deleteRestaurant/${bar_id}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/v1/deleteRestaurant/${bar_id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (response.ok) {
         fetchBars();
@@ -172,10 +175,7 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
   }, []);
 
   return (
-    <div
-      key={zone_id}
-      className=""
-    >
+    <div key={zone_id} className="">
       {imageUrl ? (
         <img
           className="object-cover rounded-t-lg w-full max-h-60 absolute opacity-75"
@@ -188,41 +188,36 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
       )}
       <div className="p-5 space-y-3 z-10 w-full">
         <div className="absolute w-full pr-10">
-          {/* zone Name */}
           <a href="#">
             <h5 className="mb-2 mt-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
               {zone_name}
             </h5>
           </a>
 
-          {/* zone Location */}
           <div className="flex space-x-2 text-xl text-gray-900 mb-4 mt-4">
-            <svg fill="#000000" width="25px" height="25px" viewBox="-3 0 19 19" xmlns="http://www.w3.org/2000/svg" className="cf-icon-svg mt-0.5"><path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z" /></svg>
+            <svg
+              fill="#000000"
+              width="25px"
+              height="25px"
+              viewBox="-3 0 19 19"
+              xmlns="http://www.w3.org/2000/svg"
+              className="cf-icon-svg mt-0.5"
+            >
+              <path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z" />
+            </svg>
 
             <div className="flex space-x-1 font-bold">
               <div>{current_visitor_count} / </div>
               <div>{max_people_in_zone}</div>
             </div>
-
           </div>
 
-          {/* zone Details */}
-          <div className=" text-sm text-gray-900 font-bold">
-            {zone_detail}
+          <div className=" text-sm text-gray-900 font-bold">{zone_detail}</div>
+
+          <div className="text-md text-gray-900 font-bold">
+            Time : {zone_time}
           </div>
 
-          <div className="text-md text-gray-900 font-bold">Time : {zone_time}</div>
-
-          {/* <div className="flex items-center text-sm mt-2.5 mb-5 space-x-2 text-gray-700">
-          <div>เวลาที่เปิดให้ปริการ: </div>
-          <div>{zone_time}</div>
-        </div> */}
-
-          {/* <div className="flex justify-end">
-          <div onClick={() => handleDelete(zone_id, zone_name)}>
-            <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
-          </div>
-        </div> */}
           {user ? (
             <div className="flex justify-end">
               <button
@@ -270,7 +265,14 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
                 </div>
                 {userRole === "admin" && (
                   <div className="flex justify-end bg-white ">
-                    <div onClick={() => handleDeleteRes(restaurant.restaurant_id, restaurant.restaurant_name)}>
+                    <div
+                      onClick={() =>
+                        handleDeleteRes(
+                          restaurant.restaurant_id,
+                          restaurant.restaurant_name
+                        )
+                      }
+                    >
                       <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
                     </div>
                   </div>

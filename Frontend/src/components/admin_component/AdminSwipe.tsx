@@ -19,7 +19,6 @@ const AdminSwipe = () => {
     const router = useRouter();
 
     useEffect(() => {
-        // Automatically trigger the "Next" button every 3 seconds
         const interval = setInterval(() => {
             const nextButton = document.querySelector("[data-carousel-next]") as HTMLElement;
             if (nextButton) {
@@ -27,7 +26,6 @@ const AdminSwipe = () => {
             }
         }, 3000);
 
-        // Cleanup interval when the component is unmounted
         return () => clearInterval(interval);
     }, []);
 

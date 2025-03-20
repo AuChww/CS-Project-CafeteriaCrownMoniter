@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, TooltipProps } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  TooltipProps,
+} from "recharts";
 
 // Define types
 interface Zone {
@@ -22,7 +31,10 @@ interface ChartData {
   bar_id: number;
 }
 
-const CustomTooltip: React.FC<TooltipProps<number, string>> = ({ active, payload }) => {
+const CustomTooltip: React.FC<TooltipProps<number, string>> = ({
+  active,
+  payload,
+}) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
@@ -71,7 +83,9 @@ const TodayBarVisitorBarChart: React.FC = () => {
           zones.map(async (zone) => {
             if (!barNameMap[zone.bar_id]) {
               try {
-                const res = await fetch(`http://127.0.0.1:8000/api/v1/getBarId/${zone.bar_id}`);
+                const res = await fetch(
+                  `http://127.0.0.1:8000/api/v1/getBarId/${zone.bar_id}`
+                );
                 const data = await res.json();
                 barNameMap[zone.bar_id] = data.bar_name;
               } catch (error) {
@@ -109,7 +123,7 @@ const TodayBarVisitorBarChart: React.FC = () => {
     visitorHistory.forEach((history) => {
       const recordDate = new Date(history.date_time);
       if (recordDate >= startOfDay && recordDate <= endOfDay) {
-        const zone = zones.find(z => z.zone_id === history.zone_id);
+        const zone = zones.find((z) => z.zone_id === history.zone_id);
         if (zone) {
           const barId = zone.bar_id;
           if (!aggregatedData[barId]) aggregatedData[barId] = 0;
@@ -130,7 +144,12 @@ const TodayBarVisitorBarChart: React.FC = () => {
   return (
     <div className="text-center relative">
       <h3>Visitor Count in Zone (Today)</h3>
-      <BarChart width={600} height={200} data={aggregateVisitorsByBar()} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+      <BarChart
+        width={600}
+        height={200}
+        data={aggregateVisitorsByBar()}
+        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+      >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="bar_id" tick={{ fontSize: 14 }} />
         <YAxis tick={{ fontSize: 14 }} />

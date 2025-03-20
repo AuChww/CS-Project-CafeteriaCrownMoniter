@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, TooltipProps, CartesianGrid, Tooltip, Legend } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  TooltipProps,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from "recharts";
 
 interface Zone {
   bar_id: number;
@@ -11,7 +20,7 @@ interface Zone {
 interface VisitorHistory {
   date_time: string;
   visitor_count: number;
-  zone_id?: number; // Optional for restaurant data
+  zone_id?: number;
   restaurant_id?: number;
 }
 
@@ -21,7 +30,10 @@ interface ChartData {
   zone_id: number;
 }
 
-const CustomTooltip: React.FC<TooltipProps<number, string>> = ({ active, payload }) => {
+const CustomTooltip: React.FC<TooltipProps<number, string>> = ({
+  active,
+  payload,
+}) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
@@ -53,42 +65,43 @@ const MonthZoneVisitorBarChart: React.FC = () => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-      setIsClient(true);
-  
-      fetch("http://127.0.0.1:8000/api/v1/getAllZones")
-        .then((response) => response.json())
-        .then((data) => {
-          setZones(data.zones);
-        })
-        .catch((err) => console.error(err));
-    }, []);
-  
+    setIsClient(true);
+
+    fetch("http://127.0.0.1:8000/api/v1/getAllZones")
+      .then((response) => response.json())
+      .then((data) => {
+        setZones(data.zones);
+      })
+      .catch((err) => console.error(err));
+  }, []);
 
   useEffect(() => {
-      if (zones.length > 0) {
-        const fetchZoneNames = async () => {
-          const zoneNameMap: { [key: number]: string } = {};
-  
-          await Promise.all(
-            zones.map(async (zone) => {
-              if (!zoneNameMap[zone.zone_id]) {
-                try {
-                  const res = await fetch(`http://127.0.0.1:8000/api/v1/getZoneById/${zone.zone_id}`);
-                  const data = await res.json();
-                  zoneNameMap[zone.zone_id] = data.zone_name;
-                } catch (error) {
-                  console.error("Error fetching bar name:", error);
-                }
+    if (zones.length > 0) {
+      const fetchZoneNames = async () => {
+        const zoneNameMap: { [key: number]: string } = {};
+
+        await Promise.all(
+          zones.map(async (zone) => {
+            if (!zoneNameMap[zone.zone_id]) {
+              try {
+                const res = await fetch(
+                  `http://127.0.0.1:8000/api/v1/getZoneById/${zone.zone_id}`
+                );
+                const data = await res.json();
+                zoneNameMap[zone.zone_id] = data.zone_name;
+              } catch (error) {
+                console.error("Error fetching bar name:", error);
               }
-            })
-          );
-  
-          setZoneNames(zoneNameMap);
-        };
-  
-        fetchZoneNames();
-      }
-    }, [zones]);
+            }
+          })
+        );
+
+        setZoneNames(zoneNameMap);
+      };
+
+      fetchZoneNames();
+    }
+  }, [zones]);
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/v1/getAllZoneVisitorHistory")
@@ -111,15 +124,16 @@ const MonthZoneVisitorBarChart: React.FC = () => {
     ) {
       return; // Skip processing until barNames is populated
     }
-  
-    const dailyVisitorMap: { [date: string]: { [barId: number]: number[] } } = {};
-  
+
+    const dailyVisitorMap: { [date: string]: { [barId: number]: number[] } } =
+      {};
+
     visitorHistory.forEach((history) => {
       const recordDate = new Date(history.date_time);
       if (recordDate >= thirtyDaysAgoDate) {
         const dateKey = recordDate.toISOString().split("T")[0];
         const zone_id = history.zone_id!;
-  
+
         if (!dailyVisitorMap[dateKey]) {
           dailyVisitorMap[dateKey] = {};
         }
@@ -129,36 +143,45 @@ const MonthZoneVisitorBarChart: React.FC = () => {
         dailyVisitorMap[dateKey][zone_id].push(history.visitor_count);
       }
     });
-  
-    const aggregatedData: { [zone_id: number]: { total: number; days: number } } = {};
-  
+
+    const aggregatedData: {
+      [zone_id: number]: { total: number; days: number };
+    } = {};
+
     Object.values(dailyVisitorMap).forEach((dayData) => {
       Object.entries(dayData).forEach(([zone_id, counts]) => {
         const id = parseInt(zone_id);
         if (!aggregatedData[id]) {
           aggregatedData[id] = { total: 0, days: 0 };
         }
-        aggregatedData[id].total += counts.reduce((sum, count) => sum + count, 0) / counts.length;
+        aggregatedData[id].total +=
+          counts.reduce((sum, count) => sum + count, 0) / counts.length;
         aggregatedData[id].days += 1;
       });
     });
-  
-    const finalChartData = Object.entries(aggregatedData).map(([zone_id, data]) => ({
-      name: zoneNames[parseInt(zone_id)], // Now guaranteed to have the bar name
-      value: data.total / data.days,
-      zone_id: parseInt(zone_id),
-    }));
-  
+
+    const finalChartData = Object.entries(aggregatedData).map(
+      ([zone_id, data]) => ({
+        name: zoneNames[parseInt(zone_id)], // Now guaranteed to have the bar name
+        value: data.total / data.days,
+        zone_id: parseInt(zone_id),
+      })
+    );
+
     setChartData(finalChartData);
   }, [visitorHistory, thirtyDaysAgoDate, zoneNames]);
-  
 
   if (!thirtyDaysAgoDate) return null; // Wait until thirtyDaysAgoDate is set
 
   return (
     <div className="text-center relative">
       <h3>Average Visitors in Zone (Last 30 Days)</h3>
-      <BarChart width={600} height={200} data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+      <BarChart
+        width={600}
+        height={200}
+        data={chartData}
+        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+      >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="zone_id" tick={{ fontSize: 14 }} />
         <YAxis tick={{ fontSize: 14 }} />

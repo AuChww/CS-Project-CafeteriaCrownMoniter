@@ -177,26 +177,7 @@ def update_restaurant(restaurant_id, data):
     conn.close()
     return updated
 
-# def update_restaurant(zone_id, data):
-#     conn = db_conn()
-#     cur = conn.cursor()
 
-#     # Check if 'current_visitor_count' exists in the data, if not, set a default value (e.g., 0)
-#     current_visitor_count = data.get('current_visitor_count', 0)
-
-#     cur.execute(
-#         'UPDATE zone SET zone_name = %s, zone_detail = %s, max_people_in_zone = %s, '
-#         'zone_time = %s, zone_image = %s, current_visitor_count = %s WHERE zone_id = %s',
-#         (data.get('zone_name'), data.get('zone_detail'), data.get('max_people_in_zone'),
-#          data.get('zone_time'), data.get('zone_image'), current_visitor_count, zone_id)
-#     )
-
-#     updated = cur.rowcount > 0
-#     conn.commit()
-#     cur.close()
-#     conn.close()
-
-#     return updated
 
 def update_restaurant_count(human_count_data):
     conn = db_conn()

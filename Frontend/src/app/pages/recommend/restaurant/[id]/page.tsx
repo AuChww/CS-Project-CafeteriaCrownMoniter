@@ -84,20 +84,17 @@ const RestaurantPage = () => {
         `http://localhost:8000/api/v1/getRestaurantImage/restaurant${id}.png`
       );
 
-      // ถ้าไม่สามารถเข้าถึงได้ (response.ok = false) ให้ใช้ URL สำรอง
       if (!response.ok) {
         console.log("First image not found, trying fallback...");
       }
-      // ตรวจสอบว่า URL ที่ได้ดึงมามีภาพหรือไม่
       if (!response.ok) {
         throw new Error(
           "Failed to fetch both restaurant image and fallback image"
         );
       }
-      // ถ้าทุกอย่างสำเร็จ, ดึงข้อมูล JSON หรือ URL ของภาพ
       const data = await response.json();
       if (data.url) {
-        setImageUrl(data.url); // ใช้ URL ที่ดึงมา
+        setImageUrl(data.url);
       } else {
         throw new Error("No image URL returned");
       }
@@ -111,20 +108,20 @@ const RestaurantPage = () => {
   }, [id]);
 
   const handleEditClick = (review: Review) => {
-    setEditingReview(review); // เปิด modal และโหลดข้อมูลที่จะแก้ไข
+    setEditingReview(review);
     setComment(review.review_comment);
     setRating(review.rating);
-    setImageFile(null); // reset image if needed
+    setImageFile(null);
   };
 
   const handleModalClose = () => {
-    setEditingReview(null); // ปิด modal
+    setEditingReview(null);
   };
 
   const handleSubmitEdit = () => {
     if (editingReview) {
       handleUpdateReview(editingReview.review_id);
-      handleModalClose(); // ปิด modal หลังจากอัพเดต
+      handleModalClose();
     }
   };
 
@@ -143,9 +140,9 @@ const RestaurantPage = () => {
         body: JSON.stringify({
           comment,
           rating,
-          restaurant_id: id, // Assuming `id` refers to the restaurant ID
-          user_id: user.user_id, // Pass the actual user ID from the logged-in user
-          review_image: imageFile ? imageFile.name : null, // Send the file name or null
+          restaurant_id: id,
+          user_id: user.user_id,
+          review_image: imageFile ? imageFile.name : null,
         }),
       });
 
@@ -153,7 +150,7 @@ const RestaurantPage = () => {
 
       if (response.ok) {
         alert("Review added successfully!");
-        fetchRestaurantAndReviews(); // Refresh reviews after success
+        fetchRestaurantAndReviews();
       } else {
         alert(data.message || "Failed to add review");
       }
@@ -179,11 +176,11 @@ const RestaurantPage = () => {
           },
           body: JSON.stringify({
             user_id: user.user_id,
-            restaurant_id: id, // restaurant_id ที่ต้องการอัพเดต
+            restaurant_id: id,
             rating: rating,
             comment: comment,
-            review_image: imageFile ? imageFile.name : null, // ส่งแค่ชื่อไฟล์หากมีรูปภาพ
-          }), // ส่งข้อมูลในรูปแบบ JSON
+            review_image: imageFile ? imageFile.name : null,
+          }),
         }
       );
 
@@ -191,7 +188,7 @@ const RestaurantPage = () => {
 
       if (response.ok) {
         alert("Review updated successfully!");
-        fetchRestaurantAndReviews(); // รีเฟรชข้อมูลรีวิว
+        fetchRestaurantAndReviews();
       } else {
         alert(data.message || "Failed to update review");
       }
@@ -218,7 +215,7 @@ const RestaurantPage = () => {
 
       if (response.ok) {
         alert("Review deleted successfully!");
-        fetchRestaurantAndReviews(); // รีเฟรชข้อมูลรีวิว
+        fetchRestaurantAndReviews();
       } else {
         alert(data.message || "Failed to delete review");
       }
@@ -239,13 +236,7 @@ const RestaurantPage = () => {
             <h1 className="text-3xl font-bold text-green-500">
               {restaurant.restaurant_name}
             </h1>
-            {/* {restaurant.restaurant_image && (
-                            <img
-                                src={restaurant.restaurant_image ? `/image/restaurantImages/${restaurant.restaurant_image}` : `/image/restaurantImages/placeholder.jpg`}
-                                alt={restaurant.restaurant_name}
-                                className="w-auto object-cover rounded-md mb-4"
-                            />
-                        )} */}
+
             {imageUrl ? (
               <img
                 className="w-full object-cover rounded-md mb-4"
@@ -283,10 +274,11 @@ const RestaurantPage = () => {
                           <svg
                             key={index}
                             xmlns="http://www.w3.org/2000/svg"
-                            className={`h-5 w-5 ${index < review.rating
+                            className={`h-5 w-5 ${
+                              index < review.rating
                                 ? "fill-current"
                                 : "text-gray-300"
-                              }`}
+                            }`}
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
@@ -312,7 +304,6 @@ const RestaurantPage = () => {
                       />
                     )}
 
-                    {/* ปุ่ม Edit สำหรับอัพเดตรีวิว */}
                     {user?.user_id === review.user_id && (
                       <button
                         onClick={() => handleEditClick(review)}
@@ -322,7 +313,6 @@ const RestaurantPage = () => {
                       </button>
                     )}
 
-                    {/* ปุ่ม Delete สำหรับลบรีวิว */}
                     {user?.user_id === review.user_id && (
                       <button
                         onClick={() => handleDeleteReview(review.review_id)}
@@ -341,7 +331,6 @@ const RestaurantPage = () => {
         </div>
       </div>
 
-      {/* ส่วนเพิ่มรีวิว */}
       {user ? (
         <div className="mt-8">
           <h3 className="text-xl font-bold mb-4">Add Your Review</h3>
@@ -354,8 +343,9 @@ const RestaurantPage = () => {
                 <svg
                   key={index}
                   xmlns="http://www.w3.org/2000/svg"
-                  className={`h-6 w-6 cursor-pointer ${index < rating ? "fill-yellow-500" : "text-gray-300"
-                    }`}
+                  className={`h-6 w-6 cursor-pointer ${
+                    index < rating ? "fill-yellow-500" : "text-gray-300"
+                  }`}
                   onClick={() => setRating(index + 1)}
                   viewBox="0 0 24 24"
                   fill="none"
@@ -423,8 +413,9 @@ const RestaurantPage = () => {
                   <svg
                     key={index}
                     xmlns="http://www.w3.org/2000/svg"
-                    className={`h-6 w-6 cursor-pointer ${index < rating ? "fill-yellow-500" : "text-gray-300"
-                      }`}
+                    className={`h-6 w-6 cursor-pointer ${
+                      index < rating ? "fill-yellow-500" : "text-gray-300"
+                    }`}
                     onClick={() => setRating(index + 1)}
                     viewBox="0 0 24 24"
                     fill="none"
