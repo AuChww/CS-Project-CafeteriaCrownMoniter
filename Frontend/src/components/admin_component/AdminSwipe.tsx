@@ -1,12 +1,9 @@
 import { useEffect } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { MdOutlineRestaurant } from "react-icons/md";
 import { FaWarehouse } from "react-icons/fa";
 import { BiSolidLike } from "react-icons/bi";
-import ZoneVisitorBarChart from "./WeekZoneBarChart";
 import TodayZoneVisitorBarChart from "./TodayZoneBarChart";
-import BarVisitorBarChart from "./WeekBarBarChart";
 import TodayBarVisitorBarChart from "./TodayBarBarChart";
 import TodayBarVisitorPieChart from "./MonthBarPieChart";
 import WeekZoneVisitorBarChart from "./WeekZoneBarChart";
@@ -19,15 +16,12 @@ const AdminSwipe = () => {
     const router = useRouter();
 
     useEffect(() => {
-        // Automatically trigger the "Next" button every 3 seconds
         const interval = setInterval(() => {
             const nextButton = document.querySelector("[data-carousel-next]") as HTMLElement;
             if (nextButton) {
                 nextButton.click();
             }
         }, 3000);
-
-        // Cleanup interval when the component is unmounted
         return () => clearInterval(interval);
     }, []);
 

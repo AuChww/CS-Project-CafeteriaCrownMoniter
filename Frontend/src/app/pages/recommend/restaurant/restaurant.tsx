@@ -6,13 +6,16 @@ import { FaFireAlt } from "react-icons/fa";
 
 interface Restaurant {
   restaurant_id: number;
+  zone_id: number;
   restaurant_name: string;
   restaurant_location: string;
   restaurant_detail: string;
+  restaurant_image: string;
+  restaurant_rating: number;
   total_rating: number;
   total_reviews: number;
   current_visitor_count: number;
-  restaurant_image: string;
+  update_date_time: string;
 }
 
 const AllRestaurant: React.FC = () => {
@@ -62,7 +65,6 @@ const AllRestaurant: React.FC = () => {
               onClick={() => router.push(`/pages/recommend/restaurant/${restaurant.restaurant_id}`)}
               className="relative w-60"
             >
-              {/* Top 3 Sticker */}
               {index < 3 && (
                 <div className="absolute flex top-2 right-2 bg-gradient-to-r
             from-orange-500
@@ -80,13 +82,16 @@ const AllRestaurant: React.FC = () => {
               <RestaurantCard
                 key={restaurant.restaurant_id}
                 restaurant_id={restaurant.restaurant_id}
+                zone_id={restaurant.zone_id}
                 restaurant_name={restaurant.restaurant_name}
                 restaurant_location={restaurant.restaurant_location}
                 restaurant_detail={restaurant.restaurant_detail}
+                restaurant_rating={restaurant.restaurant_rating}
                 total_rating={restaurant.total_rating}
                 total_reviews={restaurant.total_reviews}
-                current_visitor_count={restaurant.current_visitor_count}
                 restaurant_image={restaurant.restaurant_image}
+                current_visitor_count={restaurant.current_visitor_count}
+                update_date_time={restaurant.update_date_time}
               />
             </div>
           ))}

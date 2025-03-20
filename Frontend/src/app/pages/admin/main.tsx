@@ -6,7 +6,6 @@ import { MdDeleteForever, MdEdit } from "react-icons/md";
 import AdminSwipe from "@/components/admin_component/AdminSwipe";
 import AdminCrowdCard from "@/components/admin_component/AdminCrowdCard";
 import AddTab from "@/components/admin_component/bar_button/addTab";
-import PopUpEditBar from "@/components/admin_component/bar_button/popUpEditBar";
 import EditTab from "@/components/admin_component/bar_button/editTab";
 
 
@@ -25,7 +24,6 @@ export default function Admin() {
   const [bars, setBars] = useState<Bar[]>([]);
   const router = useRouter();
 
-  // ดึงข้อมูลจาก API
   const fetchBars = async () => {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/v1/getAllBars");
@@ -33,7 +31,7 @@ export default function Admin() {
         throw new Error("Failed to fetch bars");
       }
       const data = await response.json();
-      setBars(data.bars); // Assuming the API returns { bars: [...] }
+      setBars(data.bars);
     } catch (error) {
       console.error("Error fetching bars:", error);
     }

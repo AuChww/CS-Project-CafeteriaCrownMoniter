@@ -1,5 +1,4 @@
 import React from "react";
-import BarAndRestaurant from "@/components/BarAndRestaurant";
 
 interface Bar {
   bar_id: number;
@@ -35,7 +34,6 @@ const AllBar: React.FC<BarDetailProps> = ({ bars, restaurants }) => {
             key={bar.bar_id}
             className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
           >
-            {/* Bar Images */}
             <a href="#">
               <img
                 className="rounded-t-lg"

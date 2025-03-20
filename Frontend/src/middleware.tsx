@@ -11,7 +11,7 @@ export function middleware(req: NextRequest) {
 
     if (!tokenCookie) {
         // กรณีผู้ใช้ไม่ได้ล็อกอิน
-        if (pathname.startsWith("/pages/admin") || pathname.startsWith("/pages/report")) {
+        if (pathname.startsWith("/pages/admin")) {
             return NextResponse.redirect(new URL("/pages/authenticate/login", req.url));
         }
         return NextResponse.next();

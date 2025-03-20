@@ -3,24 +3,29 @@ import React, { useEffect, useState } from "react";
 import AllBar from './allBar';
 
 interface Bar {
-    bar_id: number;
-    bar_name: string;
-    bar_location: string;
-    bar_detail: string;
-    total_rating: number;
-    total_reviews: number;
-    bar_image: string;
-  }
+  bar_id: number;
+  bar_name: string;
+  max_people_in_bar: number;
+  bar_detail: string;
+  bar_image: string;
+  bar_location: string;
+  bar_rating: number;
+  total_rating: number;
+  total_reviews: number;
+}
   
-  interface Restaurant {
-    restaurant_id: number;
-    restaurant_name: string;
-    restaurant_location: string;
-    restaurant_detail: string;
-    total_rating: number;
-    total_reviews: number;
-    restaurant_image: string;
-  }
+interface Restaurant {
+  restaurant_id: number;
+  zone_id: number;
+  restaurant_name: string;
+  restaurant_location: string;
+  restaurant_detail: string;
+  restaurant_image: string;
+  total_rating: number;
+  total_reviews: number;
+  current_visitor_count: number;
+  update_date_time: string;
+}
 
 const BarPage: React.FC = () => {
   const [bars, setBars] = useState<Bar[]>([]);

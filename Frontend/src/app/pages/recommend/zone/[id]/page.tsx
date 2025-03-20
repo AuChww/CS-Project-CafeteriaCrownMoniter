@@ -35,13 +35,13 @@ interface Restaurant {
 
 interface Review {
   review_id: number;
-  user_id: number;  // user_id ที่จะใช้ดึงข้อมูลชื่อผู้ใช้
+  user_id: number;
   restaurant_id: number;
   review_comment: string;
   review_image: string;
   rating: number;
   created_time: string;
-  user_name?: string; // เพิ่ม property สำหรับ username
+  user_name?: string;
 }
 
 const ZonePage = () => {
@@ -55,7 +55,7 @@ const ZonePage = () => {
   const [error, setError] = useState<string | null>(null);
 
   const navigateToReports = () => {
-    router.push("/pages/report"); // เปลี่ยนเส้นทางไปที่หน้า /pages/report
+    router.push("/pages/report"); 
   };
 
   const fetchZoneAndRestaurants = async () => {
@@ -103,7 +103,6 @@ const ZonePage = () => {
     }
 
     try {
-      // ดึง URL วิดีโอ
       const getVideoResponse = await fetch(
         `http://127.0.0.1:8000/api/v1/getZoneVideo/${id}.mp4`
       );
@@ -142,52 +141,6 @@ const ZonePage = () => {
     }
   };
 
-  //     useEffect(() => {
-  //     const fetchZoneAndRestaurants = async () => {
-  //         setLoading(true);
-  //         setError(null);
-
-  //         try {
-  //             // ดึงข้อมูลโซน
-  //             const getZoneResponse = await fetch(`http://127.0.0.1:8000/api/v1/getZoneById/${id}`);
-  //             if (!getZoneResponse.ok) {
-  //                 throw new Error("Failed to fetch zone data");
-  //             }
-  //             const zoneData: Zone = await getZoneResponse.json();
-  //             setZone(zoneData);
-  //         } catch (err: any) {
-  //             setError(err.message);
-  //         }
-
-  //         try {
-  //             // ดึงข้อมูลร้านอาหาร
-  //             const getRestaurantsResponse = await fetch(`http://127.0.0.1:8000/api/v1/getRestaurantByZoneId/${id}`);
-  //             if (!getRestaurantsResponse.ok) {
-  //                 throw new Error("Failed to fetch restaurant data");
-  //             }
-  //             const restaurantsData = await getRestaurantsResponse.json();
-  //             setRestaurants(restaurantsData.restaurants);
-  //         } catch (err: any) {
-  //             setError(err.message);
-  //         }
-
-  //         try {
-  //             // ดึง URL วิดีโอ
-  //             const getVideoResponse = await fetch(`http://localhost:5000/api/v1/getZoneVideo/${id}.mp4`);
-  //             if (!getVideoResponse.ok) {
-  //                 throw new Error("Failed to fetch video");
-  //             }
-  //             const videoData = await getVideoResponse.json();
-  //             setVideoUrl(videoData.url);
-  //         } catch (err: any) {
-  //             setError(err.message);
-  //         }
-
-  //         setLoading(false);
-  //     };
-
-  //     fetchZoneAndRestaurants();
-  // }, [id]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div className="text-red-500">Error: {error}</div>;
@@ -201,25 +154,12 @@ const ZonePage = () => {
             <h1 className="text-3xl font-bold mb-4 text-green-500">
               {zone.zone_name}
             </h1>
-            {/* <video width="640" height="360" controls>
-              <source src={video || ""} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video> */}
 
             {imageUrl ? (
               <img src={imageUrl} alt={zone.zone_name} width="500" />
             ) : (
               <div>Loading image...</div>
             )}
-            {/* <img
-              className="w-full object-cover rounded-md mb-4"
-              src={
-                zone.zone_image
-                  ? `/image/zoneImages/${zone.zone_image}`
-                  : `/image/zoneImages/placeholder.jpg`
-              }
-              alt={zone.zone_name}
-            /> */}
             <div className="text-lg text-gray-700">{zone.zone_detail}</div>
 
             <div className="text-lg text-gray-700">
@@ -250,7 +190,6 @@ const ZonePage = () => {
                 Report
               </button>
             </div>
-            {/* Restaurant List */}
             <div className="grid grid-cols-2 gap-4 p-10">
               {restaurants &&
                 Array.isArray(restaurants) &&

@@ -173,35 +173,6 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
           </div>
         </div>
       </div>
-
-      {/* <div className="flex justify-end mt-2 mr-1">
-                <div onClick={() => handleEditClick()}>
-                    <MdEdit className="text-gray-600 w-6 h-6 cursor-pointer" />
-                </div>
-                <div onClick={() => handleDelete(bar_id,bar_name)}>
-                    <MdDeleteForever className="text-red-600 w-6 h-6 cursor-pointer" />
-                </div>
-            </div> */}
-      {/* 
-            {showEditPopup && (
-                <PopUpEditBar
-                    barId={bar_id}
-                    onClose={closeEditPopup}
-                    bar_name={bar_name}
-                    bar_location={bar_location}
-                    max_people_in_bar={max_people_in_bar}
-                    bar_detail={bar_detail}
-                    bar_image={bar_image}
-                />
-            )}
-
-            {showDeletePopup && (
-                <PopUpDeleteBar
-                    barId={bar_id}
-                    bar_name={bar_name}
-                    onClose={closeDeletePopup}
-                />
-            )} */}
     </div>
   );
 };
