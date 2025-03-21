@@ -85,7 +85,7 @@ const AdminCrowdCard: React.FC<CrowdCardProps> = ({
       <div onClick={() => router.push(`/pages/recommend/bar/${bar_id}`)}>
         {imageUrl ? (
           <img
-            className=" w-auto h-30 object-cover rounded-t-lg "
+            className=" w-full h-32 object-cover rounded-t-lg "
             src={imageUrl}
             alt=" Image"
           />

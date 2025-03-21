@@ -153,31 +153,26 @@ def add_user(username, email, password, role, user_image=None):
         conn.close()
 
 
-def update_user(user_id, data, file=None):
+def update_user(user_id, data):
     conn = db_conn()
     cur = conn.cursor()
+    print("Debug: Data received ->", data)
+    
+    username = data.get('username')
+    email = data.get('email')
+    user_image = data.get('user_image')
+    
+    print(f"Debug: username={username}, email={email}, user_image={user_image}")
 
-    if file:
-        filename = save_image(file)
-    else:
-        filename = data.get('user_image', '')
-
-    try:
-        cur.execute(
-            'UPDATE "USER" SET username = %s, email = %s, role = %s, user_image = %s WHERE user_id = %s',
-            (data.get('username'), data.get('email'), data.get('role'), filename, user_id)
-        )
-        updated = cur.rowcount > 0
-        conn.commit()
-        print(f"Updated {cur.rowcount} row(s)")  # Log the number of affected rows
-        return updated
-    except Exception as e:
-        print(f"Error updating user: {e}")
-        conn.rollback()
-        return False
-    finally:
-        cur.close()
-        conn.close()
+    cur.execute(
+        'UPDATE "USER" SET username = %s, email = %s, user_image = %s WHERE user_id = %s',
+        (username, email, user_image, user_id)
+    )
+    updated = cur.rowcount > 0
+    conn.commit()
+    cur.close()
+    conn.close()
+    return updated
 
 def delete_user(user_id):
     conn = db_conn()
@@ -188,3 +183,27 @@ def delete_user(user_id):
     cur.close()
     conn.close()
     return deleted
+
+
+def update_user_image_path(user_id, file_name):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute(
+        'UPDATE "USER" SET user_image = %s WHERE user_id = %s',
+        (file_name, user_id)
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+
+def get_user_image(user_id):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute('SELECT user_image FROM "USER" WHERE user_id = %s', (user_id,))
+    result = cur.fetchone()
+    cur.close()
+    conn.close()
+    
+    return result[0] if result else None  # คืนค่า file_name ถ้ามีข้อมูล

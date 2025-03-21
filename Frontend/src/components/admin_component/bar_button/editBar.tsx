@@ -43,7 +43,6 @@ const EditBar: React.FC<EditBarProps> = ({ bars }) => {
   const handleEditBar = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // ตรวจสอบค่าที่เปลี่ยนไป ถ้าไม่มีการเปลี่ยนแปลง ให้ใช้ค่าเดิมจาก state
     const Selected = selectedBar.trim || previousSelectedBar;
     const updatedBarName = barName.trim() || previousBarName;
     const updatedBarDetail = barDetail.trim() || previousBarDetail;

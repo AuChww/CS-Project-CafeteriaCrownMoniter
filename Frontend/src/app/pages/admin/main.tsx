@@ -90,7 +90,7 @@ export default function Admin() {
               bar_detail={bar.bar_detail}
             />
 
-            <div className="flex justify-end mt-4 cursor-pointer py-auto ">
+            <div className="flex justify-end mt-4 cursor-pointer pb-5 ">
               <div className="bg-red-300 p-2 rounded-3xl mx-auto my-auto" onClick={() => handleDelete(bar.bar_id, bar.bar_name)}>
                 
                 <svg
