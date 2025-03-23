@@ -49,6 +49,18 @@ const TopBar: React.FC = () => {
     fetchData();
   }, []);
 
+  if (loading) {
+    return <div className="p-6">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="p-6 text-red-500">Error: {error}</div>;
+  }
+
+  if (bars.length === 0) {
+    return <div className="p-6 text-gray-500">No bars available</div>;
+  }
+
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-4 text-green-500">Top Bars</h1>

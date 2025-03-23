@@ -45,7 +45,7 @@ def add_review():
     restaurant_id = data.get('restaurant_id')
     rating = data.get('rating')
     comment = data.get('comment')
-    review_image = data.get('review_image')  # รับค่า review_image
+    review_image = data.get('review_image') 
 
     # Validate required fields
     if not all([user_id, restaurant_id, rating]):

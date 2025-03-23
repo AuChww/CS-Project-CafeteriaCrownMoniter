@@ -77,7 +77,6 @@ const ZonePage = () => {
     }
 
     try {
-      // ดึงข้อมูลร้านอาหาร
       const getRestaurantsResponse = await fetch(
         `http://127.0.0.1:8000/api/v1/getRestaurantByZoneId/${id}`
       );

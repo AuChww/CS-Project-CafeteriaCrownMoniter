@@ -50,55 +50,58 @@ const TopRestaurant: React.FC = () => {
     fetchData();
   }, []);
 
+  if (loading) {
+    return <div className="p-6">Loading...</div>;
+  }
+
+
+  if (restaurants.length === 0 || error) {
+    return <div className="p-6 text-gray-500">No restaurants available</div>;
+  }
+
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-4 text-green-500">Top Restaurants</h1>
-      {loading ? (
-        <div>Loading...</div>
-      ) : error ? (
-        <div className="text-red-500">{error}</div>
-      ) : (
-        <div className="overflow-x-auto mb-8">
-          <div className="flex gap-6">
-            {restaurants.map((restaurant, index) => (
-              <div
-                key={restaurant.restaurant_id}
-                onClick={() => router.push(`/pages/recommend/restaurant/${restaurant.restaurant_id}`)}
-                className="relative w-60"
-              >
-                {index < 3 && (
-                  <div className="absolute flex top-2 right-2 bg-gradient-to-r
+      <div className="overflow-x-auto mb-8">
+        <div className="flex gap-6">
+          {restaurants.map((restaurant, index) => (
+            <div
+              key={restaurant.restaurant_id}
+              onClick={() => router.push(`/pages/recommend/restaurant/${restaurant.restaurant_id}`)}
+              className="relative w-60"
+            >
+              {index < 3 && (
+                <div className="absolute flex top-2 right-2 bg-gradient-to-r
                             from-orange-500
                             via-red-600
                             to-red-800  text-white text-xs py-1 px-2 rounded-full">
-                    <div>
-                      Popular
-                    </div>
-                    <div>
-                      <FaFireAlt className="w-4 h-4 ml-1" />
-                    </div>
+                  <div>
+                    Popular
                   </div>
-                )}
+                  <div>
+                    <FaFireAlt className="w-4 h-4 ml-1" />
+                  </div>
+                </div>
+              )}
 
-                <RestaurantCard
-                  key={restaurant.restaurant_id}
-                  restaurant_id={restaurant.restaurant_id}
-                  zone_id={restaurant.zone_id}
-                  restaurant_name={restaurant.restaurant_name}
-                  restaurant_location={restaurant.restaurant_location}
-                  restaurant_detail={restaurant.restaurant_detail}
-                  restaurant_image={restaurant.restaurant_image}
-                  restaurant_rating={restaurant.restaurant_rating}
-                  total_rating={restaurant.total_rating}
-                  total_reviews={restaurant.total_reviews}
-                  current_visitor_count={restaurant.current_visitor_count}
-                  update_date_time={restaurant.update_date_time}
-                />
-              </div>
-            ))}
-          </div>
+              <RestaurantCard
+                key={restaurant.restaurant_id}
+                restaurant_id={restaurant.restaurant_id}
+                zone_id={restaurant.zone_id}
+                restaurant_name={restaurant.restaurant_name}
+                restaurant_location={restaurant.restaurant_location}
+                restaurant_detail={restaurant.restaurant_detail}
+                restaurant_image={restaurant.restaurant_image}
+                restaurant_rating={restaurant.restaurant_rating}
+                total_rating={restaurant.total_rating}
+                total_reviews={restaurant.total_reviews}
+                current_visitor_count={restaurant.current_visitor_count}
+                update_date_time={restaurant.update_date_time}
+              />
+            </div>
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
 };
