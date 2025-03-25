@@ -17,8 +17,6 @@ face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fronta
 
 # เปิดวิดีโอด้วย OpenCV
 def get_zone_human_count(video_id):
-    
-    
 
     video_path = os.path.join(os.path.dirname(__file__), f"../public/video/zone/{video_id}.mp4")
         # ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่
@@ -128,7 +126,7 @@ def get_restaurant_human_count(restaurant_id_first,restaurant_id_second):
     fps = cap.get(cv2.CAP_PROP_FPS)  # Frames per second
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-    frames_to_process = int(fps * 1)  # 5 วินาทีแรก
+    frames_to_process = int(fps * 100)  # 5 วินาทีแรก
 
     while True:
         ret, frame = cap.read()
@@ -171,15 +169,15 @@ def get_restaurant_human_count(restaurant_id_first,restaurant_id_second):
             for zone, (roi_top_left, roi_bottom_right) in roi_areas.items():
                 cv2.rectangle(frame, roi_top_left, roi_bottom_right, (0, 0, 255), 2)
                 cv2.putText(frame, f"{zone}: {current_counts[zone]}", (roi_top_left[0], roi_top_left[1] - 10),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                
+            cv2.imshow('YOLOv8 Human Detection', frame)
 
-            # cv2.imshow('YOLOv8 Human Detection', frame)
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        # if cv2.waitKey(1) & 0xFF == ord('q'):
+        #     break
 
     cap.release()
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
     
     for zone in roi_areas:
         print(f"{zone}: {human_counts[zone][-1] if human_counts[zone] else 0}")
@@ -188,3 +186,4 @@ def get_restaurant_human_count(restaurant_id_first,restaurant_id_second):
 
     return [ (zone, human_counts[zone][-1] if human_counts[zone] else 0) for zone in roi_areas ]
 
+# get_restaurant_human_count(3,4)
