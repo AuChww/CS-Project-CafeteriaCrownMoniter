@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import BarCard from "@/components/BarCard";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -25,8 +25,12 @@ const TopBar: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const barsResponse = await fetch("http://127.0.0.1:8000/api/v1/getAllBars");
-        const restaurantsResponse = await fetch("http://127.0.0.1:8000/api/v1/getAllRestaurants");
+        const barsResponse = await fetch(
+          "http://127.0.0.1:8000/api/v1/getAllBars"
+        );
+        const restaurantsResponse = await fetch(
+          "http://127.0.0.1:8000/api/v1/getAllRestaurants"
+        );
 
         if (!barsResponse.ok || !restaurantsResponse.ok) {
           throw new Error("Failed to fetch data");
@@ -35,7 +39,8 @@ const TopBar: React.FC = () => {
         const barsData: { bars: Bar[] } = await barsResponse.json();
 
         const sortedBars = barsData.bars.sort(
-          (a, b) => b.total_rating - a.total_rating || b.total_reviews - a.total_reviews
+          (a, b) =>
+            b.total_rating - a.total_rating || b.total_reviews - a.total_reviews
         );
 
         setBars(sortedBars);
@@ -67,17 +72,19 @@ const TopBar: React.FC = () => {
       <div className="overflow-x-auto mb-8">
         <div className="flex gap-6">
           {bars.map((bar, index) => (
-            <div key={bar.bar_id} onClick={() => router.push(`/pages/recommend/bar/${bar.bar_id}`)}
-              className="relative">
-
+            <div
+              key={bar.bar_id}
+              onClick={() => router.push(`/pages/recommend/bar/${bar.bar_id}`)}
+              className="relative"
+            >
               {index < 3 && (
-                <div className="absolute flex top-2 right-2 bg-gradient-to-r
+                <div
+                  className="absolute flex top-2 right-2 bg-gradient-to-r
                           from-orange-500
                           via-red-600
-                          to-red-800  text-white text-xs py-1 px-2 rounded-full">
-                  <div>
-                    Popular
-                  </div>
+                          to-red-800  text-white text-xs py-1 px-2 rounded-full"
+                >
+                  <div>Popular</div>
                   <div>
                     <FaFireAlt className="w-4 h-4 ml-1" />
                   </div>

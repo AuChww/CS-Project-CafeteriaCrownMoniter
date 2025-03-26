@@ -21,10 +21,10 @@ const EditZone: React.FC<EditZoneProps> = ({ zones }) => {
   const [zoneImage, setZoneImage] = useState<File | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedZone, setSelectedZone] = useState("");
-  const [error, setError] = useState<string | null>(null); // Error state
-  const [isSubmitting, setIsSubmitting] = useState(false); // Disable submit while submitting
-  const [zoneStartTime, setZoneStartTime] = useState<string>(""); // For start time
-  const [zoneEndTime, setZoneEndTime] = useState<string>(""); // For end timeืยท
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [zoneStartTime, setZoneStartTime] = useState<string>("");
+  const [zoneEndTime, setZoneEndTime] = useState<string>("");
   const zoneTime = `${zoneStartTime}:00 - ${zoneEndTime}:00`;
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,10 +49,8 @@ const EditZone: React.FC<EditZoneProps> = ({ zones }) => {
   const handleEditZone = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // ตรวจสอบว่าค่า selectedZone มีค่าหรือไม่
     console.log("selectedZone before check:", selectedZone);
 
-    // ตรวจสอบว่าค่า selectedZone มีค่าหรือไม่
     if (!selectedZone) {
       setError("Please select a valid zone.");
       return;
@@ -99,8 +97,6 @@ const EditZone: React.FC<EditZoneProps> = ({ zones }) => {
 
       console.log("Zone updated successfully");
 
-      // Reset form fields after successful submission
-      setZoneName("");
       setZoneDetail("");
       setMaxPeopleInZone("");
       setZoneStartTime("");
@@ -108,7 +104,7 @@ const EditZone: React.FC<EditZoneProps> = ({ zones }) => {
       setSelectedZone("");
       setZoneImage(null);
       if (fileInputRef.current) {
-        fileInputRef.current.value = ""; // ล้างค่า input file เพื่อให้ UI อัปเดต
+        fileInputRef.current.value = "";
       }
       setError(null);
       toggleModal(); // Close the modal after submission
@@ -295,7 +291,6 @@ const EditZone: React.FC<EditZoneProps> = ({ zones }) => {
           </div>
         </div>
         {error && <div className="text-red-500 text-sm mb-3">{error}</div>}{" "}
-        {/* Error message display */}
         <button
           type="submit"
           className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"

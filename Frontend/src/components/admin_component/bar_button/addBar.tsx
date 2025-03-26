@@ -10,9 +10,8 @@ function AddBar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-
   const toggleModal = () => {
-    setIsModalOpen((prevState) => !prevState); // ฟังก์ชัน toggle สำหรับเปิด/ปิด Modal
+    setIsModalOpen((prevState) => !prevState);
   };
 
   const handleAddBar = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -33,7 +32,7 @@ function AddBar() {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/v1/addBar", {
         method: "POST",
-        body: formData, // ส่ง FormData ที่รวมไฟล์และข้อมูลอื่น
+        body: formData,
       });
 
       if (!response.ok) {
@@ -49,10 +48,10 @@ function AddBar() {
       setMaxPeopleInBar("");
       setBarImage(null);
       if (fileInputRef.current) {
-        fileInputRef.current.value = ""; // ล้างค่า input file เพื่อให้ UI อัปเดต
+        fileInputRef.current.value = "";
       }
 
-      toggleModal(); // ปิด Modal หลังจากเพิ่ม bar สำเร็จ
+      toggleModal();
     } catch (error) {
       console.error("Submission error:", error);
     }
@@ -62,7 +61,6 @@ function AddBar() {
     <div>
       <form onSubmit={handleAddBar} className="py-2 px-4 md:p-5">
         <div className="grid gap-3 mb-8 grid-cols-2">
-          {/* ฟิลด์ Bar name */}
           <div className="col-span-2">
             <div className="relative z-0 mb-6 w-full group">
               <input
@@ -92,7 +90,7 @@ function AddBar() {
               </label>
             </div>
           </div>
-          {/* ฟิลด์ Bar detail */}
+
           <div className="col-span-2">
             <div className="relative z-0 mb-6 w-full group">
               <input
@@ -123,7 +121,6 @@ function AddBar() {
             </div>
           </div>
 
-          {/* ฟิลด์ Bar location */}
           <div className="col-span-1">
             <div className="relative z-0 mb-6 w-full group">
               <input
@@ -182,7 +179,7 @@ function AddBar() {
               </label>
             </div>
           </div>
-          {/* ฟิลด์อัพโหลดไฟล์ (Bar image) */}
+
           <div className="col-span-2">
             <label
               htmlFor="bar_image"

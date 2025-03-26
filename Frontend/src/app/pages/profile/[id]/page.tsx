@@ -24,18 +24,15 @@ const ProfilePage = () => {
   const [previousUserEmail, setPreviousUserEmail] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
 
     if (isModalOpen) {
-        window.location.reload();
-      }
+      window.location.reload();
+    }
   };
-
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -81,17 +78,16 @@ const ProfilePage = () => {
     formData.append("user_id", userData.user_id);
     formData.append("username", updatedUserName);
     formData.append("email", updatedUserEmail);
-    
+
     if (userFileImage) {
       formData.append("user_image", userFileImage);
     }
 
-    console.log(updatedUserName)
-    console.log(updatedUserEmail)
-    console.log(userFileImage)
+    console.log(updatedUserName);
+    console.log(updatedUserEmail);
+    console.log(userFileImage);
 
     try {
-
       const response = await fetch(
         `http://127.0.0.1:8000/api/v1/updateUser/${id}`,
         {
@@ -106,11 +102,9 @@ const ProfilePage = () => {
 
       const updatedData = await response.json();
       setUserData(updatedData);
-    //   alert("User updated successfully");
-      
+
       router.push(`/pages/profile/${id}`);
       toggleModal();
-    //   window.location.reload();
     } catch (err: any) {
       console.error("Error updating user data:", err);
       setError(err.message || "Failed to update user data");
@@ -122,11 +116,7 @@ const ProfilePage = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const allowedTypes = [
-        "image/png",
-        "image/jpeg",
-        "image/jpg",
-      ];
+      const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
       if (!allowedTypes.includes(file.type)) {
         alert("Invalid file type. Please upload an image.");
         return;
@@ -180,13 +170,12 @@ const ProfilePage = () => {
               type="text"
               id="username"
               name="username"
-              value={userData.username || ""} // Ensure value is a valid string
+              value={userData.username || ""}
               onChange={handleChange}
               className="w-full border rounded px-3 py-2"
             />
           </div>
 
-          {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium mb-1">
               Email
@@ -201,7 +190,6 @@ const ProfilePage = () => {
             />
           </div>
 
-          {/* Role */}
           <div className="flex items-center space-x-3">
             <p>Role:</p>
 
@@ -223,7 +211,7 @@ const ProfilePage = () => {
             ref={fileInputRef}
             onChange={(e) => {
               if (e.target.files && e.target.files.length > 0) {
-                setUserFileImage(e.target.files[0]); // บันทึกไฟล์ใน state
+                setUserFileImage(e.target.files[0]);
               }
             }}
           />
@@ -302,9 +290,6 @@ const ProfilePage = () => {
         </div>
       )}
     </div>
-
-
-
   );
 };
 

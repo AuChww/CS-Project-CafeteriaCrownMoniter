@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation"; // ใช้ useParams แทน useRouter
+import { useParams } from "next/navigation";
 import React, { useEffect, useState, useRef } from "react";
 import ZoneCard from "@/components/ZoneCard";
 import {

@@ -44,17 +44,17 @@ const EditTab = () => {
   const [restaurantList, setRestaurantList] = useState<Restaurant[]>([]);
   const [zoneList, setZoneList] = useState<Zone[]>([]);
 
-  // เปิด Modal
+ 
   const openModal = () => {
     setIsModalOpen(true);
   };
 
-  // ปิด Modal
+ 
   const closeModal = () => {
     setIsModalOpen(false);
   };
 
-  // เปลี่ยน Tab โดยรับชื่อ Tab ที่ต้องการเป็น argument
+  
   const handleTabChange = (tab: Tab) => {
     setActiveTab(tab);
   };
@@ -72,7 +72,7 @@ const EditTab = () => {
 
         const barsData: { bars: Bar[] } = await barsResponse.json();
 
-        setBarList(barsData.bars); // Set to barList instead of bars
+        setBarList(barsData.bars); 
         setLoading(false);
       } catch (err: any) {
         setError(err.message);
@@ -121,7 +121,7 @@ const EditTab = () => {
 
   return (
     <div>
-      {/* ปุ่มเปิด Modal */}
+     
       <button
         onClick={openModal}
         className="px-4 py-2 bg-green-400 hover:bg-green-300 duration-300 text-white rounded"

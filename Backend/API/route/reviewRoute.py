@@ -114,11 +114,13 @@ IMAGE_FOLDER = 'public/image/reviewImages'
 def get_image_url(file_name):
     file_path = os.path.join(IMAGE_FOLDER, file_name)
     
-    image_url = f"http://localhost:8000/public/image/reviewImages/{file_name}"
+    if not os.path.isfile(file_path):
+        return jsonify({"url": None}), 200 
 
+    image_url = f"http://localhost:8000/public/image/reviewImages/{file_name}"
     return jsonify({"url": image_url})
 
-@review_bp.route('/public/image/ReviewImages/<path:file_name>')
+@review_bp.route('/public/image/reviewImages/<path:file_name>')
 def serve_actual_image(file_name):
     image_directory = os.path.join(os.getcwd(), "public", "image", "reviewImages")
     return send_from_directory(image_directory, file_name)

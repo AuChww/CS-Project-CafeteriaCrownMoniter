@@ -90,7 +90,7 @@ const AddTab = () => {
 
   return (
     <div>
-      {/* ปุ่มเปิด Modal */}
+     
       <button
         onClick={openModal}
         className="px-4 py-2 bg-green-400 hover:bg-green-300 duration-300 text-white rounded"
@@ -100,14 +100,14 @@ const AddTab = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-          {/* Overlay */}
+        
           <div
             className="absolute inset-0 bg-black opacity-50"
             onClick={closeModal}
           ></div>
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg z-50 w-11/12 max-w-md">
-            {/* Tab Header */}
+          
             <div className="border-b border-gray-200 dark:border-gray-700 p-4 ">
               <ul className="flex flex-wrap -mb-px text-sm font-medium text-center">
                 <li className="me-2">

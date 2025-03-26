@@ -107,6 +107,7 @@ const CrowdCard: React.FC<Bar> = ({
         if (!response.ok) throw new Error("Failed to fetch image URL");
 
         const data = await response.json();
+        console.log(data.url);
         setImageUrl(data.url);
       } catch (error) {
         console.error("Error fetching image:", error);

@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext"; // ใช้ AuthContext
+import { useAuth } from "@/context/AuthContext"; 
 import EditReviewModal from "@/components/modal/EditReviewModal";
 import AddReviewModal from "@/components/modal/AddReviewModal";
 import ReviewCard from "@/components/ReviewCard";
@@ -25,28 +25,28 @@ interface Restaurant {
 
 interface Review {
   review_id: number;
-  user_id: number; // user_id ที่จะใช้ดึงข้อมูลชื่อผู้ใช้
+  user_id: number; 
   restaurant_id: number;
   review_comment: string;
   review_image: string;
   rating: number;
   created_time: string;
-  user_name?: string; // เพิ่ม property สำหรับ username
+  user_name?: string;
 }
 
 const RestaurantPage = () => {
-  const { id } = useParams(); // ดึง id จาก URL
+  const { id } = useParams(); 
   const router = useRouter();
-  const { user } = useAuth(); // ใช้ useAuth เพื่อดึงข้อมูลผู้ใช้งาน
+  const { user } = useAuth(); 
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [reviews, setReviews] = useState<Review[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [rating, setRating] = useState(0); // เก็บค่าระดับดาวที่ผู้ใช้เลือก
-  const [comment, setComment] = useState(""); // เก็บความคิดเห็น
-  const [reviewImage, setReviewImage] = useState<string>(""); // เก็บ URL รูป
-  const [imageFile, setImageFile] = useState<File | null>(null); // เก็บไฟล์ที่เลือก
-  const [editingReview, setEditingReview] = useState<Review | null>(null); // state สำหรับการแก้ไขรีวิว
+  const [rating, setRating] = useState(0); 
+  const [comment, setComment] = useState("");
+  const [reviewImage, setReviewImage] = useState<string>(""); 
+  const [imageFile, setImageFile] = useState<File | null>(null); 
+  const [editingReview, setEditingReview] = useState<Review | null>(null); 
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [reviewImageUrl, setReviewImageUrl] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -82,11 +82,10 @@ const RestaurantPage = () => {
 
             if (reviewImageResponse.ok) {
               const reviewImageData = await reviewImageResponse.json();
+              console.log("Review Image Data:", reviewImageData);
 
               if (reviewImageData && reviewImageData.url) {
-                reviewImageUrl = reviewImageData.url;
-                console.log(reviewImageUrl);
-                setReviewImage(reviewImageUrl);
+                reviewImageUrl = reviewImageData.url; // เก็บ URL ของภาพ
               } else {
                 console.error(`No URL found for review ${review.review_id}`);
               }
@@ -209,12 +208,9 @@ const RestaurantPage = () => {
       if (response.ok) {
         toggleModal();
         fetchRestaurantAndReviews();
-      } else {
-        alert(data.message || "Failed to add review");
       }
     } catch (error) {
       console.error("An error occurred:", error);
-      alert("An error occurred while adding the review.");
     }
   };
 
@@ -335,17 +331,21 @@ const RestaurantPage = () => {
                           <div className="w-full flex-col justify-start items-start gap-3.5 flex space-y-4">
                             <div className="w-full justify-between items-center inline-flex">
                               <div className="justify_between items-center gap-2.5 flex">
-                                <div className="w-10 h-10 bg-stone-300 rounded-full justify-start items-start gap-2.5 flex">
-                                  <img
-                                    className="rounded-full object-cover"
-                                    src="https://pagedone.io/asset/uploads/1710225753.png"
-                                    alt="John smith image"
-                                  />
-                                </div>
                                 <div className="flex-col justify-start items-start gap-1 inline-flex">
                                   <h5 className="text-gray-900 text-xl font-semibold leading-snug">
                                     {review.user_name}
                                   </h5>
+
+                                  <p className="text-gray-500 text-xs">
+                                    {new Date(
+                                      review.created_time
+                                    ).toLocaleDateString("th-TH", {
+                                      weekday: "short",
+                                      month: "short",
+                                      day: "numeric",
+                                      year: "numeric",
+                                    })}
+                                  </p>
                                 </div>
                               </div>
                               <div className="flex text-yellow-300">
@@ -377,14 +377,14 @@ const RestaurantPage = () => {
 
                             {review.review_image && (
                               <img
-                                src={review.review_image} // ใช้ review_image ตรงๆ เพราะมันเป็น string ที่เก็บ URL
+                                src={review.review_image}
                                 alt={`Review image for ${review.review_id}`}
-                                style={{ maxWidth: "100%", height: "auto" }}
+                                style={{ maxWidth: "50%", height: "auto" }}
                               />
                             )}
                           </div>
                           {user?.userId === review.user_id && (
-                            <div className="flex gap-2 mt-4">
+                            <div className="flex gap-2 mt-8">
                               <button
                                 onClick={() => handleEditClick(review)}
                                 className="px-4 py-2 bg-blue-600 text-white rounded"

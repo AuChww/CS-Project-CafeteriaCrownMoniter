@@ -20,8 +20,8 @@ const EditRestaurant: React.FC<EditRestaurantProps> = ({ restaurants }) => {
   const [restaurantImage, setRestaurantImage] = useState<File | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] = useState("");
-  const [error, setError] = useState<string | null>(null); // Error state
-  const [isSubmitting, setIsSubmitting] = useState(false); // Disable submit while submitting
+  const [error, setError] = useState<string | null>(null); 
+  const [isSubmitting, setIsSubmitting] = useState(false); 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [previousRestaurantName, setPreviousRestaurantName] = useState("");
@@ -76,17 +76,17 @@ const EditRestaurant: React.FC<EditRestaurantProps> = ({ restaurants }) => {
 
       console.log("Restaurant updated successfully");
 
-      // Reset form fields after successful submission
+   
       setSelectedRestaurant("");
       setRestaurantName("");
       setRestaurantDetail("");
       setRestaurantLocation("");
       setRestaurantImage(null);
       if (fileInputRef.current) {
-        fileInputRef.current.value = ""; // ล้างค่า input file เพื่อให้ UI อัปเดต
+        fileInputRef.current.value = ""; 
       }
       setError(null);
-      toggleModal(); // Close the modal after submission
+      toggleModal(); 
     } catch (error) {
       setError(
         "There was an error while submitting the form. Please try again."
