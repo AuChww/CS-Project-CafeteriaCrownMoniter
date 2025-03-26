@@ -246,7 +246,7 @@ const EditBar: React.FC<EditBarProps> = ({ bars }) => {
           disabled={isSubmitting}
           className="px-6 py-2 bg-blue-600 text-white rounded-md disabled:bg-gray-300"
         >
-          {isSubmitting ? "Submitting..." : "Update Bar"}
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </form>
 

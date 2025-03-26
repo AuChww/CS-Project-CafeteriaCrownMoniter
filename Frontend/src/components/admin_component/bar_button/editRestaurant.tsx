@@ -231,7 +231,7 @@ const EditRestaurant: React.FC<EditRestaurantProps> = ({ restaurants }) => {
           disabled={isSubmitting}
           className="px-6 py-2 bg-blue-600 text-white rounded-md disabled:bg-gray-300"
         >
-          {isSubmitting ? "Submitting..." : "Update Restaurant"}
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </form>
 

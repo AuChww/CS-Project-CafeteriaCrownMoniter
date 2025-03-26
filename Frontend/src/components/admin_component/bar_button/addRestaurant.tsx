@@ -150,7 +150,7 @@ const AddRestaurant: React.FC<AddZoneProps> = ({ zones }) => {
             selectedBar === "" ? "text-gray-500" : "text-gray-900"
           }`}
               >
-                <option value="">Choose a bar</option>
+                <option value="">Choose a zone</option>
                 {zones.length > 0 ? (
                   zones.map((zone) => (
                     <option key={zone.zone_id} value={zone.zone_id}>
@@ -188,7 +188,7 @@ const AddRestaurant: React.FC<AddZoneProps> = ({ zones }) => {
           className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           disabled={isSubmitting} // Disable while submitting
         >
-          {isSubmitting ? "Adding..." : "Add new restaurant"}
+          {isSubmitting ? "Adding..." : "Submit"}
         </button>
       </form>
 

@@ -128,7 +128,7 @@ const ReportDetailPage = () => {
           <div>
             <div className="border p-4 rounded-lg shadow-md mb-6 ">
               <h2 className="text-xl font-semibold">ข้อมูลผู้แจ้ง</h2>
-              <div className="flex items-center space-x-4 mt-2 text-zinc-600  mt-4" >
+              <div className="flex items-center space-x-4  text-zinc-600  mt-4" >
                 <img src={user.user_image || "/default-avatar.png"} alt="User" className="w-16 h-16 rounded-full" />
                 <div className="pl-16">
                   <div><strong>ชื่อผู้ใช้:</strong> {user.username}</div>
