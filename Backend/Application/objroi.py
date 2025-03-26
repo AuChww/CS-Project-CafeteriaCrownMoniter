@@ -24,10 +24,10 @@ def get_zone_human_count(video_id):
     cap = cv2.VideoCapture(video_path)
     
     roi_zones = {
-    1: {"top_left": (50, 50), "bottom_right": (1500, 1500)},
-    2: {"top_left": (50, 50), "bottom_right": (1500, 1500)},
-    3: {"top_left": (100, 100), "bottom_right": (1400, 1400)}
-}
+        1: {"top_left": (50, 50), "bottom_right": (1500, 1500)},
+        2: {"top_left": (50, 50), "bottom_right": (1500, 1500)},
+        3: {"top_left": (100, 100), "bottom_right": (1400, 1400)}
+    }
 
     # ตรวจสอบว่ามีการกำหนดโซนนี้หรือไม่
     if id in roi_zones:
@@ -36,10 +36,6 @@ def get_zone_human_count(video_id):
     else:
         roi_top_left = (50,50)
         roi_bottom_right = (1500, 1500)  
-
-    # # กำหนดพื้นที่ที่ต้องการนับ (ROI)
-    # roi_top_left = (50, 50)  # จุดมุมบนซ้าย
-    # roi_bottom_right = (1500, 1500)  # จุดมุมล่างขวา
 
     # ตัวแปรเก็บจำนวนคนในแต่ละเฟรม
     all_human_counts = []
@@ -50,7 +46,7 @@ def get_zone_human_count(video_id):
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     # คำนวณจำนวนเฟรมที่ต้องการให้ได้ 5 วินาที
-    frames_to_process = int(fps * 1)  # 5 วินาทีแรก
+    frames_to_process = int(fps * 1)  # 1 วินาทีแรก
 
     while True:
         ret, frame = cap.read()
@@ -184,22 +180,19 @@ def get_restaurant_human_count(restaurant_id_first,restaurant_id_second):
 
     # กำหนด ROI (Region of Interest)
     roi_areas = {
-        restaurant_id_first: [(0, 0), (200, 400)],  
-        restaurant_id_second : [(200, 0), (400, 400)],
+        str(restaurant_id_first): [(0, 0), (425, 475)],  
+        str(restaurant_id_second): [(425, 0), (850, 475)],
     }
+
 
     frame_number = 0
     human_counts = {zone: [] for zone in roi_areas}
-
-    def is_within_roi(left, top, right, bottom, roi_top_left, roi_bottom_right):
-        return (left > roi_top_left[0] and right < roi_bottom_right[0] and
-                top > roi_top_left[1] and bottom < roi_bottom_right[1])
     
     # หาความยาวของวิดีโอ (ในหน่วยเฟรม)
     fps = cap.get(cv2.CAP_PROP_FPS)  # Frames per second
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-    frames_to_process = int(fps * 100)  # 5 วินาทีแรก
+    frames_to_process = int(fps * 1)  # 1 วินาทีแรก
 
     while True:
         ret, frame = cap.read()
@@ -212,26 +205,25 @@ def get_restaurant_human_count(restaurant_id_first,restaurant_id_second):
         if frame_number % 10 != 0:
             continue
 
-        
-        small_frame = cv2.resize(frame, (640, 360))
-        print(f"after small frame {restaurant_id_first,restaurant_id_second}")
-
-        results = model(small_frame)
+        results = model(frame)
         detections = results[0].boxes.xyxy.cpu().numpy()
         classes = results[0].boxes.cls.cpu().numpy()
 
         current_counts = {zone: 0 for zone in roi_areas}
-        
-        
 
         for i, box in enumerate(detections):
             left, top, right, bottom = map(int, box[:4])
             cls = int(classes[i])
 
-            if cls == 0:  # ตรวจจับเฉพาะคน
+            if cls == 0:
                 for zone, (roi_top_left, roi_bottom_right) in roi_areas.items():
-                    if is_within_roi(left, top, right, bottom, roi_top_left, roi_bottom_right):
-                        current_counts[zone] += 1
+                    if (left > roi_top_left[0] and right < roi_bottom_right[0] and
+                        top > roi_top_left[1] and bottom < roi_bottom_right[1]):
+
+                        current_counts[zone] += 1  # Update human count for the zone
+
+                        # 🔥 วาดกรอบรอบตัวคน
+                        cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)  # สีแดง
 
         # บันทึกจำนวนคนในแต่ละ ROI
         for zone in roi_areas:
@@ -246,8 +238,8 @@ def get_restaurant_human_count(restaurant_id_first,restaurant_id_second):
                 
             cv2.imshow('YOLOv8 Human Detection', frame)
 
-        # if cv2.waitKey(1) & 0xFF == ord('q'):
-        #     break
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
     cap.release()
     # cv2.destroyAllWindows()
