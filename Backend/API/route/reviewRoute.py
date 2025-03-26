@@ -44,7 +44,7 @@ def get_review_by_id(review_id):
 def add_review():
     data = request.form
     user_id = data.get('user_id')
-    restaurant_id = int(data.get('restaurant_id'))
+    restaurant_id = data.get('restaurant_id')
     rating = int(data.get('rating'))
     comment = data.get('comment')
     review_image = request.files.get('review_image') 
@@ -70,8 +70,7 @@ def add_review():
         file_name = None
  
     
-    
-    
+
     return jsonify({'message': 'Review added successfully', 'review_id': review_id}), 201
 
 @review_bp.route('/api/v1/updateReview/<int:review_id>', methods=['PUT'])
@@ -114,9 +113,6 @@ IMAGE_FOLDER = 'public/image/reviewImages'
 @review_bp.route('/api/v1/getReviewImage/<string:file_name>', methods=['GET'])
 def get_image_url(file_name):
     file_path = os.path.join(IMAGE_FOLDER, file_name)
-
-    if not os.path.isfile(file_path):
-        file_name = 'default.png'
     
     image_url = f"http://localhost:8000/public/image/reviewImages/{file_name}"
 

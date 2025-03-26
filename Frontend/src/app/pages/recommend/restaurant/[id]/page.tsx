@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext"; // ใช้ AuthContext
 import EditReviewModal from "@/components/modal/EditReviewModal";
 import AddReviewModal from "@/components/modal/AddReviewModal";
 import ReviewCard from "@/components/ReviewCard";
+import Image from "next/image";
 
 interface Restaurant {
   restaurant_id: number;
@@ -47,6 +48,7 @@ const RestaurantPage = () => {
   const [imageFile, setImageFile] = useState<File | null>(null); // เก็บไฟล์ที่เลือก
   const [editingReview, setEditingReview] = useState<Review | null>(null); // state สำหรับการแก้ไขรีวิว
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [reviewImageUrl, setReviewImageUrl] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -71,7 +73,40 @@ const RestaurantPage = () => {
             `http://127.0.0.1:8000/api/v1/getUserId/${review.user_id}`
           );
           const userData = await userResponse.json();
-          return { ...review, user_name: userData.username };
+          let reviewImageUrl = "";
+
+          try {
+            const reviewImageResponse = await fetch(
+              `http://127.0.0.1:8000/api/v1/getReviewImage/review${review.review_id}.png`
+            );
+
+            if (reviewImageResponse.ok) {
+              const reviewImageData = await reviewImageResponse.json();
+
+              if (reviewImageData && reviewImageData.url) {
+                reviewImageUrl = reviewImageData.url;
+                console.log(reviewImageUrl);
+                setReviewImage(reviewImageUrl);
+              } else {
+                console.error(`No URL found for review ${review.review_id}`);
+              }
+            } else {
+              console.error(
+                `Failed to fetch image for review ${review.review_id}, status: ${reviewImageResponse.status}`
+              );
+            }
+          } catch (error) {
+            console.error(
+              `Error fetching image for review ${review.review_id}:`,
+              error
+            );
+          }
+
+          return {
+            ...review,
+            user_name: userData.username,
+            review_image: reviewImageUrl,
+          };
         })
       );
 
@@ -149,7 +184,7 @@ const RestaurantPage = () => {
 
     formData.append("comment", comment);
     formData.append("rating", String(rating));
-    formData.append("restaurant_id", String(rating));
+    formData.append("restaurant_id", String(id));
     formData.append("user_id", user.userId);
 
     // เพิ่มไฟล์ ถ้ามี
@@ -157,25 +192,17 @@ const RestaurantPage = () => {
       formData.append("review_image", imageFile);
     }
 
-    try {
+    console.log(comment);
+    console.log(rating);
+    console.log(id);
+    console.log(user.userId);
+    console.log(imageFile);
 
+    try {
       const response = await fetch("http://127.0.0.1:8000/api/v1/addReview", {
         method: "POST",
         body: formData, // ส่ง FormData โดยตรง
       });
-      // const response = await fetch("http://127.0.0.1:8000/api/v1/addReview", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     comment,
-      //     rating,
-      //     restaurant_id: id,
-      //     user_id: user.userId,
-      //     review_image: imageFile ? imageFile.name : null,
-      //   }),
-      // });
 
       const data = await response.json();
 
@@ -347,11 +374,12 @@ const RestaurantPage = () => {
                             <p className="text-gray-600 text-sm font-normal leading-snug">
                               {review.review_comment}
                             </p>
+
                             {review.review_image && (
                               <img
-                                src={`/image/reviewImages/${review.review_image}`}
-                                alt="Review"
-                                className="mt-4 w-full rounded"
+                                src={review.review_image} // ใช้ review_image ตรงๆ เพราะมันเป็น string ที่เก็บ URL
+                                alt={`Review image for ${review.review_id}`}
+                                style={{ maxWidth: "100%", height: "auto" }}
                               />
                             )}
                           </div>

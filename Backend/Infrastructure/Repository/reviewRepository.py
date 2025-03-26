@@ -132,7 +132,7 @@ def delete_review(review_id, restaurant_id):
     conn.close()
     return deleted
 
-def update_review_image_path(review_id, file_name):
+def update_review_image(review_id, file_name):
     conn = db_conn()
     cur = conn.cursor()
     cur.execute(
