@@ -46,19 +46,17 @@ def get_review_by_id(review_id):
         )
     return None
 
-def add_review(user_id, restaurant_id, rating, review_comment, review_image):
+def add_review(user_id, restaurant_id, rating, review_comment):
     conn = db_conn()
     cur = conn.cursor()
 
-    # เพิ่มข้อมูลรีวิวใน REVIEW table
     query = '''
-        INSERT INTO review (user_id, restaurant_id, rating, review_comment, review_image)
-        VALUES (%s, %s, %s, %s, %s) RETURNING review_id
+        INSERT INTO review (user_id, restaurant_id, rating, review_comment)
+        VALUES (%s, %s, %s, %s) RETURNING review_id
     '''
-    cur.execute(query, (user_id, restaurant_id, rating, review_comment, review_image))
+    cur.execute(query, (user_id, restaurant_id, rating, review_comment))
     review_id = cur.fetchone()[0]
 
-    # อัพเดต total_rating และ total_reviews ใน RESTAURANT
     cur.execute(
         '''
         UPDATE restaurant
@@ -84,7 +82,7 @@ def add_review(user_id, restaurant_id, rating, review_comment, review_image):
             SELECT zone_id FROM restaurant WHERE restaurant_id = %s
         )
         ''',
-        ( rating, restaurant_id)
+        (rating, restaurant_id)
     )
 
     # Commit และปิดการเชื่อมต่อ
@@ -93,6 +91,7 @@ def add_review(user_id, restaurant_id, rating, review_comment, review_image):
     conn.close()
 
     return review_id
+
 
 
 def update_review(review_id, user_id, restaurant_id, rating, review_comment, review_image=None):
@@ -132,3 +131,14 @@ def delete_review(review_id, restaurant_id):
     cur.close()
     conn.close()
     return deleted
+
+def update_review_image_path(review_id, file_name):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute(
+        'UPDATE review SET review_image = %s WHERE review_id = %s',
+        (file_name, review_id)
+    )
+    conn.commit()
+    cur.close()
+    conn.close()

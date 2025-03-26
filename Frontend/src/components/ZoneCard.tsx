@@ -239,7 +239,6 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
             restaurants.map((restaurant) => (
               <div
                 key={restaurant.restaurant_id}
-                className="w-full p-2 bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 transition-transform transform hover:scale-105 duration-300"
               >
                 <div
                   onClick={() =>

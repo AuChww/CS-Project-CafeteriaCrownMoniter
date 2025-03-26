@@ -21,8 +21,8 @@ const EditBar: React.FC<EditBarProps> = ({ bars }) => {
   const [barImage, setBarImage] = useState<File | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBar, setSelectedBar] = useState("");
-  const [error, setError] = useState<string | null>(null); // Error state
-  const [isSubmitting, setIsSubmitting] = useState(false); // Disable submit while submitting
+  const [error, setError] = useState<string | null>(null); 
+  const [isSubmitting, setIsSubmitting] = useState(false); 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [previousBarName, setPreviousBarName] = useState("");
@@ -77,7 +77,7 @@ const EditBar: React.FC<EditBarProps> = ({ bars }) => {
 
       console.log("Bar updated successfully");
 
-      // Reset form fields after successful submission
+      
       setBarName("");
       setBarDetail("");
       setMaxPeopleInBar("");
@@ -85,10 +85,10 @@ const EditBar: React.FC<EditBarProps> = ({ bars }) => {
       setBarLocation("");
       setBarImage(null);
       if (fileInputRef.current) {
-        fileInputRef.current.value = ""; // ล้างค่า input file เพื่อให้ UI อัปเดต
+        fileInputRef.current.value = ""; 
       }
       setError(null);
-      toggleModal(); // Close the modal after submission
+      toggleModal(); 
     } catch (error) {
       setError(
         "There was an error while submitting the form. Please try again."
@@ -113,7 +113,7 @@ const EditBar: React.FC<EditBarProps> = ({ bars }) => {
         setBarDetail(data.bar_detail || "");
         setBarLocation(data.bar_location || "");
         setMaxPeopleInBar(data.max_people_in_bar?.toString() || "");
-        setPreviousBarImage(data.bar_image || ""); // เก็บค่ารูปภาพเดิม
+        setPreviousBarImage(data.bar_image || ""); 
         setBarImage(null);
         setError(null);
       })

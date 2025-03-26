@@ -88,15 +88,15 @@ const BarPage = () => {
 
       const barData: Bar = await getBarResponse.json();
       const zonesData: { zones: Zone[] } =
-        await getAllZoneByBarIdResponse.json(); 
+        await getAllZoneByBarIdResponse.json();
 
       setBar(barData);
-      setZones(zonesData.zones || []); 
+      setZones(zonesData.zones || []);
       setError(null);
     } catch (err: any) {
       setError(err.message);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
 
     try {
@@ -112,7 +112,7 @@ const BarPage = () => {
 
       const data = await response.json();
       if (data.url) {
-        setImageUrl(data.url); 
+        setImageUrl(data.url);
       } else {
         throw new Error("No image URL returned");
       }
@@ -212,7 +212,7 @@ const BarPage = () => {
     <div className="container mt-12 mx-auto p-4 w-full h-screen overflow-y-auto space-y-12">
       <div className="flex gap-6 xl:pt-10 ">
         <div className="grid w-full grid-cols-2">
-          <div className="pl-8">
+          <div className="pl-8 space-y-2">
             <h1 className="text-3xl font-bold mb-4 text-green-500">
               {bar.bar_name}
             </h1>
@@ -227,32 +227,43 @@ const BarPage = () => {
             ) : (
               <div>Loading image...</div>
             )}
-            <div className="text-lg text-gray-700">{bar.bar_detail}</div>
 
-            <div className=" text-xl">
-              {currentVisitors} / {bar.max_people_in_bar}
+            <div className="text-lg text-gray-700">{bar.bar_detail}</div>
+            <div className="flex space-x-3">
+              <svg
+                fill="#000000"
+                width="25px"
+                height="25px"
+                viewBox="-3 0 19 19"
+                xmlns="http://www.w3.org/2000/svg"
+                className="cf-icon-svg"
+              >
+                <path d="M12.517 12.834v1.9a1.27 1.27 0 0 1-1.267 1.267h-9.5a1.27 1.27 0 0 1-1.267-1.267v-1.9A3.176 3.176 0 0 1 3.65 9.667h5.7a3.176 3.176 0 0 1 3.167 3.167zM3.264 5.48A3.236 3.236 0 1 1 6.5 8.717a3.236 3.236 0 0 1-3.236-3.236z" />
+              </svg>
+              <div className=" text-xl">
+                {currentVisitors} / {bar.max_people_in_bar}
+              </div>
             </div>
 
             <div className="text-base mt-2 text-gray-500 flex space-x-1">
-              <img src="/image/icons/location.svg" alt="location pin" />
+              <img
+                width="25px"
+                height="25px"
+                src="/image/icons/location.svg"
+                alt="location pin"
+              />
               <span>{bar.bar_location}</span>
             </div>
 
             <div className="flex space-x-1">
-              <img src="/image/icons/star.svg" alt="location pin" />
+              <img
+                width="25px"
+                height="25px"
+                src="/image/icons/star.svg"
+                alt="location pin"
+              />
               <div className="text-base text-gray-500">
                 {bar.bar_rating} ({bar.total_rating} reviews)
-              </div>
-            </div>
-
-            <div className="text-lg text-gray-700">
-              <strong>เวลาให้บริการ:</strong> {bar.total_rating} (
-              {bar.total_reviews} reviews)
-            </div>
-
-            <div className="relative flex flex-col rounded-xl bg-white">
-              <div className="flex items-center gap-4">
-                <div></div>
               </div>
             </div>
           </div>
@@ -264,19 +275,17 @@ const BarPage = () => {
                   key={zone.zone_id}
                   className=" w-full bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 transition-transform transform hover:scale-105 duration-300"
                 >
-                  <div>
-                    <ZoneCard
-                      zone_id={zone.zone_id}
-                      bar_id={zone.bar_id}
-                      zone_name={zone.zone_name}
-                      zone_detail={zone.zone_detail}
-                      max_people_in_zone={zone.max_people_in_zone}
-                      current_visitor_count={zone.current_visitor_count}
-                      update_date_time={zone.update_date_time}
-                      zone_time={zone.zone_time}
-                      zone_image={zone.zone_image}
-                    />
-                  </div>
+                  <ZoneCard
+                    zone_id={zone.zone_id}
+                    bar_id={zone.bar_id}
+                    zone_name={zone.zone_name}
+                    zone_detail={zone.zone_detail}
+                    max_people_in_zone={zone.max_people_in_zone}
+                    current_visitor_count={zone.current_visitor_count}
+                    update_date_time={zone.update_date_time}
+                    zone_time={zone.zone_time}
+                    zone_image={zone.zone_image}
+                  />
                   {userRole === "admin" && (
                     <div className="flex justify-end p-4">
                       <div

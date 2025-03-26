@@ -1,5 +1,7 @@
-from flask import Blueprint, request, jsonify
-from Application.Service.feature.reviewService import get_all_reviews_service, get_review_by_id_service, add_review_service, update_review_service, delete_review_service
+from flask import Blueprint, request, jsonify, send_from_directory
+from Application.Service.feature.reviewService import get_all_reviews_service, get_review_by_id_service, add_review_service, update_review_service, update_review_image_service, delete_review_service
+
+import os
 
 review_bp = Blueprint('reviews', __name__)
 
@@ -40,12 +42,12 @@ def get_review_by_id(review_id):
 
 @review_bp.route('/api/v1/addReview', methods=['POST'])
 def add_review():
-    data = request.json
+    data = request.form
     user_id = data.get('user_id')
-    restaurant_id = data.get('restaurant_id')
-    rating = data.get('rating')
+    restaurant_id = int(data.get('restaurant_id'))
+    rating = int(data.get('rating'))
     comment = data.get('comment')
-    review_image = data.get('review_image') 
+    review_image = request.files.get('review_image') 
 
     # Validate required fields
     if not all([user_id, restaurant_id, rating]):
@@ -55,7 +57,21 @@ def add_review():
     if not (1 <= rating <= 5):
         return jsonify({'message': 'Rating must be between 1 and 5'}), 400
 
-    review_id = add_review_service(user_id, restaurant_id, rating, comment, review_image)  # เพิ่ม review_image ในการเพิ่มรีวิว
+    review_id = add_review_service(user_id, restaurant_id, rating, comment)  
+    
+    
+    if review_image:
+        file_path = f'public/image/reviewImages/review{review_id}.png'
+        file_name = f'review{review_id}.png'
+        review_image.save(file_path)
+        print(f"Image saved to {file_path}")
+        update_review_image_service(review_id, file_name)  
+    else:
+        file_name = None
+ 
+    
+    
+    
     return jsonify({'message': 'Review added successfully', 'review_id': review_id}), 201
 
 @review_bp.route('/api/v1/updateReview/<int:review_id>', methods=['PUT'])
@@ -90,3 +106,23 @@ def delete_review(review_id):
         return jsonify({'message': 'Review deleted successfully'}), 200
     else:
         return jsonify({'message': 'Review not found or failed to delete'}), 404
+    
+
+
+IMAGE_FOLDER = 'public/image/reviewImages'
+
+@review_bp.route('/api/v1/getReviewImage/<string:file_name>', methods=['GET'])
+def get_image_url(file_name):
+    file_path = os.path.join(IMAGE_FOLDER, file_name)
+
+    if not os.path.isfile(file_path):
+        file_name = 'default.png'
+    
+    image_url = f"http://localhost:8000/public/image/reviewImages/{file_name}"
+
+    return jsonify({"url": image_url})
+
+@review_bp.route('/public/image/ReviewImages/<path:file_name>')
+def serve_actual_image(file_name):
+    image_directory = os.path.join(os.getcwd(), "public", "image", "reviewImages")
+    return send_from_directory(image_directory, file_name)
