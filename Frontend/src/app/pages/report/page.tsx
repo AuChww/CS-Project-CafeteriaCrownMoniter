@@ -25,6 +25,7 @@ const ReportPageContent = () => {
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
+    router.push("/");
   };
 
   useEffect(() => {
@@ -49,16 +50,29 @@ const ReportPageContent = () => {
     formData.append("report_status", "pending");
     formData.append("report_type", reportType);
     formData.append("report_message", reportMessage);
+
+    
+
     if (image) {
       formData.append("report_image", image);
+    } else {
+      formData.append("report_image", "null"); 
     }
+    console.log("FormData:", Object.fromEntries(formData.entries()));
 
     try {
-      await axios.post("http://127.0.0.1:8000/api/v1/addReport", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const response = await fetch("http://127.0.0.1:8000/api/v1/addReport", {
+        method: "POST",
+        body: formData, 
       });
-      toggleModal();
-      router.push("/");
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toggleModal();
+      } else {
+        alert(data.message || "Failed to add report");
+      }
     } catch (error) {
       console.error(error);
       alert("เกิดข้อผิดพลาด");
@@ -114,13 +128,13 @@ const ReportPageContent = () => {
               />
             </div>
 
-            <div>
+            {/* <div>
               <label className="block text-gray-700">แนบรูปภาพ (ถ้ามี):</label>
               <input
                 type="file"
                 onChange={(e) => e.target.files && setImage(e.target.files[0])}
               />
-            </div>
+            </div> */}
 
             <button
               type="submit"

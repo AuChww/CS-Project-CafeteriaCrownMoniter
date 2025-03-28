@@ -55,6 +55,8 @@ const ReportCheck = () => {
   }, []);
 
   const updateStatus = async (id: number, status: Report["report_status"]) => {
+
+    console.log(status);
     try {
       await axios.put(`http://127.0.0.1:8000/api/v1/updateReport/${id}`, {
         status,

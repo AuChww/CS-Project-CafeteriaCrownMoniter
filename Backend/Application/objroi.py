@@ -89,79 +89,79 @@ def get_zone_human_count(video_id):
     return all_human_counts[-1] if all_human_counts else 0
 
 
-def get_zone_human_count(video_id):
-    video_path = os.path.join(os.path.dirname(__file__), f"../public/video/zone/{video_id}.mp4")
+# def get_zone_human_count(video_id):
+#     video_path = os.path.join(os.path.dirname(__file__), f"../public/video/zone/{video_id}.mp4")
 
-    # ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่
-    if not os.path.exists(video_path):
-        print(f"Video file for zone {video_id} not found.")
-        return 0  
+#     # ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่
+#     if not os.path.exists(video_path):
+#         print(f"Video file for zone {video_id} not found.")
+#         return 0  
     
-    cap = cv2.VideoCapture(video_path)
+#     cap = cv2.VideoCapture(video_path)
     
-    roi_zones = {
-        1: {"top_left": (50, 50), "bottom_right": (1500, 1500)},
-        2: {"top_left": (50, 50), "bottom_right": (1500, 1500)},
-        3: {"top_left": (100, 100), "bottom_right": (1400, 1400)}
-    }
+#     roi_zones = {
+#         1: {"top_left": (50, 50), "bottom_right": (1500, 1500)},
+#         2: {"top_left": (50, 50), "bottom_right": (1500, 1500)},
+#         3: {"top_left": (100, 100), "bottom_right": (1400, 1400)}
+#     }
 
-    # ตรวจสอบว่าโซนที่กำหนดมีอยู่หรือไม่
-    if video_id in roi_zones:
-        roi_top_left = roi_zones[video_id]["top_left"]
-        roi_bottom_right = roi_zones[video_id]["bottom_right"]
-    else:
-        roi_top_left = (50, 50)
-        roi_bottom_right = (1500, 1500)  
+#     # ตรวจสอบว่าโซนที่กำหนดมีอยู่หรือไม่
+#     if video_id in roi_zones:
+#         roi_top_left = roi_zones[video_id]["top_left"]
+#         roi_bottom_right = roi_zones[video_id]["bottom_right"]
+#     else:
+#         roi_top_left = (50, 50)
+#         roi_bottom_right = (1500, 1500)  
 
-    all_human_counts = []
-    frame_number = 0
+#     all_human_counts = []
+#     frame_number = 0
 
-    while True:
-        ret, frame = cap.read()
-        if not ret:  
-            break  # ออกจาก loop ถ้าหมดวิดีโอ
+#     while True:
+#         ret, frame = cap.read()
+#         if not ret:  
+#             break  # ออกจาก loop ถ้าหมดวิดีโอ
 
-        frame_number += 1
+#         frame_number += 1
 
-        results = model(frame)
-        detections = results[0].boxes.xyxy.cpu().numpy()  # ดึงข้อมูล bounding boxes
-        classes = results[0].boxes.cls.cpu().numpy()     # ดึงข้อมูล class
+#         results = model(frame)
+#         detections = results[0].boxes.xyxy.cpu().numpy()  # ดึงข้อมูล bounding boxes
+#         classes = results[0].boxes.cls.cpu().numpy()     # ดึงข้อมูล class
         
-        human_count = 0
+#         human_count = 0
 
-        for i, box in enumerate(detections):
-            left, top, right, bottom = map(int, box[:4])
-            cls = int(classes[i])
+#         for i, box in enumerate(detections):
+#             left, top, right, bottom = map(int, box[:4])
+#             cls = int(classes[i])
 
-            # ตรวจจับเฉพาะคน และอยู่ใน ROI
-            if cls == 0 and (left > roi_top_left[0] and right < roi_bottom_right[0] and
-                             top > roi_top_left[1] and bottom < roi_bottom_right[1]):  
-                human_count += 1
+#             # ตรวจจับเฉพาะคน และอยู่ใน ROI
+#             if cls == 0 and (left > roi_top_left[0] and right < roi_bottom_right[0] and
+#                              top > roi_top_left[1] and bottom < roi_bottom_right[1]):  
+#                 human_count += 1
 
-                # 🔥 วาดกรอบรอบตัวคน
-                cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)  # สีแดง
-                cv2.putText(frame, f"ID {i+1}", (left, top - 10), 
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)  # แสดงเลข ID
+#                 # 🔥 วาดกรอบรอบตัวคน
+#                 cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)  # สีแดง
+#                 cv2.putText(frame, f"ID {i+1}", (left, top - 10), 
+#                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)  # แสดงเลข ID
 
-        all_human_counts.append(human_count)
+#         all_human_counts.append(human_count)
 
-        # วาดกรอบ ROI
-        cv2.rectangle(frame, roi_top_left, roi_bottom_right, (0, 255, 0), 2)  # สีเขียว
-        cv2.putText(frame, f"Zone {video_id}: {human_count}", (roi_top_left[0], roi_top_left[1] - 10), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+#         # วาดกรอบ ROI
+#         cv2.rectangle(frame, roi_top_left, roi_bottom_right, (0, 255, 0), 2)  # สีเขียว
+#         cv2.putText(frame, f"Zone {video_id}: {human_count}", (roi_top_left[0], roi_top_left[1] - 10), 
+#                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-        # แสดงหน้าต่างวิดีโอ
-        cv2.imshow('YOLOv8 Human Detection', frame)
+#         # แสดงหน้าต่างวิดีโอ
+#         # cv2.imshow('YOLOv8 Human Detection', frame)
 
-        # หยุดวิดีโอเมื่อกด 'q'
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+#         # หยุดวิดีโอเมื่อกด 'q'
+#         if cv2.waitKey(1) & 0xFF == ord('q'):
+#             break
 
-    cap.release()
-    cv2.destroyAllWindows()
+#     cap.release()
+#     cv2.destroyAllWindows()
 
-    # คืนค่าตัวสุดท้ายของ all_human_counts
-    return all_human_counts[-1] if all_human_counts else 0
+#     # คืนค่าตัวสุดท้ายของ all_human_counts
+#     return all_human_counts[-1] if all_human_counts else 0
 
 
 # get_zone_human_count(9)
@@ -236,7 +236,7 @@ def get_restaurant_human_count(restaurant_id_first,restaurant_id_second):
                 cv2.putText(frame, f"{zone}: {current_counts[zone]}", (roi_top_left[0], roi_top_left[1] - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
                 
-            cv2.imshow('YOLOv8 Human Detection', frame)
+            # cv2.imshow('YOLOv8 Human Detection', frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -252,103 +252,6 @@ def get_restaurant_human_count(restaurant_id_first,restaurant_id_second):
     return [ (zone, human_counts[zone][-1] if human_counts[zone] else 0) for zone in roi_areas ]
 
 
-# def get_restaurant_human_count(restaurant_id_first, restaurant_id_second):
-#     video_path = os.path.join(os.path.dirname(__file__), f"../public/video/restaurant/{restaurant_id_first},{restaurant_id_second}.mp4")
-    
-#     if not os.path.exists(video_path):
-#         print(f"Video file {restaurant_id_first}, {restaurant_id_second} not found.")
-#         return 0  
-    
-#     cap = cv2.VideoCapture(video_path)
-
-#     # 🟢 กำหนด ROI (Region of Interest) สำหรับแต่ละโซน
-#     roi_areas = {
-#         restaurant_id_first: [(0, 0), (400, 400)],  
-#         restaurant_id_second: [(400, 0), (800, 400)],
-#     }
-
-#     frame_number = 0
-#     human_counts = {zone: [] for zone in roi_areas}
-
-#     def is_within_roi(left, top, right, bottom, roi_top_left, roi_bottom_right):
-#         return (left > roi_top_left[0] and right < roi_bottom_right[0] and
-#                 top > roi_top_left[1] and bottom < roi_bottom_right[1])
-
-#     fps = cap.get(cv2.CAP_PROP_FPS)  
-
-#     while True:
-#         ret, frame = cap.read()
-#         if not ret:
-#             break  
-
-#         frame_number += 1
-
-#         if frame_number % 10 != 0:
-#             continue
-        
-#         print(f"Processing frame {frame_number} for {restaurant_id_first}, {restaurant_id_second}")
-
-#         results = model(frame)
-#         detections = results[0].boxes.xyxy.cpu().numpy()
-#         classes = results[0].boxes.cls.cpu().numpy()
-
-#         current_counts = {zone: 0 for zone in roi_areas}
-
-#         # 🔲 วาด ROI สำหรับแต่ละร้าน (เส้นสีเขียว)
-#         for zone, (roi_top_left, roi_bottom_right) in roi_areas.items():
-#             cv2.rectangle(frame, roi_top_left, roi_bottom_right, (0, 255, 0), 2)
-#             cv2.putText(frame, f"{zone}", (roi_top_left[0] + 10, roi_top_left[1] + 30),
-#                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-
-#         for i, box in enumerate(detections):
-#             left, top, right, bottom = map(int, box[:4])
-#             cls = int(classes[i])
-
-#             if cls == 0:  
-#                 in_any_zone = False  
-
-#                 for zone, (roi_top_left, roi_bottom_right) in roi_areas.items():
-#                     if is_within_roi(left, top, right, bottom, roi_top_left, roi_bottom_right):
-#                         current_counts[zone] += 1
-#                         in_any_zone = True
-                        
-#                         # 🔴 วาดกรอบสำหรับคนที่ถูกนับ (สีแดง)
-#                         cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)  
-#                         cv2.putText(frame, f"ID {i+1}", (left, top - 10), 
-#                                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-
-#                 if not in_any_zone:
-#                     # 🔵 วาดกรอบสีฟ้าให้คนที่ไม่นับ
-#                     cv2.rectangle(frame, (left, top), (right, bottom), (255, 0, 0), 2)
-#                     cv2.putText(frame, f"ID {i+1} (Out)", (left, top - 10),
-#                                 cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
-
-#         # หยุดวิดีโอเมื่อกด 'q'
-#         if cv2.waitKey(1) & 0xFF == ord('q'):
-#             break
-
-#         for zone in roi_areas:
-#             human_counts[zone].append(current_counts[zone])
-
-#         # แสดงค่าจำนวนคนบนหน้าจอ
-#         if frame_number % 60 == 0:
-#             for zone, (roi_top_left, _) in roi_areas.items():
-#                 cv2.putText(frame, f"{zone}: {current_counts[zone]}", 
-#                             (roi_top_left[0] + 10, roi_top_left[1] + 50),
-#                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-            
-#         cv2.imshow('YOLOv8 Human Detection', frame)
-
-#     cap.release()
-#     # cv2.destroyAllWindows()
-
-#     for zone in roi_areas:
-#         print(f"{zone}: {human_counts[zone][-1] if human_counts[zone] else 0}")
-
-#     print("✅ Success: Human count completed.")
-
-#     return [(zone, human_counts[zone][-1] if human_counts[zone] else 0) for zone in roi_areas]
 
 
-
-get_restaurant_human_count(3,4)
+# get_restaurant_human_count(3,4)

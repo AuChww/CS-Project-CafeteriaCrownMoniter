@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext"; 
+import { useAuth } from "@/context/AuthContext";
 import EditReviewModal from "@/components/modal/EditReviewModal";
 import AddReviewModal from "@/components/modal/AddReviewModal";
 import ReviewCard from "@/components/ReviewCard";
@@ -25,7 +25,7 @@ interface Restaurant {
 
 interface Review {
   review_id: number;
-  user_id: number; 
+  user_id: number;
   restaurant_id: number;
   review_comment: string;
   review_image: string;
@@ -35,22 +35,29 @@ interface Review {
 }
 
 const RestaurantPage = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const router = useRouter();
-  const { user } = useAuth(); 
+  const { user } = useAuth();
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [reviews, setReviews] = useState<Review[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [rating, setRating] = useState(0); 
+  const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
-  const [reviewImage, setReviewImage] = useState<string>(""); 
-  const [imageFile, setImageFile] = useState<File | null>(null); 
-  const [editingReview, setEditingReview] = useState<Review | null>(null); 
+  const [reviewImage, setReviewImage] = useState<string>("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [editingReview, setEditingReview] = useState<Review | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [reviewImageUrl, setReviewImageUrl] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const openModal = () => setIsOpen(true);
+  const closeModal = () => setIsOpen(false);
+
+  const openReviewModal = () => setIsReviewOpen(true);
+  const closeReviewModal = () => setIsReviewOpen(false);
 
   const fetchRestaurantAndReviews = async () => {
     try {
@@ -86,13 +93,7 @@ const RestaurantPage = () => {
 
               if (reviewImageData && reviewImageData.url) {
                 reviewImageUrl = reviewImageData.url; // เก็บ URL ของภาพ
-              } else {
-                console.error(`No URL found for review ${review.review_id}`);
               }
-            } else {
-              console.error(
-                `Failed to fetch image for review ${review.review_id}, status: ${reviewImageResponse.status}`
-              );
             }
           } catch (error) {
             console.error(
@@ -191,12 +192,6 @@ const RestaurantPage = () => {
       formData.append("review_image", imageFile);
     }
 
-    console.log(comment);
-    console.log(rating);
-    console.log(id);
-    console.log(user.userId);
-    console.log(imageFile);
-
     try {
       const response = await fetch("http://127.0.0.1:8000/api/v1/addReview", {
         method: "POST",
@@ -208,6 +203,8 @@ const RestaurantPage = () => {
       if (response.ok) {
         toggleModal();
         fetchRestaurantAndReviews();
+      } else {
+        alert(data.message || "Failed to add review");
       }
     } catch (error) {
       console.error("An error occurred:", error);
@@ -241,7 +238,6 @@ const RestaurantPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // alert("Review updated successfully!");
         toggleEditModal();
         fetchRestaurantAndReviews();
       } else {
@@ -269,7 +265,7 @@ const RestaurantPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Review deleted successfully!");
+        closeModal();
         fetchRestaurantAndReviews();
       } else {
         alert(data.message || "Failed to delete review");
@@ -383,22 +379,89 @@ const RestaurantPage = () => {
                               />
                             )}
                           </div>
-                          {user?.userId === review.user_id && (
+                          {(user?.userId === review.user_id ||
+                            user?.role === "admin") && (
                             <div className="flex gap-2 mt-8">
+                              {/* เฉพาะเจ้าของรีวิวเท่านั้นที่สามารถ Edit ได้ */}
+                              {user?.userId === review.user_id && (
+                                <button
+                                  onClick={() => handleEditClick(review)}
+                                  className="px-4 py-2 bg-blue-600 text-white rounded"
+                                >
+                                  Edit
+                                </button>
+                              )}
+
+                              {/* เจ้าของรีวิว + Admin สามารถลบได้ */}
                               <button
-                                onClick={() => handleEditClick(review)}
-                                className="px-4 py-2 bg-blue-600 text-white rounded"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                onClick={() =>
-                                  handleDeleteReview(review.review_id)
-                                }
+                                onClick={openModal}
                                 className="px-4 py-2 bg-red-600 text-white rounded"
                               >
                                 Delete
                               </button>
+                            </div>
+                          )}
+
+                          {isOpen && (
+                            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                              <div className="relative p-4 w-full max-w-md max-h-full bg-white rounded-lg shadow-md dark:bg-gray-700">
+                                <button
+                                  type="button"
+                                  onClick={closeModal}
+                                  className="absolute top-3 right-3 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                >
+                                  <svg
+                                    className="w-3 h-3"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 14 14"
+                                  >
+                                    <path
+                                      stroke="currentColor"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                                    />
+                                  </svg>
+                                </button>
+
+                                <div className="p-4 md:p-5 text-center">
+                                  <svg
+                                    className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 20 20"
+                                  >
+                                    <path
+                                      stroke="currentColor"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                    />
+                                  </svg>
+                                  <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                                    Are you sure you want to delete this review?
+                                  </h3>
+                                  <button
+                                    onClick={() =>
+                                      handleDeleteReview(review.review_id)
+                                    }
+                                    className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
+                                  >
+                                    Yes, I'm sure
+                                  </button>
+                                  <button
+                                    onClick={closeModal}
+                                    className="py-2.5 px-5 ml-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                                  >
+                                    No, cancel
+                                  </button>
+                                </div>
+                              </div>
                             </div>
                           )}
                         </div>

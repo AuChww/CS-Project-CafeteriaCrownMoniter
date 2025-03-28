@@ -91,7 +91,7 @@ def get_visitor_history_by_zone_id_endpoint(zone_id):
     ])
 
 @zone_bp.route('/api/v1/getRestaurantByZoneId/<int:zone_id>', methods=['GET'])
-def get_restaurant_by_zone_id_endpoint(zone_id):
+def get_restaurant_by_zone_id(zone_id):
     restaurants = get_restaurant_by_zone_id_service(zone_id)  # Use the service function here
     if not restaurants:
         return jsonify({'message': 'No restaurants found for this zone'}), 404

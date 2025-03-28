@@ -16,6 +16,7 @@ def add_report_service(user_id, zone_id, report_status, report_type, report_mess
     return add_report(user_id, zone_id, report_status, report_type, report_message, report_image)
 
 def update_report_service(report_id, data):
+    print("Debug data:", data)
     return update_report(report_id, data)
 
 def delete_report_service(report_id):

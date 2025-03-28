@@ -46,13 +46,16 @@ def get_report_by_id_endpoint(report_id):
 
 @report_bp.route('/api/v1/addReport', methods=['POST'])
 def add_report_endpoint():
-    data = request.json
+    data = request.form
     user_id = data.get('user_id')
     zone_id = data.get('zone_id')
     report_status = data.get('report_status')
     report_type = data.get('report_type')
     report_message = data.get('report_message', '')
-    report_image = data.get('report_image', None)
+    report_image = data.get('report_image')
+    if report_image == "null" or report_image is None:
+        report_image = None
+
 
     if not user_id or not zone_id or not report_status or not report_type:
         return jsonify({'message': 'Missing required fields'}), 400
@@ -63,6 +66,9 @@ def add_report_endpoint():
 @report_bp.route('/api/v1/updateReport/<int:report_id>', methods=['PUT'])
 def update_report_endpoint(report_id):
     data = request.json
+    if data:
+        return jsonify(data)
+    
     updated = update_report_service(report_id, data)  # Use the service function here
     if not updated:
         return jsonify({'message': 'Report not found'}), 404
