@@ -46,12 +46,12 @@ def get_report_by_id(report_id):
         )
     return None
 
-def add_report(user_id, zone_id, report_status, report_type, report_message=None, report_image=None):
+def add_report(user_id, zone_id, report_status, report_type, report_message=None):
     conn = db_conn()
     cur = conn.cursor()
     cur.execute(
-        'INSERT INTO report (user_id, zone_id, report_status, report_type, report_message, report_image) VALUES (%s, %s, %s, %s, %s, %s) RETURNING report_id',
-        (user_id, zone_id, report_status, report_type, report_message, report_image)
+        'INSERT INTO report (user_id, zone_id, report_status, report_type, report_message) VALUES (%s, %s, %s, %s, %s) RETURNING report_id',
+        (user_id, zone_id, report_status, report_type, report_message)
     )
     report_id = cur.fetchone()[0]
     conn.commit()
@@ -92,3 +92,14 @@ def delete_report(report_id):
     cur.close()
     conn.close()
     return deleted
+
+def update_report_image(report_id, file_name):
+    conn = db_conn()
+    cur = conn.cursor()
+    cur.execute(
+        'UPDATE report SET report_image = %s WHERE report_id = %s',
+        (file_name, report_id)
+    )
+    conn.commit()
+    cur.close()
+    conn.close()

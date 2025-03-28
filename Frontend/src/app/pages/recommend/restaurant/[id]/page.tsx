@@ -78,8 +78,8 @@ const RestaurantPage = () => {
         reviewsData.reviews.map(async (review) => {
           const userResponse = await fetch(
             `http://127.0.0.1:8000/api/v1/getUserId/${review.user_id}`
-          );
-          const userData = await userResponse.json();
+            );
+            const userData = await userResponse.json();
           let reviewImageUrl = "";
 
           try {
@@ -349,11 +349,10 @@ const RestaurantPage = () => {
                                   <svg
                                     key={index}
                                     xmlns="http://www.w3.org/2000/svg"
-                                    className={`h-5 w-5 ${
-                                      index < review.rating
-                                        ? "fill-current"
-                                        : "text-gray-300"
-                                    }`}
+                                    className={`h-5 w-5 ${index < review.rating
+                                      ? "fill-current"
+                                      : "text-gray-300"
+                                      }`}
                                     viewBox="0 0 24 24"
                                     fill="none"
                                     stroke="currentColor"
@@ -381,26 +380,26 @@ const RestaurantPage = () => {
                           </div>
                           {(user?.userId === review.user_id ||
                             user?.role === "admin") && (
-                            <div className="flex gap-2 mt-8">
-                              {/* เฉพาะเจ้าของรีวิวเท่านั้นที่สามารถ Edit ได้ */}
-                              {user?.userId === review.user_id && (
-                                <button
-                                  onClick={() => handleEditClick(review)}
-                                  className="px-4 py-2 bg-blue-600 text-white rounded"
-                                >
-                                  Edit
-                                </button>
-                              )}
+                              <div className="flex gap-2 mt-8">
+                                {/* เฉพาะเจ้าของรีวิวเท่านั้นที่สามารถ Edit ได้ */}
+                                {user?.userId === review.user_id && (
+                                  <button
+                                    onClick={() => handleEditClick(review)}
+                                    className="px-4 py-2 bg-blue-600 text-white rounded"
+                                  >
+                                    Edit
+                                  </button>
+                                )}
 
-                              {/* เจ้าของรีวิว + Admin สามารถลบได้ */}
-                              <button
-                                onClick={openModal}
-                                className="px-4 py-2 bg-red-600 text-white rounded"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          )}
+                                {/* เจ้าของรีวิว + Admin สามารถลบได้ */}
+                                <button
+                                  onClick={openModal}
+                                  className="px-4 py-2 bg-red-600 text-white rounded"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            )}
 
                           {isOpen && (
                             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
@@ -472,72 +471,75 @@ const RestaurantPage = () => {
                   </div>
                 </div>
 
-                <form className="mt-8  border  p-8 rounded-3xl space-y-4">
-                  <h3 className="text-xl font-bold mb-4">Add Your Review</h3>
-                  <div className="space-y-2">
-                    <label htmlFor="rating" className="block text-gray-700">
-                      Rating
-                    </label>
-                    <div className="flex gap-2">
-                      {[...Array(5)].map((_, index) => (
-                        <svg
-                          key={index}
-                          xmlns="http://www.w3.org/2000/svg"
-                          className={`h-6 w-6 cursor-pointer ${
-                            index < rating
+                {user ? (
+                  <form className="mt-8  border  p-8 rounded-3xl space-y-4">
+                    <h3 className="text-xl font-bold mb-4">Add Your Review</h3>
+                    <div className="space-y-2">
+                      <label htmlFor="rating" className="block text-gray-700">
+                        Rating
+                      </label>
+                      <div className="flex gap-2">
+                        {[...Array(5)].map((_, index) => (
+                          <svg
+                            key={index}
+                            xmlns="http://www.w3.org/2000/svg"
+                            className={`h-6 w-6 cursor-pointer ${index < rating
                               ? "text-yellow-300 fill-yellow-300"
                               : "text-gray-300"
-                          }`}
-                          onClick={() => setRating(index + 1)}
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M12 17.75l-6.162 3.24 1.174-6.874L2 7.87l6.902-1.004L12 1l2.098 5.866L21 7.87l-5.012 6.246 1.174 6.874z" />
-                        </svg>
-                      ))}
+                              }`}
+                            onClick={() => setRating(index + 1)}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M12 17.75l-6.162 3.24 1.174-6.874L2 7.87l6.902-1.004L12 1l2.098 5.866L21 7.87l-5.012 6.246 1.174 6.874z" />
+                          </svg>
+                        ))}
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="comment" className="block text-gray-700">
-                      Reviews
-                    </label>
-                    <textarea
-                      id="comment"
-                      className="w-full p-2 border rounded-xl"
-                      rows={4}
-                      value={comment}
-                      onChange={(e) => setComment(e.target.value)}
-                      placeholder="Write your review here..."
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <label htmlFor="comment" className="block text-gray-700">
+                        Reviews
+                      </label>
+                      <textarea
+                        id="comment"
+                        className="w-full p-2 border rounded-xl"
+                        rows={4}
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="Write your review here..."
+                      />
+                    </div>
 
-                  <div>
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                      Upload file
-                    </label>
-                    <input
-                      className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                      id="reviewImage"
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) =>
-                        setImageFile(e.target.files?.[0] || null)
-                      }
-                    />
-                  </div>
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        Upload file
+                      </label>
+                      <input
+                        className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                        id="reviewImage"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) =>
+                          setImageFile(e.target.files?.[0] || null)
+                        }
+                      />
+                    </div>
 
-                  <button
-                    onClick={handleAddReview}
-                    className="px-4 py-2  bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                  >
-                    Submit Review
-                  </button>
-                </form>
+                    <button
+                      onClick={handleAddReview}
+                      className="px-4 py-2  bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    >
+                      Submit Review
+                    </button>
+                  </form>
+                ) : (
+                  <div></div>
+                )}
               </div>
             </section>
           </div>
@@ -556,9 +558,8 @@ const RestaurantPage = () => {
                     <svg
                       key={index}
                       xmlns="http://www.w3.org/2000/svg"
-                      className={`h-6 w-6 cursor-pointer ${
-                        index < rating ? "fill-yellow-500" : "text-gray-300"
-                      }`}
+                      className={`h-6 w-6 cursor-pointer ${index < rating ? "fill-yellow-500" : "text-gray-300"
+                        }`}
                       onClick={() => setRating(index + 1)}
                       viewBox="0 0 24 24"
                       fill="none"
