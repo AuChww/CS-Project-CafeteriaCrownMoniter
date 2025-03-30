@@ -1,7 +1,8 @@
-import BarPage from './bar';
+import TopBar from '../topBar/topBar';
+import AllBar from './allBar';
 
 export default function Home() {
   return (
-    <BarPage />
+    <AllBar />
   )
 }
