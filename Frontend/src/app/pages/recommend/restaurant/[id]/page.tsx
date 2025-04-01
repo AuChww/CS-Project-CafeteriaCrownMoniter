@@ -78,8 +78,8 @@ const RestaurantPage = () => {
         reviewsData.reviews.map(async (review) => {
           const userResponse = await fetch(
             `http://127.0.0.1:8000/api/v1/getUserId/${review.user_id}`
-            );
-            const userData = await userResponse.json();
+          );
+          const userData = await userResponse.json();
           let reviewImageUrl = "";
 
           try {
@@ -378,8 +378,9 @@ const RestaurantPage = () => {
                               />
                             )}
                           </div>
-                          {(user?.userId === review.user_id ||
-                            user?.role === "admin") && (
+
+                          <div className="flex gap-2 mt-8">
+                            {(user?.userId === review.user_id) && (
                               <div className="flex gap-2 mt-8">
                                 {/* เฉพาะเจ้าของรีวิวเท่านั้นที่สามารถ Edit ได้ */}
                                 {user?.userId === review.user_id && (
@@ -390,7 +391,11 @@ const RestaurantPage = () => {
                                     Edit
                                   </button>
                                 )}
+                              </div>
+                            )}
 
+                            {(user?.role === "admin" || user?.userId === review.user_id) && (
+                              <div className="flex gap-2 mt-8">
                                 {/* เจ้าของรีวิว + Admin สามารถลบได้ */}
                                 <button
                                   onClick={openModal}
@@ -400,6 +405,7 @@ const RestaurantPage = () => {
                                 </button>
                               </div>
                             )}
+                          </div>
 
                           {isOpen && (
                             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">

@@ -110,14 +110,20 @@ def update_review(review_id, user_id, restaurant_id, rating, review_comment, rev
 def delete_review(review_id, restaurant_id):
     conn = db_conn()
     cur = conn.cursor()
+    print(f"{review_id} {restaurant_id}")
     cur.execute('DELETE FROM review WHERE review_id = %s', (review_id,))
-    cur.execute('UPDATE restaurant SET total_rating = total_rating - 1, total_reviews = total_reviews - 1 WHERE restaurant_id = %s', (restaurant_id,))
+    cur.execute('''
+    UPDATE restaurant 
+    SET total_rating = GREATEST(total_rating - 1, 0), 
+        total_reviews = GREATEST(total_reviews - 1, 0) 
+    WHERE restaurant_id = %s
+    ''', (restaurant_id,))
     cur.execute(
         '''
         UPDATE bar
         SET 
-            total_rating = bar.total_rating - 1, 
-            total_reviews = bar.total_reviews - 1
+            total_rating = GREATEST(bar.total_rating - 1, 0), 
+            total_reviews = GREATEST(bar.total_reviews - 1, 0)
         FROM zone
         WHERE bar.bar_id = zone.bar_id AND zone.zone_id = (
             SELECT zone_id FROM restaurant WHERE restaurant_id = %s

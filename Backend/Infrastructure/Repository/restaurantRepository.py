@@ -135,7 +135,6 @@ def add_restaurant(zone_id, restaurant_name, restaurant_location, restaurant_det
     )
     restaurant_id = cur.fetchone()[0]
 
-    # Commit the transaction and close cursor and connection
     conn.commit()
     cur.close()
     conn.close()
@@ -157,7 +156,6 @@ def update_restaurant(restaurant_id, data):
     conn = db_conn()
     cur = conn.cursor()
     
-    # ตรวจสอบว่า restaurant_image มีอยู่ใน data หรือไม่
     restaurant_image = data.get('restaurant_image', None)
 
     if restaurant_image:
@@ -185,16 +183,16 @@ def update_restaurant_count(human_count_data):
 
     # ใช้ SQL เพื่ออัปเดตหลายแถวในครั้งเดียว
     for i in range(0, len(human_count_data)):
-        zone_id, count = human_count_data[i]  # ดึงทั้ง zone_id และ count ออกมาทีละคู่
+        restaurant_id, count = human_count_data[i]  # ดึงทั้ง zone_id และ count ออกมาทีละคู่
         
         # ตรวจสอบว่า zone_id และ count เป็นประเภทที่ถูกต้อง
-        if isinstance(zone_id, int) and isinstance(count, int):
+        if isinstance(restaurant_id, int) and isinstance(count, int):
             cur.execute(
                 "UPDATE restaurant SET current_visitor_count = %s WHERE restaurant_id = %s",
-                (count, zone_id)  # count จะถูกส่งไปที่ current_visitor_count และ zone_id ที่ restaurant_id
+                (count, restaurant_id)  # count จะถูกส่งไปที่ current_visitor_count และ zone_id ที่ restaurant_id
             )
         else:
-            print(f"Invalid data: zone_id={zone_id}, count={count}")
+            print(f"Invalid data: restaurant_id={restaurant_id}, count={count}")
 
     conn.commit()
     cur.close()

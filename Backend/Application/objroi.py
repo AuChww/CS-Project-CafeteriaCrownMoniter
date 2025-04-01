@@ -168,8 +168,6 @@ def get_zone_human_count(video_id):
 
 
 def get_restaurant_human_count(restaurant_id_first,restaurant_id_second):
-    # สร้าง path ไปยังไฟล์วิดีโอ
-    # zone_id = "{zone_id}.mp4"
     video_path = os.path.join(os.path.dirname(__file__), f"../public/video/restaurant/{restaurant_id_first,restaurant_id_second}.mp4")
     
     if not os.path.exists(video_path):
@@ -223,7 +221,7 @@ def get_restaurant_human_count(restaurant_id_first,restaurant_id_second):
                         current_counts[zone] += 1  # Update human count for the zone
 
                         # 🔥 วาดกรอบรอบตัวคน
-                        cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)  # สีแดง
+                        cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
 
         # บันทึกจำนวนคนในแต่ละ ROI
         for zone in roi_areas:
@@ -235,14 +233,11 @@ def get_restaurant_human_count(restaurant_id_first,restaurant_id_second):
                 cv2.rectangle(frame, roi_top_left, roi_bottom_right, (0, 0, 255), 2)
                 cv2.putText(frame, f"{zone}: {current_counts[zone]}", (roi_top_left[0], roi_top_left[1] - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-                
-            # cv2.imshow('YOLOv8 Human Detection', frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
     cap.release()
-    # cv2.destroyAllWindows()
     
     for zone in roi_areas:
         print(f"{zone}: {human_counts[zone][-1] if human_counts[zone] else 0}")
@@ -250,8 +245,3 @@ def get_restaurant_human_count(restaurant_id_first,restaurant_id_second):
     print(f"success human count")
 
     return [ (zone, human_counts[zone][-1] if human_counts[zone] else 0) for zone in roi_areas ]
-
-
-
-
-# get_restaurant_human_count(3,4)
