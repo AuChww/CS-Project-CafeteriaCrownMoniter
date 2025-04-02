@@ -23,7 +23,7 @@ ___
 ## วิธีการ run project
 - **ขั้นตอนที่ 1**: ใช้คำสั่งเพื่อ clone โปรเจคจาก GitHub
 ```
-git clone https://github.com/AuChww/CS-Project-CafeteriaRecommendation&CrowdMoniterSystem.git
+git clone https://github.com/AuChww/CS-Project-CafeteriaRecommendationAndCrowdMoniterSystem.git
 ``` 
 
 ### Backend Set Up
