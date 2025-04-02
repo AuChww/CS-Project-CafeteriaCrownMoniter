@@ -15,7 +15,7 @@ def get_all_restaurants():
     restaurants = [
         RestaurantEntity(
             restaurant_id=row[0],
-            zone_id=row[1],  # แก้ไขเป็น zone_id จาก row[1]
+            zone_id=row[1], 
             restaurant_name=row[2],
             restaurant_location=row[3],
             restaurant_detail=row[4],
@@ -24,7 +24,7 @@ def get_all_restaurants():
             total_reviews=row[7],
             restaurant_image=row[8],
             current_visitor_count=row[9],
-            update_date_time=row[10]  # เพิ่มฟิลด์ restaurant_image
+            update_date_time=row[10] 
         )
         for row in data
     ]
@@ -41,7 +41,7 @@ def get_restaurant_by_id(restaurant_id):
     if row:
         return RestaurantEntity(
             restaurant_id=row[0],
-            zone_id=row[1],  # แก้ไขเป็น zone_id จาก row[1]
+            zone_id=row[1], 
             restaurant_name=row[2],
             restaurant_location=row[3],
             restaurant_detail=row[4],
@@ -50,7 +50,7 @@ def get_restaurant_by_id(restaurant_id):
             total_reviews=row[7],
             restaurant_image=row[8],
             current_visitor_count=row[9],
-            update_date_time=row[10]  # เพิ่มฟิลด์ restaurant_image
+            update_date_time=row[10] 
         )
     return None
 
@@ -70,7 +70,7 @@ def get_visitor_history_by_restaurant_id(restaurant_id):
     if rows:
         return [
             RestaurantVisitorHistoryEntity(
-                date_time=row[2],  # date_time corresponds to row[2]
+                date_time=row[2], 
                 restaurant_id=row[0],
                 visitor_count=row[1]
             )
@@ -97,9 +97,9 @@ def get_all_reviews_by_restaurant_id(restaurant_id):
             user_id=row[1],
             restaurant_id=row[2],
             rating=row[3],
-            review_comment=row[4],  # แก้ไขเป็น review_comment
-            created_time=row[5],    # แก้ไขเป็น created_time
-            update_time=row[6],     # แก้ไขเป็น update_time
+            review_comment=row[4],
+            created_time=row[5],  
+            update_time=row[6],  
             review_image=row[7]  
         )
         for row in data
@@ -127,7 +127,6 @@ def add_restaurant(zone_id, restaurant_name, restaurant_location, restaurant_det
     restaurant_image = ''
     current_visitor_count = 0
 
-    # Insert into the RESTAURANT table and return restaurant_id
     cur.execute(
         'INSERT INTO restaurant (zone_id, restaurant_name, restaurant_location, restaurant_detail, restaurant_rating, total_rating, total_reviews, restaurant_image, current_visitor_count) '
         'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING restaurant_id',
@@ -181,15 +180,13 @@ def update_restaurant_count(human_count_data):
     conn = db_conn()
     cur = conn.cursor()
 
-    # ใช้ SQL เพื่ออัปเดตหลายแถวในครั้งเดียว
     for i in range(0, len(human_count_data)):
-        restaurant_id, count = human_count_data[i]  # ดึงทั้ง zone_id และ count ออกมาทีละคู่
+        restaurant_id, count = human_count_data[i]
         
-        # ตรวจสอบว่า zone_id และ count เป็นประเภทที่ถูกต้อง
         if isinstance(restaurant_id, int) and isinstance(count, int):
             cur.execute(
                 "UPDATE restaurant SET current_visitor_count = %s WHERE restaurant_id = %s",
-                (count, restaurant_id)  # count จะถูกส่งไปที่ current_visitor_count และ zone_id ที่ restaurant_id
+                (count, restaurant_id)
             )
         else:
             print(f"Invalid data: restaurant_id={restaurant_id}, count={count}")

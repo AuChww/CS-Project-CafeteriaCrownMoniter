@@ -19,7 +19,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta
 import pytz 
 from apscheduler.triggers.cron import CronTrigger
-import atexit
 import os
 
 restaurant_bp = Blueprint('restaurants', __name__)
@@ -130,20 +129,17 @@ def update_restaurant_human_count():
         
         print(f"Zone {restaurant.zone_id} is Open.")
 
-        # ดึง restaurant_id ทีละสองตัว
         restaurant_id_1 = restaurants[i].restaurant_id
         restaurant_id_2 = restaurants[i].restaurant_id + 1
 
-        # ดึงค่า human_count ออกมา
         human_count = get_restaurant_human_count(restaurant_id_1, restaurant_id_2)
         print(f"res human count {restaurant_id_1} and {restaurant_id_2} : {human_count}")
 
-        # ตรวจสอบว่า human_count เป็น list หรือไม่
         if isinstance(human_count, list):
             human_count_data = []
             for i in range(0, len(human_count), 2):
-                zone_id = human_count[i]  # ดึง zone_id จากตำแหน่งคู่
-                count = human_count[i + 1]  # ดึง count จากตำแหน่งถัดไป
+                zone_id = human_count[i]
+                count = human_count[i + 1]
                 human_count_data.append(zone_id)
                 human_count_data.append(count)
             
@@ -152,12 +148,10 @@ def update_restaurant_human_count():
             print(f"[{datetime.now()}] Invalid human count format for restaurant {restaurant_id_1} and {restaurant_id_2}")
             continue
 
-        # ตรวจสอบข้อมูลที่ได้
         if not human_count_data:
             print(f"[{datetime.now()}] No valid human count data for restaurant {restaurant_id_1} and {restaurant_id_2}")
             continue
 
-        # ส่งข้อมูลเข้าไปใน update service
         update_restaurant_count_service(human_count_data)
 
         print(f"[{datetime.now()}] Updated Restaurant_id {restaurant_id_1} and {restaurant_id_2} with count {human_count_data}")
@@ -165,34 +159,23 @@ def update_restaurant_human_count():
 
         
 def start_scheduler():
-    # ตั้งค่าไทม์โซนเป็นไทย
     tz = pytz.timezone('Asia/Bangkok')
-
-    # เวลาปัจจุบันในไทม์โซนไทย
     now = datetime.now(tz)
     
-    # คำนวณเวลาที่เหลือจนถึงชั่วโมงถัดไปที่ลงท้ายด้วย :00:00
     next_run = (now + timedelta(hours=0)).replace(minute=1, second=0, microsecond=0)
     delay = (next_run - now).total_seconds()
 
-    # Debugging
     print(f"Current time: {now}")
     print(f"Next run at: {next_run}")
     print(f"Delay until next run: {delay} seconds")
 
-    # สร้าง Scheduler
     scheduler = BackgroundScheduler(timezone=tz)
 
     update_restaurant_human_count()
-    # save_zone_visitor_history()
-
-    # เพิ่ม Job ที่จะเริ่มทำงานทันทีที่โปรแกรมเริ่ม และทำซ้ำทุกๆ 1 นาที
     scheduler.add_job(update_restaurant_human_count, "cron", minute="*/1", timezone=tz, start_date=now)
 
-    # เริ่ม Scheduler
     scheduler.start()
 
-# เรียกใช้งาน Scheduler
 start_scheduler()
 
 

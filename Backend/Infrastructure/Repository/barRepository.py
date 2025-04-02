@@ -29,11 +29,11 @@ def get_all_bars():
             bar_location=row[2],
             bar_detail=row[3],
             current_visitor_count=row[4],
-            max_people_in_bar=row[5],  # Mapping to max_people_in_bar from DB
+            max_people_in_bar=row[5], 
             bar_rating=row[6],
-            total_rating=row[7],        # Mapping to total_rating from DB
-            total_reviews=row[8],       # Mapping to total_reviews from DB
-            bar_image=row[9]           # Mapping to bar_image from DB
+            total_rating=row[7],     
+            total_reviews=row[8],     
+            bar_image=row[9]          
         )
         for row in data
     ]
@@ -55,11 +55,11 @@ def get_bar_by_id(bar_id):
             bar_location=row[2],
             bar_detail=row[3],
             current_visitor_count=row[4],
-            max_people_in_bar=row[5],  # Mapping to max_people_in_bar from DB
+            max_people_in_bar=row[5], 
             bar_rating=row[6],
-            total_rating=row[7],        # Mapping to total_rating from DB
-            total_reviews=row[8],       # Mapping to total_reviews from DB
-            bar_image=row[9]           # Mapping to bar_image from DB
+            total_rating=row[7],      
+            total_reviews=row[8],    
+            bar_image=row[9]        
         )
     return None
 
@@ -74,14 +74,14 @@ def get_all_restaurants_by_bar_id(bar_id):
     restaurants = [
         RestaurantEntity(
             restaurant_id=row[0],
-            zone_id=row[1],  # Mapping to zone_id from DB
+            zone_id=row[1], 
             restaurant_name=row[2],
             restaurant_location=row[3],
             restaurant_detail=row[4],
             restaurant_rating=row[5],
-            total_rating=row[6],      # Mapping to total_rating from DB
-            total_reviews=row[7],     # Mapping to total_reviews from DB
-            restaurant_image=row[8]   # Mapping to restaurant_image from DB
+            total_rating=row[6],    
+            total_reviews=row[7],    
+            restaurant_image=row[8]  
         )
         for row in data
     ]
@@ -129,10 +129,10 @@ def get_all_zones_by_bar_id(bar_id):
             bar_id=row[1],
             zone_name=row[2],
             zone_detail=row[3],
-            max_people_in_zone=row[4],         # Mapping to max_people_in_zone from DB
-            current_visitor_count=row[5],       # Mapping to current_visitor_count from DB
-            update_date_time=row[6],            # Mapping to update_date_time from DB
-            zone_time=row[7]                    # Mapping to zone_time from DB
+            max_people_in_zone=row[4],     
+            current_visitor_count=row[5],     
+            update_date_time=row[6],          
+            zone_time=row[7]            
         )
         for row in data
     ]

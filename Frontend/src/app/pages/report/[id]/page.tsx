@@ -131,7 +131,6 @@ const ReportDetailPage = () => {
             <div className="border p-4 rounded-lg shadow-md mb-6 ">
               <h2 className="text-xl font-semibold">ข้อมูลผู้แจ้ง</h2>
               <div className="flex items-center space-x-4  text-zinc-600  mt-4" >
-                {/* <img src={user.user_image || "/default-avatar.png"} alt="User" className="w-16 h-16 rounded-full" /> */}
                 <div className="">
                   <div><strong>ชื่อผู้ใช้:</strong> {user.username}</div>
                   <div><strong>อีเมล:</strong> {user.email}</div>
@@ -143,7 +142,6 @@ const ReportDetailPage = () => {
             <div className="border p-4 rounded-lg shadow-md mb-6">
               <h2 className="text-xl font-semibold">ข้อมูลโซน</h2>
               <div className="flex items-center space-x-4 mt-2 text-zinc-600 mt-4">
-                {/* <img src={zone.zone_image || "/default-zone.jpg"} alt="Zone" className="w-32 h-32 rounded-lg" /> */}
                 <div>
                   <div><strong>ชื่อโซน:</strong> {zone.zone_name}</div>
                   <div><strong>รายละเอียด:</strong> {zone.zone_detail}</div>
@@ -184,7 +182,7 @@ const ReportDetailPage = () => {
 
             </div>
           </div>
-          
+
           <div></div>
 
           <div className="flex space-x-4  justify-end">

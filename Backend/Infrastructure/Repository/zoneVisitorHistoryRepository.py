@@ -37,7 +37,7 @@ def get_visitor_history_by_zone_id(zone_id):
     if rows:
         return [
             ZoneVisitorHistoryEntity(
-                date_time=row[2],  # date_time corresponds to row[2]
+                date_time=row[2], 
                 zone_id=row[0],
                 visitor_count=row[1]
             )

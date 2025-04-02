@@ -19,7 +19,7 @@ def get_all_reports():
             report_type=row[4],
             report_message=row[5],
             created_time=row[6],
-            report_image=row[7]  # เพิ่มฟิลด์ report_image
+            report_image=row[7] 
         )
         for row in data
     ]
@@ -42,7 +42,7 @@ def get_report_by_id(report_id):
             report_type=row[4],
             report_message=row[5],
             created_time=row[6],
-            report_image=row[7]  # เพิ่มฟิลด์ report_image
+            report_image=row[7]
         )
     return None
 
@@ -63,7 +63,6 @@ def update_report(report_id, data):
     conn = db_conn()
     cur = conn.cursor()
 
-    # ตรวจสอบว่า report_image มีอยู่ใน data หรือไม่
     report_image = data.get('report_image', None)
 
     if report_image:

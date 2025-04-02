@@ -13,7 +13,7 @@ report_bp = Blueprint('reports', __name__)
 
 @report_bp.route('/api/v1/getAllReports', methods=['GET'])
 def get_all_reports_endpoint():
-    reports = get_all_reports_service()  # Use the service function here
+    reports = get_all_reports_service() 
     report_list = [
         {
             'report_id': report.report_id,
@@ -31,7 +31,7 @@ def get_all_reports_endpoint():
 
 @report_bp.route('/api/v1/getReportById/<int:report_id>', methods=['GET'])
 def get_report_by_id_endpoint(report_id):
-    report = get_report_by_id_service(report_id)  # Use the service function here
+    report = get_report_by_id_service(report_id) 
     if not report:
         return jsonify({'message': 'Report not found'}), 404
 
@@ -56,7 +56,7 @@ def add_report_endpoint():
     report_message = data.get('report_message', '')
     report_image = request.files.get('report_image') 
 
-    report_id = add_report_service(user_id, zone_id, report_status, report_type, report_message)  # Use the service function here
+    report_id = add_report_service(user_id, zone_id, report_status, report_type, report_message)  
 
     if report_image:
         file_path = f'public/image/reportImages/report{report_id}.png'
@@ -78,7 +78,7 @@ def update_report_endpoint(report_id):
     if data:
         return jsonify(data)
     
-    updated = update_report_service(report_id, data)  # Use the service function here
+    updated = update_report_service(report_id, data)
     if not updated:
         return jsonify({'message': 'Report not found'}), 404
 
@@ -86,7 +86,7 @@ def update_report_endpoint(report_id):
 
 @report_bp.route('/api/v1/deleteReport/<int:report_id>', methods=['DELETE'])
 def delete_report_endpoint(report_id):
-    deleted = delete_report_service(report_id)  # Use the service function here
+    deleted = delete_report_service(report_id)
     if not deleted:
         return jsonify({'message': 'Report not found'}), 404
 

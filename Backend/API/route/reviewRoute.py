@@ -17,7 +17,7 @@ def get_all_reviews():
             'comment': r.review_comment,
             'created_time': r.created_time,
             'update_time': r.update_time,
-            'review_image': r.review_image  # เพิ่มฟิลด์ review_image
+            'review_image': r.review_image 
         }
         for r in reviews
     ]
@@ -37,7 +37,7 @@ def get_review_by_id(review_id):
         'comment': review.review_comment,
         'created_time': review.created_time,
         'update_time': review.update_time,
-        'review_image': review.review_image  # เพิ่มฟิลด์ review_image
+        'review_image': review.review_image 
     })
 
 @review_bp.route('/api/v1/addReview', methods=['POST'])
@@ -49,11 +49,9 @@ def add_review():
     comment = data.get('comment')
     review_image = request.files.get('review_image') 
 
-    # Validate required fields
     if not all([user_id, restaurant_id, rating]):
         return jsonify({'message': 'Missing required fields'}), 400
 
-    # Validate rating range
     if not (1 <= rating <= 5):
         return jsonify({'message': 'Rating must be between 1 and 5'}), 400
 
@@ -68,8 +66,6 @@ def add_review():
         update_review_image_service(review_id, file_name)  
     else:
         file_name = None
- 
-    
 
     return jsonify({'message': 'Review added successfully', 'review_id': review_id}), 201
 

@@ -61,7 +61,6 @@ const CrowdCard: React.FC<Bar> = ({
   useEffect(() => {
     const fetchVisitorData = async () => {
       try {
-        // 1. ดึงข้อมูลโซนทั้งหมดที่เกี่ยวข้องกับ bar_id
         const zonesRes = await fetch(
           `http://127.0.0.1:8000/api/v1/getAllZonesByBarId/${bar_id}`
         );
@@ -73,7 +72,6 @@ const CrowdCard: React.FC<Bar> = ({
           0
         );
 
-        // 2. ดึงข้อมูลร้านอาหารทั้งหมดที่เกี่ยวข้องกับแต่ละ zone_id
         let totalRestaurantVisitors = 0;
 
         await Promise.all(
@@ -83,7 +81,6 @@ const CrowdCard: React.FC<Bar> = ({
             );
             const restaurantData = await restaurantRes.json();
 
-            // รวม current_visitor_count ของทุกร้านอาหารในโซนนั้น
             totalRestaurantVisitors += (
               restaurantData.restaurants || []
             ).reduce(
@@ -94,7 +91,6 @@ const CrowdCard: React.FC<Bar> = ({
           })
         );
 
-        // 3. รวมค่า current_visitor ทั้งหมดจากโซนและร้านอาหาร
         setCurrentVisitors(totalZoneVisitors + totalRestaurantVisitors);
       } catch (error) {
         console.error("Error fetching visitor data:", error);
@@ -156,16 +152,13 @@ const CrowdCard: React.FC<Bar> = ({
           {bar_detail}
         </p>
 
-        {/* Bar Location */}
         <div className="flex space-x-1 text-sm text-gray-500 dark:text-gray-400 ">
           <img src="/image/icons/location.svg" alt="location pin" />
           <p className="line-clamp-2">{bar_location}</p>
         </div>
 
-        {/* Bar Score */}
         <div className="flex items-center mt-2.5 mb-5 space-x-2">
           <div className="flex items-center space-x-1 rtl:space-x-reverse">
-            {/* Display filled yellow stars */}
             {[...Array(filledStars)].map((_, index) => (
               <svg
                 key={index}
@@ -179,7 +172,6 @@ const CrowdCard: React.FC<Bar> = ({
               </svg>
             ))}
 
-            {/* Display empty gray stars */}
             {[...Array(emptyStars)].map((_, index) => (
               <svg
                 key={filledStars + index}

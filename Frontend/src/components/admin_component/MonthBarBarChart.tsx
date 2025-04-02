@@ -131,9 +131,9 @@ const MonthBarVisitorBarChart: React.FC = () => {
       visitorHistory.length === 0 ||
       restaurantVisitorHistory.length === 0 ||
       !thirtyDaysAgoDate ||
-      Object.keys(barNames).length === 0 // Check if barNames is populated
+      Object.keys(barNames).length === 0 
     ) {
-      return; // Skip processing until barNames is populated
+      return; 
     }
 
     const dailyVisitorMap: { [date: string]: { [barId: number]: number[] } } =
@@ -172,7 +172,7 @@ const MonthBarVisitorBarChart: React.FC = () => {
 
     const finalChartData = Object.entries(aggregatedData).map(
       ([barId, data]) => ({
-        name: barNames[parseInt(barId)], // Now guaranteed to have the bar name
+        name: barNames[parseInt(barId)], 
         value: data.total / data.days,
         bar_id: parseInt(barId),
       })

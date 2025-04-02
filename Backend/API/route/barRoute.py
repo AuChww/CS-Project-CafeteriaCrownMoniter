@@ -39,7 +39,7 @@ def get_all_bars():
             'bar_rating' : bar.bar_rating,
             'total_rating': bar.total_rating,
             'total_reviews': bar.total_reviews,
-            'bar_image': bar.bar_image  # เพิ่ม bar_image ในการตอบกลับ
+            'bar_image': bar.bar_image  
         }
         for bar in bars
     ]
@@ -61,7 +61,7 @@ def get_bar_by_id(bar_id):
         'bar_rating' : bar.bar_rating,
         'total_rating': bar.total_rating,
         'total_reviews': bar.total_reviews,
-        'bar_image': bar.bar_image  # เพิ่ม bar_image ในการตอบกลับ
+        'bar_image': bar.bar_image  
     })
 
 @bar_bp.route('/api/v1/getRestaurantByBarId/<int:bar_id>', methods=['GET'])
@@ -95,7 +95,7 @@ def get_all_reviews_by_bar_id(bar_id):
             'comment': r.review_comment,
             'created_time': r.created_time,
             'update_time': r.update_time,
-            'review_image': r.review_image  # เพิ่มฟิลด์ review_image
+            'review_image': r.review_image
         }
         for r in reviews
     ]

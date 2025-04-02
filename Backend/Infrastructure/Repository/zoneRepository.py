@@ -210,7 +210,7 @@ def update_zone_count(zone_id, count, update_date_time):
         SET current_visitor_count = %s, update_date_time = %s 
         WHERE zone_id = %s
         """,
-        (count, update_date_time, zone_id)  # ต้องใส่ update_date_time ด้วย
+        (count, update_date_time, zone_id)
     )
     updated = cur.rowcount > 0
     conn.commit()

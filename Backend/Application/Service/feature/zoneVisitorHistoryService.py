@@ -10,8 +10,7 @@ from Infrastructure.Repository.zoneRepository import (
 )
 
 def get_all_zones_service():
-    zones = get_all_zones()  # Get all ZoneEntity objects
-    # Extract and return only the zone_id from each ZoneEntity
+    zones = get_all_zones()
     return [zone.zone_id for zone in zones]
 
 def get_all_zone_visitor_histories_service():

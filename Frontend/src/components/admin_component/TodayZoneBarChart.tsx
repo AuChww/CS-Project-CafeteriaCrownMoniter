@@ -102,7 +102,6 @@ const TodayBarVisitorBarChart: React.FC = () => {
     }
   }, [zones]);
 
-  // Fetch visitor history data (Zones)
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/v1/getAllZoneVisitorHistory")
       .then((response) => response.json())
@@ -119,7 +118,6 @@ const TodayBarVisitorBarChart: React.FC = () => {
     const startOfDay = new Date(today.setHours(0, 0, 0, 0));
     const endOfDay = new Date(today.setHours(23, 59, 59, 999));
 
-    // Aggregate Zone Visitors
     visitorHistory.forEach((history) => {
       const recordDate = new Date(history.date_time);
       if (recordDate >= startOfDay && recordDate <= endOfDay) {

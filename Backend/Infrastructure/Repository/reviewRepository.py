@@ -16,10 +16,10 @@ def get_all_reviews():
             user_id=row[1],
             restaurant_id=row[2],
             rating=row[3],
-            review_comment=row[4],  # แก้ไขเป็น review_comment
-            created_time=row[5],    # แก้ไขเป็น created_time
-            update_time=row[6],     # แก้ไขเป็น update_time
-            review_image=row[7]     # เพิ่มฟิลด์ review_image
+            review_comment=row[4], 
+            created_time=row[5], 
+            update_time=row[6],   
+            review_image=row[7]   
         )
         for row in data
     ]
@@ -39,10 +39,10 @@ def get_review_by_id(review_id):
             user_id=row[1],
             restaurant_id=row[2],
             rating=row[3],
-            review_comment=row[4],  # แก้ไขเป็น review_comment
-            created_time=row[5],    # แก้ไขเป็น created_time
-            update_time=row[6],     # แก้ไขเป็น update_time
-            review_image=row[7]     # เพิ่มฟิลด์ review_image
+            review_comment=row[4], 
+            created_time=row[5],  
+            update_time=row[6],  
+            review_image=row[7]
         )
     return None
 
@@ -69,7 +69,6 @@ def add_review(user_id, restaurant_id, rating, review_comment):
         (rating, restaurant_id)
     )
 
-    # อัพเดต total_rating และ total_reviews ใน BAR ที่เกี่ยวข้อง
     cur.execute(
         '''
         UPDATE bar
@@ -85,7 +84,6 @@ def add_review(user_id, restaurant_id, rating, review_comment):
         (rating, restaurant_id)
     )
 
-    # Commit และปิดการเชื่อมต่อ
     conn.commit()
     cur.close()
     conn.close()

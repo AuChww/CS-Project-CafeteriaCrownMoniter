@@ -157,10 +157,8 @@ const BarCard: React.FC<Bar> = ({
           <p className="line-clamp-2">{bar_location}</p>
         </div>
 
-        {/* Bar Score */}
         <div className="flex items-center mt-2.5 mb-5 space-x-2">
           <div className="flex items-center space-x-1 rtl:space-x-reverse">
-            {/* Display filled yellow stars */}
             {[...Array(filledStars)].map((_, index) => (
               <svg
                 key={index}
@@ -174,7 +172,6 @@ const BarCard: React.FC<Bar> = ({
               </svg>
             ))}
 
-            {/* Display empty gray stars */}
             {[...Array(emptyStars)].map((_, index) => (
               <svg
                 key={filledStars + index}

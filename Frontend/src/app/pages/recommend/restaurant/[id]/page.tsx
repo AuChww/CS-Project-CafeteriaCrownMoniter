@@ -382,7 +382,6 @@ const RestaurantPage = () => {
                           <div className="flex gap-2 mt-8">
                             {(user?.userId === review.user_id) && (
                               <div className="flex gap-2 mt-8">
-                                {/* เฉพาะเจ้าของรีวิวเท่านั้นที่สามารถ Edit ได้ */}
                                 {user?.userId === review.user_id && (
                                   <button
                                     onClick={() => handleEditClick(review)}
@@ -396,7 +395,6 @@ const RestaurantPage = () => {
 
                             {(user?.role === "admin" || user?.userId === review.user_id) && (
                               <div className="flex gap-2 mt-8">
-                                {/* เจ้าของรีวิว + Admin สามารถลบได้ */}
                                 <button
                                   onClick={openModal}
                                   className="px-4 py-2 bg-red-600 text-white rounded"

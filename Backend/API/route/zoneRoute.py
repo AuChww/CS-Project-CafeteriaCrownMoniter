@@ -92,7 +92,7 @@ def get_visitor_history_by_zone_id_endpoint(zone_id):
 
 @zone_bp.route('/api/v1/getRestaurantByZoneId/<int:zone_id>', methods=['GET'])
 def get_restaurant_by_zone_id(zone_id):
-    restaurants = get_restaurant_by_zone_id_service(zone_id)  # Use the service function here
+    restaurants = get_restaurant_by_zone_id_service(zone_id) 
     if not restaurants:
         return jsonify({'message': 'No restaurants found for this zone'}), 404
 
@@ -100,7 +100,7 @@ def get_restaurant_by_zone_id(zone_id):
 
 @zone_bp.route('/api/v1/getAllReportByZoneId/<int:zone_id>', methods=['GET'])
 def get_all_report_by_zone_id_endpoint(zone_id):
-    reports = get_all_report_by_zone_id_service(zone_id)  # Use the service function here
+    reports = get_all_report_by_zone_id_service(zone_id) 
     if not reports:
         return jsonify({'message': 'No reports found for this zone'}), 404
 
@@ -134,19 +134,16 @@ def add_zone():
 
 @zone_bp.route('/api/v1/updateZone/<int:zone_id>', methods=['PATCH'])
 def update_zone(zone_id):
-    # Get form data and files
-    data = request.form.to_dict()  # Convert form data to dictionary
+    data = request.form.to_dict()
     zone_image = request.files.get('zone_image')
     
-    # Get the individual fields from the data dictionary
     zone_id = data.get('zone_id')
     zone_name = data.get('zone_name')
     zone_detail = data.get('zone_detail')
     max_people_in_zone = data.get('max_people_in_zone')
     zone_time = data.get('zone_time')
-    current_visitor_count = 0  # Set default value for current_visitor_count
+    current_visitor_count = 0 
     
-    # Update the zone using the service function
     updated = update_zone_service(zone_id, data)  
     
     previous_file_name = get_zone_image_service(zone_id)
@@ -156,28 +153,23 @@ def update_zone(zone_id):
     if zone_image:
         if os.path.exists(file_path):
             try:
-                os.remove(file_path)  # ลบไฟล์เก่า
+                os.remove(file_path)
                 print(f"Old image {file_path} deleted.")
             except Exception as e:
                 print(f"Error deleting old image: {e}")
 
         try:
-            zone_image.save(file_path)  # บันทึกไฟล์ใหม่
+            zone_image.save(file_path)
             print(f"New image saved to {file_path}")
         except Exception as e:
             print(f"Error saving image: {e}")
             return jsonify({'message': 'Failed to save image'}), 500
     else:
-        file_name = previous_file_name if previous_file_name else 'default.png'  # ถ้าไม่มีภาพใหม่ ให้ใช้ default.png
+        file_name = previous_file_name if previous_file_name else 'default.png'
 
-    # อัปเดตชื่อไฟล์ภาพในข้อมูล
     data['zone_image'] = file_name
     
-    # updated = update_zone_service(zone_id, data)
-    
-    # อัปเดตข้อมูล zone_id ในฐานข้อมูล (ถ้าจำเป็น)
     update_zone_image(zone_id, file_name)
-    
     
     if not updated:
         return jsonify({'message': 'Zone not found'}), 404
@@ -185,12 +177,8 @@ def update_zone(zone_id):
     return jsonify({'message': 'Zone updated successfully'})
 
 
-# กำหนดโซนเวลาประเทศไทย
 timezone = pytz.timezone("Asia/Bangkok")
 utc_tz = pytz.utc
-
-
-
 
 
 def get_zone_operating_hours_func():
@@ -198,9 +186,9 @@ def get_zone_operating_hours_func():
 
     zone_operating_hours = {
         z.zone_id: {
-            "days": {0, 1, 2, 3, 4, 5, 6},  # กำหนดให้เปิดทุกวัน
-            "start": z.zone_time.split(' - ')[0],  # แยกเวลาเริ่มต้นจาก zone_time
-            "end": z.zone_time.split(' - ')[1]  # แยกเวลาปิดจาก zone_time
+            "days": {0, 1, 2, 3, 4, 5, 6}, 
+            "start": z.zone_time.split(' - ')[0],
+            "end": z.zone_time.split(' - ')[1]
         }
         for z in zones
     }
@@ -210,7 +198,7 @@ def get_zone_operating_hours_func():
 
 def is_zone_open(zone_id):
     now = datetime.now(timezone)
-    current_day = now.weekday()  # 0 = จันทร์, 6 = อาทิตย์
+    current_day = now.weekday()
     current_time = now.strftime("%H:%M")
     zone_operating_hours = get_zone_operating_hours_func()
 
@@ -218,13 +206,10 @@ def is_zone_open(zone_id):
     
     print(f"zone_id: {zone_id} | zone_info: {zone_info}")
     if not zone_info:
-        return False  # ถ้าไม่มีข้อมูลโซน ให้ปิด
-
-    # ตรวจสอบว่าวันปัจจุบันอยู่ในช่วงเวลาที่กำหนดหรือไม่
+        return False
     if current_day not in zone_info["days"]:
         return False
 
-    # ตรวจสอบเวลา
     return zone_info["start"] <= current_time <= zone_info["end"]
 
 
@@ -250,18 +235,14 @@ def update_zone_human_count():
             print(f"[{datetime.now}] Invalid human count for zone {zone.zone_id}")
             continue
 
-
-        # เก็บค่า zone_id, human_count ไว้ใน cache
         visitor_counts_cache[zone.zone_id] = human_count
         update_date_time = datetime.now(pytz.utc).astimezone(timezone)
         update_date_time_str = update_date_time.strftime('%Y-%m-%d %H:%M:%S')
 
-        # ยิง API ไปที่ update_zone_count ทุก 5 นาที
         update_zone_count_service(zone.zone_id, human_count, update_date_time_str)
 
 
         if update_date_time.minute == 0:
-            # ถ้าใช่ ให้เรียก add_zone_visitor_history_service
             add_zone_visitor_history_service(update_date_time_str, zone.zone_id, human_count)
             print(f"This is Log : [{update_date_time_str}] Updated Zone {zone.zone_id} with count {human_count}")
 
@@ -271,37 +252,22 @@ def update_zone_human_count():
     return {"message": "Zone count updated"}
 
 def start_scheduler():
-    # ตั้งค่าไทม์โซนเป็นไทย
     tz = pytz.timezone('Asia/Bangkok')
-
-    # เวลาปัจจุบันในไทม์โซนไทย
     now = datetime.now(tz)
-    
-    # คำนวณเวลาที่เหลือจนถึงชั่วโมงถัดไปที่ลงท้ายด้วย :00:00
+
     next_run = (now + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
     delay = (next_run - now).total_seconds()
 
-    # Debugging
     print(f"Current time: {now}")
     print(f"Next run at: {next_run}")
     print(f"Delay until next run: {delay} seconds")
 
-    # สร้าง Scheduler
     scheduler = BackgroundScheduler(timezone=tz)
 
     update_zone_human_count()
-    # save_zone_visitor_history()
-
-    # เพิ่ม Job ที่จะเริ่มทำงานทันทีที่โปรแกรมเริ่ม และทำซ้ำทุกๆ 1 นาที
     scheduler.add_job(update_zone_human_count, "cron", minute="*/1", timezone=tz, start_date=now)
-
-    # เพิ่ม Job ที่จะเริ่มทำงานทันทีที่โปรแกรมเริ่ม และทำซ้ำทุกๆ 1 ชั่วโมง
-    # scheduler.add_job(save_zone_visitor_history, "cron", minute="*/1", timezone=tz, start_date=now)
-
-    # เริ่ม Scheduler
     scheduler.start()
 
-# เรียกใช้งาน Scheduler
 start_scheduler()
 
 @zone_bp.route('/api/v1/getZoneVideo/<string:file_name>', methods=['GET'])

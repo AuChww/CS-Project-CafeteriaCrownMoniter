@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { MdEdit } from "react-icons/md";
-import { MdDeleteForever } from "react-icons/md";
 
 interface Restaurant {
   restaurant_id: number;
