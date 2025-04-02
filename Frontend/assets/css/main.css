@@ -1,0 +1,141 @@
+
+
+.background-animate {
+    background-size: 200%;
+    -webkit-animation: AnimateBackgroud 5s ease infinite;
+    -moz-animation: AnimateBackgroud 5s ease infinite;
+    animation: AnimateBackgroud 5s ease infinite;
+  }
+  
+  @keyframes AnimateBackgroud {
+    0% {
+      background-position: 0;
+    }
+    50% {
+      background-position: 100%;
+    }
+    100% {
+      background-position: 0;
+    }
+  }
+
+.area {
+	background: #4e54c8;
+	background: -webkit-linear-gradient(to left, #ffffff, #ffffff);
+	width: 100%;
+	height: 100vh;
+	position: absolute;
+	z-index: -1;
+}
+
+.circles {
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 96%;
+	overflow: hidden;
+}
+
+.circles li {
+	position: absolute;
+	display: block;
+	list-style: none;
+	width: 20px;
+	height: 20px;
+	background: rgb(255, 255, 255);
+	animation: animate 25s linear infinite;
+	bottom: 1/6;
+}
+
+.circles li:nth-child(1) {
+	left: 25%;
+	width: 80px;
+	height: 80px;
+	animation-delay: 0s;
+}
+
+.circles li:nth-child(2) {
+	left: 60%;
+	width: 20px;
+	height: 20px;
+	animation-delay: 0s;
+	animation-duration: 6s;
+}
+
+.circles li:nth-child(3) {
+	left: 50%;
+	width: 40px;
+	height: 40px;
+	animation-delay: 2s;
+    animation-duration: 6s;
+}
+
+.circles li:nth-child(4) {
+	left: 40%;
+	width: 60px;
+	height: 60px;
+	animation-delay: 0s;
+	animation-duration: 14s;
+}
+
+.circles li:nth-child(5) {
+	left: 5%;
+	width: 20px;
+	height: 20px;
+	animation-delay: 0s;
+    animation-duration: 7s;
+}
+
+.circles li:nth-child(6) {
+	left: 15%;
+	width: 110px;
+	height: 110px;
+	animation-delay: 1s;
+}
+
+.circles li:nth-child(7) {
+	left: 55%;
+	width: 150px;
+	height: 150px;
+	animation-delay: 1s;
+}
+
+.circles li:nth-child(8) {
+	left: 30%;
+	width: 25px;
+	height: 25px;
+	animation-delay: 2s;
+	animation-duration: 8s;
+}
+
+.circles li:nth-child(9) {
+	left: 20%;
+	width: 15px;
+	height: 15px;
+	animation-delay: 2s;
+	animation-duration: 15s;
+}
+
+.circles li:nth-child(10) {
+	left: 35%;
+	width: 150px;
+	height: 150px;
+	animation-delay: 0s;
+	animation-duration: 8s;
+}
+
+
+
+
+@keyframes animate {
+    0% {
+        transform: translateY(-500vh) rotate(0deg); /* Start from above the viewport */
+        opacity: 1;
+        border-radius: 50%;
+    }
+    100% {
+        transform: translateY(0vh) rotate(720deg); /* End below the viewport */
+        opacity: 0;
+        border-radius: 0;
+    }
+}
