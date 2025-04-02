@@ -4,20 +4,21 @@ This system is developed as a **Web Application** with the main feature of displ
 
 This system is developed with **Next.JS**, **Flask**, **YOLO v.8**, **PostgreSQL**, and **Docker** to enable efficient data management and display. 
 
-#### Graduation project in 2025 of Computer Science students, Kasetsart University, Bangkhen KU81 CS36 
-- 6410450800 Mr. Chanawut Wuttinan 
-- 6410450893 Nawaphon Leelanawalikit
-
-___
-
+---
 
 ระบบนี้พัฒนาเป็น **Web Application** ที่มีฟีเจอร์หลักในการแสดงจำนวนผู้ใช้ในระดับใกล้เคียงกับเรียลไทม์ ในแต่ละโรงอาหาร, โซนของโรงอาหาร และ ร้านอาหาร ได้โดยใช้ YOLO v.8 ตรวจจับและนับจำนวนผู้คนในคลิปที่จะประมวลผลทุก 1 นาที พร้อมทั้งฟีเจอร์จัดอันดับแนะนำโรงอาหาร, โซนของโรงอาหาร, ร้านอาหารต่างๆ และยังมี ฟีเจอร์การรีวิวและให้ดาวร้านอาหาร, ระบบแสดงประวัติผู้ใช้งาน (1 day, 7 days, 30 days) และ ระบบรายงานปัญหาสถานที่แก่ผู้ดูแลระบบ ทั้งนี้สิทธิ์ในการเข้าถึงระบบแตกต่างกันไปตาม Role ของผู้ใช้งาน
 
 ระบบนี้ถูกพัฒนาด้วย **Next.JS**, **Flask**,**YOLO v.8** , **PostgreSQL**, และ **Docker** เพื่อให้การบริหารจัดการข้อมูลและการแสดงผลเป็นไปอย่างมีประสิทธิภาพ
 
-#### โปรเจ็คจบการศึกษาปี 2568 ของนิสิตวิทยาการคอมพิวเตอร์ ม.เกษตรศาสตร์ บางเขน KU81 CS36
-- 6410450800 นายชนาวุฒิ วุฑฒินันท์
-- 6410450893 ณวพน ลีลานวลิขิต
+---
+
+### Graduation project in 2025 of Computer Science students, Kasetsart University, Bangkhen KU81 CS36 
+- 6410450800 Chanawut Wuttinan นายชนาวุฒิ วุฑฒินันท์
+- 6410450893 Nawaphon Leelanawalikit นายณวพน ลีลานวลิขิต
+
+<img src="https://github.com/user-attachments/assets/b94936a7-f73c-43f3-b974-78e5f8f41391" width="500">
+<img src="https://github.com/user-attachments/assets/266304be-a0ff-4a1c-940c-dfc6164d8e08" width="500">
+
 
 
 ## วิธีการ run project
